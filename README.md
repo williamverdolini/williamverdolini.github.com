@@ -1,4 +1,4 @@
-# Personal Blob About my Projects
+# Personal Blog About my Projects
 
 The lessons learned...coming soon.
 

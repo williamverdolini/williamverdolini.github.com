@@ -29,7 +29,10 @@
       </div>
     </div>
     <div class="col-md-3">
+          {% include themes/blog/disc-sidebar.html %}
+        
     
+  {% comment %}    
       <div class="list-group" >
         {% for node in site.pages sorted %}
           {% if node.title != null %}
@@ -42,6 +45,7 @@
             {% endif %}
           {% endif %}
         {% endfor %}
+  {% endcomment %}    
 
       </div>
        

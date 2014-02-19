@@ -1,0 +1,46 @@
+{% comment %}
+-------------------------------------------------------------------
+  Definizione dell'indice del blog per il progetto Discitur
+-------------------------------------------------------------------
+{% endcomment%}
+
+
+{% assign Summary = "title:1. Premessa,url:/pages/discitur/1_index.html" %}
+{% capture finalSummary%}{{Summary}}{% endcapture %}
+
+{% assign Summary = "title:2. Introduzione,url:/pages/discitur/2_intro.html" %}
+{% capture finalSummary%}{{finalSummary}}|{{Summary}}{% endcapture %}
+
+{% assign Summary = "title:3. Prerequisiti,url:/2014/01/05/discitur-prerequisiti" %}
+{% capture finalSummary%}{{finalSummary}}|{{Summary}}{% endcapture %}
+
+
+
+
+
+
+
+{% assign myArray = finalSummary | split: "|" %}
+
+<div class="list-group" >
+  {% for node in myArray sorted %}
+    {% assign summaryLine = node | split: "," %}
+    {% for prop in summaryLine sorted %}
+      {% assign keyval = prop | split: ":" %}
+      {% if keyval[0] == 'title' %}
+        {% assign title = keyval[1] %}
+    	{% endif %}
+      {% if keyval[0] == 'url' %}
+        {% assign url = keyval[1] %}
+    	{% endif %}
+  	{% endfor %}
+  	{% if page.url == url %}
+  	<a class="list-group-item active" href="{{ BASE_PATH }}{{url}}">{{title}}</a>
+  	{% else %}
+  	<a class="list-group-item" href="{{ BASE_PATH }}{{url}}">{{title}}</a>
+  	{% endif %}
+
+  {% endfor %}
+
+</div>
+           

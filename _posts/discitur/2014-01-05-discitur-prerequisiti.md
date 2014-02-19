@@ -1,10 +1,11 @@
 ---
-layout: wvpage
+layout: wvpost
 title: "Il Progetto Discitur"
 tagline: Prerequisiti
 header: Prerequisiti
 description: Progetto Discitur, Prerequisiti, Tecnologie
 group: Discitur
+tags: [Metodologia,Tecnologia]
 ---
 {% include JB/setup %}
 

@@ -9,6 +9,8 @@ group: navigation
          
 <h2>Contenuti</h2>
 
+{% comment %}
+
 {% assign pages_list = site.pages %}
 <ul>
   {% for node in site.pages %}
@@ -23,6 +25,33 @@ group: navigation
     {% endif %}
   {% endfor %}
 </ul>
+{% endcomment %}
+
+{% include themes/blog/disc-summary.html %}
+
+{% assign myArray = finalSummary | split: "|" %}
+
+<ul style="list-style-type: none;">
+  {% for node in myArray sorted %}
+    {% assign summaryLine = node | split: "," %}
+    {% for prop in summaryLine sorted %}
+      {% assign keyval = prop | split: ":" %}
+      {% if keyval[0] == 'title' %}
+        {% assign title = keyval[1] %}
+    	{% endif %}
+      {% if keyval[0] == 'url' %}
+        {% assign url = keyval[1] %}
+    	{% endif %}
+  	{% endfor %}
+  	{% if page.url == url %}
+  	<li class="active"><a href="{{ BASE_PATH }}{{url}}">{{title}}</a></li>
+  	{% else %}
+  	<li><a href="{{ BASE_PATH }}{{url}}">{{title}}</a></li>
+  	{% endif %}
+
+  {% endfor %}
+
+</div>
 
 
 

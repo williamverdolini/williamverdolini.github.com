@@ -1,24 +1,4 @@
-{% comment %}
--------------------------------------------------------------------
-  Definizione dell'indice del blog per il progetto Discitur
--------------------------------------------------------------------
-{% endcomment%}
-
-
-{% assign Summary = "title:1. Premessa,url:/pages/discitur/1_index.html" %}
-{% capture finalSummary%}{{Summary}}{% endcapture %}
-
-{% assign Summary = "title:2. Introduzione,url:/pages/discitur/2_intro.html" %}
-{% capture finalSummary%}{{finalSummary}}|{{Summary}}{% endcapture %}
-
-{% assign Summary = "title:3. Prerequisiti,url:/2014/01/05/discitur-prerequisiti" %}
-{% capture finalSummary%}{{finalSummary}}|{{Summary}}{% endcapture %}
-
-
-
-
-
-
+{% include themes/blog/disc-summary.html %}
 
 {% assign myArray = finalSummary | split: "|" %}
 

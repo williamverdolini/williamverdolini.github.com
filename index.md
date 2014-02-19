@@ -1,5 +1,5 @@
 ---
-layout: page
+layout: wvmonopage
 title: In Code We Live
 tagline: Progetti, storie, riflessioni
 ---
@@ -11,7 +11,7 @@ I progetti su cui sto lavorando: <https://github.com/williamverdolini?tab=reposi
 ## Chi sono
 La sintesi della mia storia lavorativa la potete leggere nel [mio profilo Linkedin] (http://www.linkedin.com/in/williamverdolini)
 
-    
+<!--   
 ## I Posts
 
 Le mie riflessioni:
@@ -21,3 +21,5 @@ Le mie riflessioni:
     <li><span>{{ post.date | date_to_string }}</span> &raquo; <a href="{{ BASE_PATH }}{{ post.url }}">{{ post.title }}</a></li>
   {% endfor %}
 </ul>
+
+-->

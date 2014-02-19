@@ -1,0 +1,40 @@
+---
+layout: wvmonopage
+title: Discitur
+tagline: Backstage del progetto
+header: Discitur
+group: navigation
+---
+{% include JB/setup %}
+         
+<h2>Contenuti</h2>
+
+{% assign pages_list = site.pages %}
+<ul>
+  {% for node in site.pages %}
+    {% if node.title != null %}
+      {% if node.group == 'Discitur' %}
+      	{% if page.url == node.url %}
+      	<li class="active"><a href="{{ BASE_PATH }}{{node.url}}" class="active">{{node.header}}</a></li>
+      	{% else %}
+      	<li><a href="{{ BASE_PATH }}{{node.url}}">{{node.header}}</a></li>
+      	{% endif %}
+      {% endif %}
+    {% endif %}
+  {% endfor %}
+</ul>
+
+
+
+{% comment %}
+  
+
+<ul>
+{% assign pages_list = site.pages %}
+{% include JB/pages_list %}
+</ul>
+
+Discitur<br>
+<p>{{pages_list}}</p>
+{% endcomment %}
+

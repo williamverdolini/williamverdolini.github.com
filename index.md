@@ -6,7 +6,9 @@ tagline: Progetti, storie, riflessioni
 {% include JB/setup %}
 
 ## Progetti
-I progetti su cui sto lavorando: <https://github.com/williamverdolini?tab=repositories>
+###[Discitur]({{ BASE_PATH }}Discitur.html)
+
+Il progetto è versionato su repository pubblico: <https://github.com/williamverdolini?tab=repositories>
 
 ## Chi sono
 La sintesi della mia storia lavorativa la potete leggere nel [mio profilo Linkedin] (http://www.linkedin.com/in/williamverdolini)

@@ -5,8 +5,6 @@ tagline: Prerequisiti
 header: Prerequisiti
 description: Progetto Discitur, Prerequisiti, Tecnologie
 group: Discitur
-tags : [Metodologia]
-categories : [lessons, beginner]
 ---
 {% include JB/setup %}
 

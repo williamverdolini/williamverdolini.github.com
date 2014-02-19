@@ -31,7 +31,7 @@
     <div class="col-md-3">
     
       <div class="list-group" >
-        {% for node in site.pages %}
+        {% for node in site.pages sorted %}
           {% if node.title != null %}
             {% if node.group == 'Discitur' %}
             	{% if page.url == node.url %}

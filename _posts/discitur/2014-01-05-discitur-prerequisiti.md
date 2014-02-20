@@ -3,9 +3,9 @@ layout: wvpost
 title: "Il Progetto Discitur"
 tagline: Prerequisiti
 header: Prerequisiti
-description: Progetto Discitur, Prerequisiti, Tecnologie
+description: Progetto Discitur, Prerequisiti, Tecnologie, Metodologia, Agile
 group: Discitur
-tags: [Metodologia,Tecnologia]
+tags: [Agile,Tecnologia]
 ---
 {% include JB/setup %}
 
@@ -133,3 +133,21 @@ tutti i sotto-sistemi fossero funzionanti. Non so cosa stai facendo ora Cesare,
 ma se hai qualche programmatore da instradare nella direzione giusta, butta un
 occhio a [Karma](http://karma-runner.github.io/0.10/index.html)
 (uno dei motivi per cui voglio approfondire Angular.js) e [Grunt](http://gruntjs.com/).
+
+Ultima nota (ma non per importanza): ho una discreta esperienza come project manager
+di progetti e team di sviluppo e nel corso degli anni ho approfondito ed applicato
+metodologie Water-fall-style o simili alla [RUP](http://en.wikipedia.org/wiki/IBM_Rational_Unified_Process).
+Funzionano. Ma l'Agile ha una marcia in più dal mio punto di vista (che è poco più che didattico). 
+Ci possono essere molti ostacoli ad una reale 
+applicazione dell'agile: clienti, contratti, abitudini, ecc., ma se si riesce 
+a creare il giusto contesto, il valore che se ne genera è indiscusso. Il **valore** è la
+parola magica che è entrata nei miei pensieri da quando ho cominciato a studiare ed applicare
+alcune tecniche agili. E solo con questo "semplice" pensiero in testa, il mio lavoro è migliorato, perchè più attento
+alle esigenze ed al punto di vista del cliente.
+
+E' con questo spirito che continuo a studiare, ad applicare e provare l'agile. Il progetto
+è una palestra anche in questo. Lo faccio con umiltà ed invito chiunque abbia una reale
+esperienza a correggermi. Mi farebbe veramente bene. Per ora l'agile mi ha insegnato
+a pormi sempre questa domanda: 
+
+_Qual è il **Valore** di ciò che sto facendo?_

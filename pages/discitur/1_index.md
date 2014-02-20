@@ -9,7 +9,7 @@ group: Discitur
 {% include JB/setup %}
 
 Il sito vuole essere un insieme di articoli che tracciano il diario di bordo dell’ideazione 
-e della realizzazione di un’applicazione web. 
+e della realizzazione di un’applicazione web rivolta al mondo degli insegnanti. 
 
 Allo stato dell’arte, tra i vari impegni, 
 non sono sicuro riuscirò e vederne la fine, ma lo scopo è quello di tracciare tutto, un po'

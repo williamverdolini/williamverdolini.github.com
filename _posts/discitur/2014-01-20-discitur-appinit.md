@@ -200,13 +200,12 @@ angular.module('Lesson')
 **Meglio!**
 
 
-###Controller Inheritance?
+###_Controller Inheritance?_
 
 Rifletto su questo aspetto per il fatto che, sulla base del codice appena
 scritto, tutti i controller della mia applicazione avranno questi componenti e
 riscrivere, controller dopo controller, le stesse funzioni la trovo una pratica
-da evitare (se possibile) perché _error-prone_
-(come ogni copia/incolla) e per il fatto che è più difficile da manutenere (se
+da evitare (se possibile) perché _error-prone_ (come ogni copia/incolla) e per il fatto che è più difficile da manutenere (se
 dovessi modificare la funzione private getLabel, dovrei ripassarmi tutti i
 controller dell’applicazione). 
 
@@ -231,60 +230,3 @@ angular.module("Discitur")
     });
 ]]></script> 
  
-riflessioni:
-
-1. Utilizzo un servizio con lo scopo di dare una
-     sorta di “namespace” al Controller, senza “inquinare” con variabili
-     globali.
-2. la parte “chiave” dell’implementazione è
-     quella relativa all’istruzione di return, che restituisce il Costruttore e
-     consente quindi al chiamante di instanziare la classe. Ecco perché NON sto
-     utilizzando un controller vero e proprio, ma un servizio, perché ho
-     bisogno
-
-A questo punto il mio controller potrebbe essere reingegnerizzato come di
-seguito:
-
- 
-<script type="syntaxhighlighter" class="brush: javascript">
-<![CDATA[
-angular.module('Lesson')
-    .controller('LessonCtrl', [
-        '$scope',
-        'DisciturBaseCtrl',
-        '$injector',
-        function ($scope, DisciturBaseCtrl, $injector) {
-            $scope._ctrl = 'LessonCtrl';
-            // inherit Discitur Base Controller           
-            $injector.invoke(DisciturBaseCtrl, this, { $scope: $scope });
-            //-------- public properties-------
-            $scope.labels = {
-                specifics: $scope.getLabel('specifics'),
-                discipline: $scope.getLabel('discipline'),
-                school: $scope.getLabel('school'),
-                classroom: $scope.getLabel('classroom'),
-                ...
-            };
-   ...
-]]></script> 
- 
-
-Da un punto di vista del codice scritto, in questo specifico caso, non c’è
-molto beneficio (alla fine più o meno lo stesso numero di righe di codice), ma
-qualora le funzionalità base dei controller aumentino il beneficio si vedrebbe
-più sensibilmente. L’aspetto sicuramente migliorativo sta nel design del
-software, che consente di isolare nel controller base le funzionalità comuni,
-percui la manutenzione/evoluzione ne risulta semplificata.
-
- 
-
-Al momento NON applicherò questo design, perché non sono sicuro sia il modo
-corretto di interpretare il framework Angular e perché mi sembra una forzatura
-la gestione del controller padre tramite istanze da servizio. So che funziona,
-ma per ora utilizzerò l’injection dei servizi che mi sembra il modo più “standard”
-di affrontare la questione.
-
- 
-
-Qualche opinione in merito?
-

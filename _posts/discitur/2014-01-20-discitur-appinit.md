@@ -200,7 +200,7 @@ angular.module('Lesson')
 **Meglio!**
 
 
-###_Controller Inheritance?_
+###Controller Inheritance?
 
 Rifletto su questo aspetto per il fatto che, sulla base del codice appena
 scritto, tutti i controller della mia applicazione avranno questi componenti e

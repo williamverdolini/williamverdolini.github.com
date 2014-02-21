@@ -236,7 +236,7 @@ riflessioni:
 1. Utilizzo un servizio con lo scopo di dare una
      sorta di "namespace" al Controller, senza inquinare con variabili
      globali.
-2. la parte "chiave" dell’implementazione è
+2. la parte chiave dell’implementazione è
      quella relativa all’istruzione di return, che restituisce il Costruttore e
      consente quindi al chiamante di instanziare la classe. Ecco perché NON sto
      utilizzando un controller vero e proprio, ma un servizio, perché ho
@@ -245,3 +245,26 @@ riflessioni:
 A questo punto il mio controller potrebbe essere reingegnerizzato come di
 seguito:
 
+ 
+<script type="syntaxhighlighter" class="brush: javascript">
+<![CDATA[
+angular.module('Lesson')
+    .controller('LessonCtrl', [
+        '$scope',
+        'DisciturBaseCtrl',
+        '$injector',
+        function ($scope, DisciturBaseCtrl, $injector) {
+            $scope.ctrl = 'LessonCtrl';
+            // inherit Discitur Base Controller           
+            $injector.invoke(DisciturBaseCtrl, this, { $scope: $scope });
+            //-------- public properties-------
+            $scope.labels = {
+                specifics: $scope.getLabel('specifics'),
+                discipline: $scope.getLabel('discipline'),
+                school: $scope.getLabel('school'),
+                classroom: $scope.getLabel('classroom'),
+                ...
+            };
+   ...
+]]></script> 
+ 

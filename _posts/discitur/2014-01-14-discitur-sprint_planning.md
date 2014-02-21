@@ -1,8 +1,8 @@
 ---
 layout: wvpost
 title: "Il Progetto Discitur"
-tagline: Le Stime
-header: Le Stime
+tagline: Sprint Planning
+header: Sprint Planning
 description: Progetto Discitur, Planning, Stime, Metodologia, Scrum, Agile
 group: Discitur
 tags: [Agile]

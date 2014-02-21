@@ -77,4 +77,26 @@ vincente a prescindere, ma ho qualche riflessione generale in merito:
      cuore a tutti quelli che hanno avuto la voglia di condividere le loro
      esperienze; nel mio piccolo cerco di dare il mio contributo
 
- 
+
+### La struttura del Progetto Angular
+
+Entriamo nel vivo. Front-end subito per l’utente finale e quindi Angular.js
+(sul perché della scelta di questo framework, eventualmente, mi soffermerò più
+avanti). Approfondendo da settimane il framework Angular.js, ho provato diversi
+approcci per strutturare il progetto, poi ho fatto tesoro dell’esperienza e dei
+[consigli di Marco Rinck](http://entwicklertagebuch.com/blog/2013/10/how-to-structure-large-angularjs-applications/).  
+
+### TDD
+
+Una delle più grosse novità per me in questo progetto è l’uso del
+Test-Driven Development. Un po’ difficoltoso è iniziare, soprattutto se ci si
+deve liberare delle “tossine” della programmazione tradizionale…per trattare
+questo importantissimo tema ho preferito tracciare una cronistoria nelle
+sprint-review dei miei avanzamenti nell’uso di questa nuova filosofia di vita!
+
+### Task Board
+
+Non ho particolari insight da aggiungere sull’argomento. Vi rimando
+all’antologia per i dettagli. L’unica cosa che ci tengo a dire è: usatela,
+anche se vi sembra inutile. E’ tutto il contrario. Avere sotto gli occhi la
+situazione e gli obiettivi è importantissimo per migliorare la produttività. 

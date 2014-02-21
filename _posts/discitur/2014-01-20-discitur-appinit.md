@@ -249,9 +249,6 @@ seguito:
 <![CDATA[
 angular.module('Lesson')
     .controller('LessonCtrl', [
-        '$scope',
-        'DisciturBaseCtrl',
-        '$injector',
 ]]></script> 
 
 

@@ -248,7 +248,6 @@ seguito:
 <script type="syntaxhighlighter" class="brush: javascript">
 <![CDATA[
 angular.module('Lesson')
-    .controller('LessonCtrl', [
 ]]></script> 
 
 

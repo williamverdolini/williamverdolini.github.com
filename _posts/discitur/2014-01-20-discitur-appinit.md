@@ -91,3 +91,74 @@ situazioni di emergenza (non capita mai di dover patchare e rilasciare un
 applicazione velocissimamamente? no vero..?...).
  
 
+Però, così come è, questa soluzione ha il limite di non poter gestire
+l’override di una label su un controller specifico. Cioè: se definisco che la
+label school equivale a “Scuola”, in tutta l’applicazione il suo valore rimarrà sempre
+lo stesso. Ma se in un controller specifico volessi visualizzare “La mia
+Scuola”, cosa dovrei fare? duplicare le label per ogni controller non mi sembra
+un buona idea. Meglio quella di predisporre un file di costanti globali con le
+sole etichette personalizzate per lo specifico controller:
+
+ 
+<script type="syntaxhighlighter" class="brush: javascript">
+<![CDATA[
+angular.module('Common')
+.value('overrides',
+    {
+        'LessonCtrl': {
+            school: "La  mia Scuola"
+        }
+    }
+)
+]]></script> 
+
+Anche questo file potrebbe essere generato automaticamente a partire da
+dati salvati a DB.
+
+Questa scelta costringe ad un rework del controller, che a questo punto non
+può più accedere direttamente al dictionary, ma deve passare attravero un
+servizio che data l’etichetta verifica l’esistenza di un eventuale override del
+controller. 
+
+ 
+<script type="syntaxhighlighter" class="brush: javascript">
+<![CDATA[
+angular.module('Common')
+        .factory('LabelService', function (dictionary,  overrides) {
+            return {
+                get: function (controller, label) {
+            // if exists the overriden label within the Controller is returned 
+            // otherwise the dictionary's label is returned
+
+                 return 
+          (overrides[controller] && overrides[controller][label]) ?
+          overrides[controller][label] :
+          dictionary[label] || 'Label (' + label + ') not set!';
+                }
+            };
+        });
+]]></script> 
+
+Ed il controller diventa:
+
+ 
+<script type="syntaxhighlighter" class="brush: javascript">
+<![CDATA[
+angular.module('Lesson')
+    .controller('LessonCtrl', [
+        '$scope',
+        'LabelService'
+        function (
+            $scope,
+            LabelService,
+            ) {
+            //-------- public properties-------
+            $scope.labels = {
+                specifics: LabelService.get('LessonCtrl','specifics'),
+                discipline: LabelService.get('LessonCtrl','discipline'),
+                school: LabelService.get('LessonCtrl','school'),
+                ...
+            };
+]]></script> 
+
+Ok.

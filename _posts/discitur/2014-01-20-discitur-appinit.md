@@ -244,7 +244,9 @@ riflessioni:
 
 A questo punto il mio controller potrebbe essere reingegnerizzato come di
 seguito:
- 
+
+
+{%raw%}
 angular.module('Lesson')
     .controller('LessonCtrl', [
         '$scope',
@@ -261,7 +263,7 @@ angular.module('Lesson')
                 school: $scope.getLabel('school'),
                 classroom: $scope.getLabel('classroom')
             };
-
+{%endraw%}
 
 Da un punto di vista del codice scritto, in questo specifico caso, non c’è
 molto beneficio (alla fine più o meno lo stesso numero di righe di codice), ma

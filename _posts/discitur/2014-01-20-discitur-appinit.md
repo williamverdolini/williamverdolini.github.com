@@ -42,7 +42,8 @@ in tutta l’applicazione. Il mio servizio sarà quindi come segue:
  
   
 
-<pre class="brush: javascript">
+<script type="syntaxhighlighter" class="brush: javascript">
+<![CDATA[
 angular.module('Common')
 .value('dictionary',
     {
@@ -55,7 +56,7 @@ angular.module('Common')
         ...
     }
 )
-</pre>
+]]></script> 
 
 
 Questo servizio dovrà essere utilizzato da ogni controller per popolare le
@@ -63,7 +64,8 @@ label visualizzate. Quindi, sfruttando la Dependency Injection di Angular, un
 controller potrebbe avere questa struttura:
 
  
-<pre class="brush: javascript">
+<script type="syntaxhighlighter" class="brush: javascript">
+<![CDATA[
 angular.module('Lesson')
     .controller('LessonCtrl', [
         '$scope',
@@ -80,7 +82,7 @@ angular.module('Lesson')
                 classroom: dictionary.classroom,
                 author: dictionary.author
             };
-</pre> 
+]]></script> 
 
 Ammetto che questa soluzione non mi piace al 100% perché richiede di
 inserire una step di deploy “esterno” (per leggere da DB le labels e creare il
@@ -98,7 +100,8 @@ un buona idea. Meglio quella di predisporre un file di costanti globali con le
 sole etichette personalizzate per lo specifico controller:
 
  
-<pre class="brush: javascript">
+<script type="syntaxhighlighter" class="brush: javascript">
+<![CDATA[
 angular.module('Common')
 .value('overrides',
     {
@@ -107,7 +110,7 @@ angular.module('Common')
         }
     }
 )
-</pre>
+]]></script> 
 
 Anche questo file potrebbe essere generato automaticamente a partire da
 dati salvati a DB.

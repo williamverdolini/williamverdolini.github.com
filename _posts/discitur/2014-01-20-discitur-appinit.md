@@ -245,19 +245,23 @@ riflessioni:
 A questo punto il mio controller potrebbe essere reingegnerizzato come di
 seguito:
  
-<script type="syntaxhighlighter" class="brush: javascript">
-<![CDATA[
-angular.module("Discitur")
-    .factory('DisciturBaseCtrl', function () {
-        function DisciturBaseCtrl($scope, LabelService) {
-            //-------- public methods-------
-            $scope.getLabel = function (label) {
-                return LabelService.get($scope.ctrl, label);
+angular.module('Lesson')
+    .controller('LessonCtrl', [
+        '$scope',
+        'DisciturBaseCtrl',
+        '$injector',
+        function ($scope, DisciturBaseCtrl, $injector) {
+            $scope.ctrl = 'LessonCtrl';
+            // inherit Discitur Base Controller
+            $injector.invoke(DisciturBaseCtrl, this, { $scope: $scope });
+            //-------- public properties-------
+            $scope.labels = {
+                specifics: $scope.getLabel('specifics'),
+                discipline: $scope.getLabel('discipline'),
+                school: $scope.getLabel('school'),
+                classroom: $scope.getLabel('classroom')
             };
-        }
-        return (DisciturBaseCtrl);
-    });
-]]></script> 
+
 
 Da un punto di vista del codice scritto, in questo specifico caso, non c’è
 molto beneficio (alla fine più o meno lo stesso numero di righe di codice), ma

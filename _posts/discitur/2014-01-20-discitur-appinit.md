@@ -262,5 +262,5 @@ di affrontare la questione.
 
  
 
-Qualche opinione in merito?
+Qualche opinione a riguardo?
 

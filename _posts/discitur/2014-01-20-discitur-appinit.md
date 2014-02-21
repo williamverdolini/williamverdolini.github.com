@@ -123,7 +123,6 @@ controller. 
  
 <script type="syntaxhighlighter" class="brush: javascript">
 <![CDATA[
- {%raw%}
 angular.module('Common')
         .factory('LabelService', function (dictionary,  overrides) {
             return {
@@ -138,7 +137,6 @@ angular.module('Common')
                 }
             };
         });
-{%endraw%}
 ]]></script> 
 
 Ed il controller diventa:
@@ -146,7 +144,6 @@ Ed il controller diventa:
  
 <script type="syntaxhighlighter" class="brush: javascript">
 <![CDATA[
-{%raw%}
 angular.module('Lesson')
     .controller('LessonCtrl', [
         '$scope',
@@ -162,7 +159,6 @@ angular.module('Lesson')
                 school: LabelService.get('LessonCtrl','school'),
                 ...
             };
-{%endraw%}
 ]]></script> 
 
 Ok.
@@ -179,7 +175,6 @@ La prima soluzione è semplice:
  
 <script type="syntaxhighlighter" class="brush: javascript">
 <![CDATA[
-{%raw%}
 angular.module('Lesson')
     .controller('LessonCtrl', [
         '$scope',
@@ -199,7 +194,6 @@ angular.module('Lesson')
                 school: getLabel('school'),
                 ...
             };
-{%endraw%}
 ]]></script> 
 
  
@@ -226,7 +220,6 @@ che può essere ereditato dai singoli controller:
  
 <script type="syntaxhighlighter" class="brush: javascript">
 <![CDATA[
-{%raw%}
 angular.module("Discitur")
     .factory('DisciturBaseCtrl', function () {
         function DisciturBaseCtrl($scope, LabelService) {
@@ -237,7 +230,6 @@ angular.module("Discitur")
         }
         return (DisciturBaseCtrl);
     });
-{%endraw%}
 ]]></script> 
  
 riflessioni:

@@ -244,7 +244,6 @@ riflessioni:
 
 A questo punto il mio controller potrebbe essere reingegnerizzato come di
 seguito:
-
  
 <script type="syntaxhighlighter" class="brush: javascript">
 <![CDATA[
@@ -263,8 +262,5 @@ angular.module('Lesson')
                 discipline: $scope.getLabel('discipline'),
                 school: $scope.getLabel('school'),
                 classroom: $scope.getLabel('classroom'),
-                ...
             };
-   ...
-]]></script> 
- 
+]]></script>

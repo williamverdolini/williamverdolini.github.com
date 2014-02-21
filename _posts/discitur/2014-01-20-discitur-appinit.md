@@ -162,3 +162,40 @@ angular.module('Lesson')
 ]]></script> 
 
 Ok.
+
+
+E’ più forte di me notare che nel codice inserito c’è tanta ripetizione. Mi
+aspetto infatti di avere decine di labels per controller e quindi di riscrivere
+la stessa riga di codice per decine di volte. In più, in ogni riga di codice c
+sono dei literals, che tendo ad evitare, perché 9 volte su 10 sono gestite con
+copia/incolla e fare bug-fixing può essere una cosa snervante.
+
+La prima soluzione è semplice:
+
+ 
+<script type="syntaxhighlighter" class="brush: javascript">
+<![CDATA[
+angular.module('Lesson')
+    .controller('LessonCtrl', [
+        '$scope',
+        'LabelService'
+        function (
+            $scope,
+            LabelService,
+            ) {
+            var getLabel = function (label) {
+                return LabelService.get('LessonCtrl', label);
+            }
+
+            //-------- public properties-------
+            $scope.labels = {
+                specifics: getLabel('specifics'),
+                discipline: getLabel('discipline'),
+                school: getLabel('school'),
+                ...
+            };
+]]></script> 
+
+ 
+**Meglio!**
+

@@ -245,26 +245,6 @@ riflessioni:
 A questo punto il mio controller potrebbe essere reingegnerizzato come di
 seguito:
 
-
-{%raw%}
-angular.module('Lesson')
-    .controller('LessonCtrl', [
-        '$scope',
-        'DisciturBaseCtrl',
-        '$injector',
-        function ($scope, DisciturBaseCtrl, $injector) {
-            $scope.ctrl = 'LessonCtrl';
-            // inherit Discitur Base Controller
-            $injector.invoke(DisciturBaseCtrl, this, { $scope: $scope });
-            //-------- public properties-------
-            $scope.labels = {
-                specifics: $scope.getLabel('specifics'),
-                discipline: $scope.getLabel('discipline'),
-                school: $scope.getLabel('school'),
-                classroom: $scope.getLabel('classroom')
-            };
-{%endraw%}
-
 Da un punto di vista del codice scritto, in questo specifico caso, non c’è
 molto beneficio (alla fine più o meno lo stesso numero di righe di codice), ma
 qualora le funzionalità base dei controller aumentino il beneficio si vedrebbe

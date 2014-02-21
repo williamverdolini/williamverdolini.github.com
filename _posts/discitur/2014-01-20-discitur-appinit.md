@@ -188,15 +188,15 @@ angular.module('Lesson')
             $scope,
             LabelService,
             ) {
-            var _getLabel = function (label) {
+            var getLabel = function (label) {
                 return LabelService.get('LessonCtrl', label);
             }
 
             //-------- public properties-------
             $scope.labels = {
-                specifics: _getLabel('specifics'),
-                discipline: _getLabel('discipline'),
-                school: _getLabel('school'),
+                specifics: getLabel('specifics'),
+                discipline: getLabel('discipline'),
+                school: getLabel('school'),
                 ...
             };
 {%endraw%}

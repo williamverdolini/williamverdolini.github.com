@@ -223,7 +223,7 @@ angular.module("Discitur")
         function DisciturBaseCtrl($scope, LabelService) {
             //-------- public methods-------
             $scope.getLabel = function (label) {
-                return LabelService.get($scope._ctrl, label);
+                return LabelService.get($scope.ctrl, label);
             };
         }
         return (DisciturBaseCtrl);
@@ -254,7 +254,7 @@ angular.module('Lesson')
         'DisciturBaseCtrl',
         '$injector',
         function ($scope, DisciturBaseCtrl, $injector) {
-            $scope._ctrl = 'LessonCtrl';
+            $scope.ctrl = 'LessonCtrl';
             // inherit Discitur Base Controller           
             $injector.invoke(DisciturBaseCtrl, this, { $scope: $scope });
             //-------- public properties-------

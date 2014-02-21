@@ -261,6 +261,6 @@ angular.module('Lesson')
                 specifics: $scope.getLabel('specifics'),
                 discipline: $scope.getLabel('discipline'),
                 school: $scope.getLabel('school'),
-                classroom: $scope.getLabel('classroom'),
+                classroom: $scope.getLabel('classroom')
             };
-]]></script>
+]]></script> 

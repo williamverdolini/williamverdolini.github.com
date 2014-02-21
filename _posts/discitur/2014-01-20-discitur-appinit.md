@@ -247,12 +247,17 @@ seguito:
  
 <script type="syntaxhighlighter" class="brush: javascript">
 <![CDATA[
-a
+angular.module("Discitur")
+    .factory('DisciturBaseCtrl', function () {
+        function DisciturBaseCtrl($scope, LabelService) {
+            //-------- public methods-------
+            $scope.getLabel = function (label) {
+                return LabelService.get($scope.ctrl, label);
+            };
+        }
+        return (DisciturBaseCtrl);
+    });
 ]]></script> 
-
-
-
-
 
 Da un punto di vista del codice scritto, in questo specifico caso, non c’è
 molto beneficio (alla fine più o meno lo stesso numero di righe di codice), ma

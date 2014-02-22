@@ -1,8 +1,8 @@
 ---
 layout: wvpost
 title: "Discitur Project"
-tagline: TDD, JE (Just Enough)
-header: TDD, JE (Just Enough)
+tagline: Angular.js TDD, JE (Just Enough)
+header: Angular.js TDD, JE (Just Enough)
 description: Progetto Discitur, Tech, Angular.js, TDD
 group: Discitur
 tags: [Angular.js,TDD]

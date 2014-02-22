@@ -1,8 +1,8 @@
 ---
 layout: wvpost
 title: "Il Progetto Discitur"
-tagline: TDD, QB (Quanto Basta)
-header: TDD, QB (Quanto Basta)
+tagline: Angular.js TDD, QB (Quanto Basta)
+header: Angular.js TDD, QB (Quanto Basta)
 description: Progetto Discitur, Tech, Angular.js, TDD
 group: Discitur
 tags: [Angular.js,TDD]

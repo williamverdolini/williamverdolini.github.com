@@ -1,8 +1,8 @@
 ---
 layout: wvpost
 title: "Il Progetto Discitur"
-tagline: Climbing TDD
-header: Climbing TDD
+tagline: Climbing Angular.js TDD
+header: Climbing Angular.js TDD
 description: Progetto Discitur, Tech, Angular.js, TDD
 group: Discitur
 tags: [Angular.js,TDD]

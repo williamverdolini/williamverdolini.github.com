@@ -129,7 +129,7 @@ Poi ho continuato ancora, nel TDD di Angular services. Il codice lo pubblicherò
 volendo sarà possibile vedere tutti i dettagli, ma fondamentalmente vorrei concentrare l’esperienza su un dettaglio. 
 Stavo realizzando il servizio di ricerca (uno dei principali dell’applicazione) e continuavo nell’applicare il TDD. 
 Nello scrivere il test dopo poco sono arrivato all’esigenza di realizzare l’interfaccia di input che, 
-nella mia testa DDD (_Development-Driven Development_) suonava così:
+nella mia testa DDD ( _Development-Driven Development_ ) suonava così:
 
 
 
@@ -323,7 +323,7 @@ non giustifica quel valore.
 Avrei portato più valore se avessi sviluppato direttamente e mi fossi concentrato sul TDD in altri contesti.
 
 Una conferma importante. 
-Stasera ho avuto una piacevole conversazione con Lorenzo Massacci, co-fondatore di [E-xtrategy](http://www.e-xtrategy.net/), 
+Qualche sera fa, ho avuto una piacevole conversazione con Lorenzo Massacci, co-fondatore di [E-xtrategy](http://www.e-xtrategy.net/), 
 una realtà locale molto attiva in campo Agile. Lorenzo mi ha raccontato qualche esperienza ed 
 il suo punto di vista sul TDD e mi ha detto: “noi non siamo talebani dell’Agile, 
 lo utilizziamo nel modo in cui meglio si adatta alle esigenze. 

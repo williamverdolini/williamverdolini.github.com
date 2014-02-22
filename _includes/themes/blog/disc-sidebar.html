@@ -27,13 +27,25 @@
         {% assign levelTitle = keyval[1] %}
     	{% endif %}
   	{% endfor %}
+
+
   	
 
   	{% if level != 0 and prevLevelTitle != levelTitle %}
+    	   <script>console.log('preLevel: {{prevLevel}} - level: {{level}} - levelTitle:{{levelTitle}} - prevLevelTitle:{{prevLevelTitle}}')</script>
+
+    	{% if prevLevel != 0 %}
+    	   <script>console.log({{prevLevel}})</script>
+        </div>
+      </div>
+    	{% endif %}
+
+  	
+  	
       {% assign prevLevelTitle = levelTitle %}
       {% assign prevLevel = level %}
-    <div class="list-group-item">{{levelTitle}}<span class="glyphicon glyphicon-chevron-down pull-right"></span></div>
-    <div class="panel panel-default list-group-item" style="padding-top: 0px;padding-bottom: 0px;padding-right: 0px;">
+    <div class="list-group-item" style="border-bottom-width: 0px;">{{levelTitle}}<span class="glyphicon glyphicon-chevron-down pull-right"></span></div>
+    <div class="panel panel-default list-group-item" style="padding-top: 0px;padding-bottom: 0px;padding-right: 0px;margin-bottom: -1px;">
       <div class="list-group">
   	{% endif %}
   	
@@ -43,7 +55,7 @@
   	<a class="list-group-item" href="{{ BASE_PATH }}{{url}}">{{title}}</a>
   	{% endif %}
 
-  	{% if _i == myArray.size && level != 0 %}
+  	{% if _i == myArray.size and level != 0 %}
       </div>
     </div>
   	{% endif %}

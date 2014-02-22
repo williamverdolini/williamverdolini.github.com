@@ -27,7 +27,7 @@ front-end è:
     - Lista di Tags (per la classificazione
       trasversale della lezione)
 
-Per l’approccio definito nel [Ciclo di Raffinazione](http://localhost:4000/2014/01/18/discitur-value_env) ho sviluppato prima il FE con i mock dei
+Per l’approccio definito nel [Ciclo di Raffinazione]({{ BASE_PATH }}/2014/01/18/discitur-value_env) ho sviluppato prima il FE con i mock dei
 servizi, ho verificato con il PO il risultato e successivamente ho realizzato
 il back-end. Una volta passato al BE ho trovato più adatto prevedere un modello
 (entity-table) che prevedesse una sola Entity/Table LessonFeedback per inserire

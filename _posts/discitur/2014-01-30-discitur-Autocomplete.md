@@ -8,6 +8,21 @@ group: Discitur
 tags: [Angular.js]
 ---
 {% include JB/setup %}
+<!-- Markup JSON-LD generato da Assistente per il markup dei dati strutturati di Google. -->
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Article",
+  "name" : "Angular.js Autocomplete",
+  "author" : {
+    "@type" : "Person",
+    "name" : "williamverdolini"
+  },
+  "datePublished" : "2014-01-30",
+  "articleSection" : [ "autocomplete", "Angular.js" ],
+  "url" : "http://williamverdolini.github.io/2014/01/30/discitur-Autocomplete/"
+}
+</script>
 
 Tra i tanti aspetti positivi di questo sprint, uno di quelli che più di
 altri ha fatto ulteriormente crescere l’apprezzamento del framework

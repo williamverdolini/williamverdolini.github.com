@@ -9,6 +9,21 @@ tags: [Angular.js,routing]
 ---
 {% include JB/setup %}
 
+<!-- Markup JSON-LD generato da Assistente per il markup dei dati strutturati di Google. -->
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Article",
+  "name" : "Routing (Deep-Linking)",
+  "author" : {
+    "@type" : "Person",
+    "name" : "william verdolini"
+  },
+  "datePublished" : "2014-01-21",
+  "articleSection" : [ "Angular.js", "routing" ]
+}
+</script>
+
 Questo è un argomento spinoso in Angular. Onestamente da una “macchina da
 guerra” come Angular mi aspettavo qualcosa di meglio per questo
 aspetto….comunque…spiego le mie perplessità.

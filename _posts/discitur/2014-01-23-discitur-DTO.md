@@ -9,6 +9,22 @@ tags: [Angular.js,DTO,Software Design]
 ---
 {% include JB/setup %}
 
+<!-- Markup JSON-LD generato da Assistente per il markup dei dati strutturati di Google. -->
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Article",
+  "name" : "Angular DTO",
+  "author" : {
+    "@type" : "Person",
+    "name" : "william verdolini"
+  },
+  "datePublished" : "2014-01-23",
+  "articleSection" : [ "Angular.js", "DTO", "Software Design" ],
+  "url" : "http://williamverdolini.github.io/2014/01/23/discitur-DTO/"
+}
+</script>
+
 Nel primo sprint realizzavo un
 semplice controller che visualizzava i dati di una lezione. La lezione è un
 oggetto composto da diversi sotto-oggetti. La struttura che prevedevo nel

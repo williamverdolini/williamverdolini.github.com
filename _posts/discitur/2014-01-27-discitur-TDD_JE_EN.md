@@ -8,6 +8,21 @@ group: Discitur
 tags: [Angular.js,TDD]
 ---
 {% include JB/setup %}
+<!-- Markup JSON-LD generato da Assistente per il markup dei dati strutturati di Google. -->
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Article",
+  "name" : "Angular.js TDD, JE (Just Enough)",
+  "author" : {
+    "@type" : "Person",
+    "name" : "william verdolini"
+  },
+  "datePublished" : "2014-01-27",
+  "articleSection" : [ "Angular.js", "TDD" ],
+  "url" : "http://williamverdolini.github.io/2014/01/27/discitur-TDD_JE/"
+}
+</script>
 [_italian_]({{BASE_PATH }}/2014/01/26/discitur-TDD_JE)
 
  

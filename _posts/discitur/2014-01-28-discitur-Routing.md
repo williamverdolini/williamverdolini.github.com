@@ -8,6 +8,21 @@ group: Discitur
 tags: [Angular.js,Routing]
 ---
 {% include JB/setup %}
+<!-- Markup JSON-LD generato da Assistente per il markup dei dati strutturati di Google. -->
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Article",
+  "name" : "Angular.js Routing (UI-Router)",
+  "author" : {
+    "@type" : "Person",
+    "name" : "williamverdolini"
+  },
+  "datePublished" : "2014-01-28",
+  "articleSection" : [ "Angular.js", "Routing" ],
+  "url" : "http://williamverdolini.github.io/2014/01/28/discitur-Routing/"
+}
+</script>
 
 Come promesso nel primo sprint, avrei affrontato questo argomento non
 appena potevo. Il secondo sprint sembra ora essere sovrastimato per quello che

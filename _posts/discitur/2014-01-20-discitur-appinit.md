@@ -9,6 +9,21 @@ tags: [Angular.js,Constants,Services,Software Design]
 ---
 {% include JB/setup %}
 
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Article",
+  "name" : "App Initialization, Global Variables",
+  "author" : {
+    "@type" : "Person",
+    "name" : "william verdolini"
+  },
+  "datePublished" : "2014-01-20",
+  "articleSection" : [ "Passare ad Angular significava passare dal server al client e questo approccio (molto utile) doveva essere rivisto. Rivisto, consapevole del fatto che NON poteva essere riottenuto lo stesso identico risultato, per il fatto che nelle applicazioni web tradizionali le variabili in Application Memory erano inserite una sola volta ed erano accessibili a tutte le sessioni http che l'applicazione riceveva; mentre in SPA con framework di templating js come Angular l'applicazione risiede tutta sul client ed il backend è in genere state-less e quindi quelle che saranno oggetti di applicazione, sono oggetti ricreati su ogni client.", "Angular.js", "Constants", "Services", "Software Design" ],
+  "url" : "http://williamverdolini.github.io/2014/01/20/discitur-appinit/"
+}
+</script>
+
 Prima di passare ad Angular, ero abituato a lavorare su tipici progetti
 web, nei quali l’applicazione aveva il suo core server-side, con la generazione
 server del codice html e client. Uno degli step che inserivo in quasi tutte le
@@ -239,8 +254,7 @@ riflessioni:
 2. la parte chiave dell’implementazione è
      quella relativa all’istruzione di return, che restituisce il Costruttore e
      consente quindi al chiamante di instanziare la classe. Ecco perché NON sto
-     utilizzando un controller vero e proprio, ma un servizio, perché ho
-     bisogno
+     utilizzando un controller vero e proprio, ma un servizio.
 
 A questo punto il mio controller potrebbe essere reingegnerizzato come di
 seguito:

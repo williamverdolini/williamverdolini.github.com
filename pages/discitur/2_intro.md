@@ -24,7 +24,7 @@ che risiedevano sul client browser...ora le cose sono un po' cambiate
 
 2.    migliorare il sistema Scuola in Italia. Lo so, il
 progetto e' un "pizzichino" ambizioso, ma penso (e sono sicuro di non essere
-l'unico) che non sia importante migliorare la situazione attuale. 
+l'unico) che sia importante migliorare la situazione attuale. 
 La cosa l'ho sempre trovata un paradosso: nella culla della civiltà,
 non esiste un metodo realmente applicato per migliorare l'insegnamento. I buoni
 insegnanti sono insegnanti che, principalmente con il buon senso ed il

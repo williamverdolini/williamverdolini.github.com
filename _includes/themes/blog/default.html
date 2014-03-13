@@ -64,6 +64,7 @@
   </head>
 
   <body>
+    <meta itemprop="url" content="http://williamverdolini.github.io{{page.url}}">
     <div class="navbar navbar-default navbar-fixed-top">
       <div class="container">
         <div class="navbar-header">
@@ -115,7 +116,7 @@
     </div>  
   
 
-    <div class="container">
+    <div itemscope itemtype="http://schema.org/Article"  class="container">
       <div class="row">
       
         {{ content }}
@@ -126,7 +127,7 @@
         <div >
           <hr>
           <footer>
-            <p>&copy; {{ site.time | date: '%Y' }} {{ site.author.name }}
+            <p>&copy; {{ site.time | date: '%Y' }} <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span itemprop="name"> {{ site.author.name }}</span></span>
               with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
               and <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a>
             </p>

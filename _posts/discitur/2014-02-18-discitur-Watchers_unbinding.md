@@ -36,7 +36,7 @@ Inoltre, per tutte le espressioni bindate nel view, Angular crea un watcher
 che viene “spazzolato” ad ogni ciclo per verificare se ci siano cambiamenti da
 recepire.
 
-Un buon articolo che approfondisce il tema è il seguente: [http://blog.bguiz.com/post/57373805814/accessors-vs-dirty-checking-in-javascript-frameworks](http://blog.bguiz.com/post/57373805814/accessors-vs-dirty-checking-in-javascript-frameworks)
+Un buon articolo che approfondisce il tema è il seguente: <a href="http://blog.bguiz.com/post/57373805814/accessors-vs-dirty-checking-in-javascript-frameworks" target="_blank">http://blog.bguiz.com/post/57373805814/accessors-vs-dirty-checking-in-javascript-frameworks</a>
 
  
 
@@ -144,7 +144,7 @@ performante.
 
  
 
-**_[Bindonce](https://github.com/Pasvaz/bindonce)_**
+**_<a href="https://github.com/Pasvaz/bindonce" target="_blank">Bindonce</a>_**
 
 Questa libreria nasce proprio a questo scopo e realizza il mio obiettivo in
 maniera decisamente più elegante e standard, ovvero utilizzando delle
@@ -154,7 +154,7 @@ staccare i binding marcati opportunamente.
  
 
 Bello, ma non è esattamente quello che cerco, perché vorrei tenere quanto
-più pulita la view di aspetti meramente tecnici.
+più "pulita" la view di aspetti meramente tecnici.
 
 Per me, infatti, la View è un terreno che dovrebbe rimanere quanto più
 leggibile possibile e quanto meno denso di logica di UI. Questo perché, in un
@@ -162,7 +162,14 @@ contesto reale, la view è data in pasto ad uno o più web-master che aggiungono
 classi o altre modifiche CSS o al wireframe per vestire il modulo in maniera
 appropriata. meno codice applicativo possono vedere e (peggio ancora) toccare,
 meglio è. Ancora di più se parliamo di aspetti più architetturali che
-funzionali.
+funzionali. In particolare questo aspetto lo vedo nel "dominio" del controller, più che
+in quello della view; è il controller, infatti, che chiama i servizi e gestisce il dato 
+ed è nel controller che si ha quindi la conoscenza del fatto che la singola espressione sia statica o dinamica.
+
+Resta il fatto che Bindonce è molto elegante e rappresenta l' "Angular way" di approcciare questa problematica.
+
+Inoltre ho avuto modo di conoscere l'<a href="https://twitter.com/PasqualeVazzana" target="_blank">autore della libreria</a> e di vedere all'opera le performance di una applicazione che utilizzava Bindonce.
+Risultato? Lo userò presto nel progetto. 
 
  
 

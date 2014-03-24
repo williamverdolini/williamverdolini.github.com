@@ -51,9 +51,8 @@ della finestra modale, che renderebbero i controller highly-coupled tra loro.
  
 
 Per far questo, mi appoggio alla gestione degli eventi Angular, in
-particolare [lanciando
-dal $rootScope un broadcast dell’evento di login](https://github.com/williamverdolini/discitur-web/blob/sprint3/app/modules/lesson/LessonCommentDrv.js#L65). Una velocissima
-riflessione: uso il $rootScope per essere sicuro che l’evento raggiunga il
+particolare <a href="https://github.com/williamverdolini/discitur-web/blob/sprint3/app/modules/lesson/LessonCommentDrv.js#L60" target="_blank">lanciando dal $rootScope un broadcast dell’evento di login</a>. Una velocissima
+riflessione: uso il <a href="http://docs.angularjs.org/api/ng/service/$rootScope" target="_blank">$rootScope</a> per essere sicuro che l’evento raggiunga il
 controller principale da cui la finestra modale di login si genera. Se utilizzassi
 il semplice $scope del controller di partenza, ed il controller non fosse uno
 scope padre di quello che voglio raggiungere, rischierei di lanciare nel vuoto
@@ -84,15 +83,15 @@ per punti, questi sono i passaggi seguiti:
 
 1. la login viene invocata e procede ad eseguire
      le autenticazione server-side
-2. se la [login](https://github.com/williamverdolini/discitur-web/blob/sprint3/app/modules/user/UserService.js#L69)
-     da esito positivo, viene valorizzata una proprietà “[user](https://github.com/williamverdolini/discitur-web/blob/sprint3/app/modules/user/UserService.js#L67)”
+2. se la <a href="https://github.com/williamverdolini/discitur-web/blob/sprint3/app/modules/user/UserService.js#L69" target="_blank">login</a>
+     da esito positivo, viene valorizzata una proprietà “<a href="https://github.com/williamverdolini/discitur-web/blob/sprint3/app/modules/user/UserService.js#L66" target="_blank">user</a>”
      del servizio di autenticazione con un oggetto contenente tutte le
      informazioni sull’utente
 3. Questo oggetto, essendo all’interno di un
      servizio (che per sua natura è un singleton) è unica ed i suoi
      aggiornamenti sono visibili ovunque si faccia injection del servizio
 4. all’interno dei controller che hanno bisogno
-     di conoscere lo stato di autenticazione dell’utente, si realizza un [watcher](https://github.com/williamverdolini/discitur-web/blob/sprint3/app/modules/lesson/LessonCommentDrv.js#L54)
+     di conoscere lo stato di autenticazione dell’utente, si realizza un <a href="https://github.com/williamverdolini/discitur-web/blob/sprint3/app/modules/lesson/LessonCommentDrv.js#L134" target="_blank">watcher</a>
      delle proprietà di user interessate, in particolare user.isLogged
 
  
@@ -186,12 +185,12 @@ ciclo di digest avesse spazzolato anche i servizi iniettati dai vari scope.
 
 **_Revisione_**
 
-Facendo ulteriori approfondimenti e, soprattutto, avendo approfondito [questo post](http://stackoverflow.com/a/16465890/3316654) ho capito
+Facendo ulteriori approfondimenti e, soprattutto, avendo approfondito <a href="http://stackoverflow.com/a/16465890/3316654" target="_blank">questo post</a> ho capito
 meglio come lavora il ciclo di digest di Angular. Il check che Angular fa è
-relativo ai soli tipi primitivi, e, nel caso di [watcher](http://docs.angularjs.org/api/ng.$rootScope.Scope#methods_$watch)
+relativo ai soli tipi primitivi, e, nel caso di <a href="http://docs.angularjs.org/api/ng.$rootScope.Scope#methods_$watch" target="_blank">watcher</a>
 accesi su oggetti non primitivi, Angular fa un dirty checking di tutte le
 proprietà primitive dell’oggetto, secondo quanto riportato dal metodo di
-confronto utilizzato: [angular.equal](http://docs.angularjs.org/api/angular.equals).
+confronto utilizzato: <a href="http://docs.angularjs.org/api/angular.equals" target="_blank">angular.equal</a>.
 
 <b><i>Controller</i></b>:
 
@@ -269,7 +268,7 @@ lo faranno), ma guardano all’interno del loro scope.
 
 _seconda riflessione_:
 
-una lettura che ha confermato tutti i miei approfondimenti è stata questa: [http://stsc3000.github.io/blog/2013/10/26/a-tale-of-frankenstein-and-binding-to-service-values-in-angular-dot-js/](http://stsc3000.github.io/blog/2013/10/26/a-tale-of-frankenstein-and-binding-to-service-values-in-angular-dot-js/)
+una lettura che ha confermato tutti i miei approfondimenti è stata questa: <a href="http://stsc3000.github.io/blog/2013/10/26/a-tale-of-frankenstein-and-binding-to-service-values-in-angular-dot-js/" target="_blank">http://stsc3000.github.io/blog/2013/10/26/a-tale-of-frankenstein-and-binding-to-service-values-in-angular-dot-js/</a>
 
 Se solo l’avessi trovata prima…
 
@@ -287,9 +286,9 @@ Non lo faccio ora, ma una cosa intelligente da fare è quella di staccare i
 watcher quando non ce n’è più bisogno. Delle letture velocissime (ma interessanti)
 che ho fatto a riguardo:
 
-[http://angular-tips.com/blog/2013/08/removing-the-unneeded-watches/](http://angular-tips.com/blog/2013/08/removing-the-unneeded-watches/)
+<a href="http://angular-tips.com/blog/2013/08/removing-the-unneeded-watches/" target="_blank">http://angular-tips.com/blog/2013/08/removing-the-unneeded-watches/</a>
 
-[http://www.bennadel.com/blog/2480-Unbinding-watch-Listeners-In-AngularJS.htm](http://www.bennadel.com/blog/2480-Unbinding-watch-Listeners-In-AngularJS.htm):
+<a href="http://www.bennadel.com/blog/2480-Unbinding-watch-Listeners-In-AngularJS.htm" target="_blank">http://www.bennadel.com/blog/2480-Unbinding-watch-Listeners-In-AngularJS.htm</a>.
 
  
 

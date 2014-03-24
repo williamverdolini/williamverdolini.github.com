@@ -34,7 +34,7 @@ sentire un po’ di aria fresca…
 
 Ho deciso di cambiare un po’ del framework scelto nel primo sprint, giusto
 per essere più “standard” e trovare maggior supporto in rete, che in fase
-esplorativa è vitale. Quindi adesso uso [jasmine](http://pivotal.github.io/jasmine/) come framework per le
+esplorativa è vitale. Quindi adesso uso <a href="http://jasmine.github.io/" target="_blank">jasmine</a> come framework per le
 asserzioni dello unit test. Per ora mi concentro sullo unit test per fare del
 vero TDD.
 
@@ -62,7 +62,7 @@ l’efficacia ed ho fatto qualche passo avanti, li elenco e poi li approfondisco
 
 Per i primi due punti faccio un approfondimento in seguito. Adesso vorrei
 far vedere i primi risultati ottenuti con il TDD. Cominciamo dal test che
-fallisce. Sul [repository](https://github.com/williamverdolini/discitur-web) c’è tutto il codice, ma qui vorrei concentrarmi su un
+fallisce. Sul <a href="https://github.com/williamverdolini/discitur-web" target="_blank">repository</a> c’è tutto il codice, ma qui vorrei concentrarmi su un
 paio di test.
 
 Lo scenario in cui sono è uno scenario del tutto comune in progetti reali,
@@ -80,13 +80,13 @@ mio sviluppo:
      aspetti tecnici dell’invocazione, la cosa principale è gestire i dati
      scambiati con il servizio e quindi comprenderne e gestirne l’interfaccia e
      creare i mock per lavorare in autonomia. Avendo già i dati di una lezione
-     è stato abbastanza semplice definire il [mock iniziale](https://github.com/williamverdolini/discitur-web/blob/sprint2/mock/modules/lesson/mocks.js#L6)
+     è stato abbastanza semplice definire il <a href="https://github.com/williamverdolini/discitur-web/blob/sprint2/mock/modules/lesson/mocks.js#L6" target="_blank">mock iniziale</a>
 2. A questo punto creo il test per l’invocazione
-     del servizio. Lo [unit test](https://github.com/williamverdolini/discitur-web/blob/sprint2/test/unit/modules/jservicesSpec.js#L285) utilizza il mock dei dati creato e tutte le
+     del servizio. Lo <a href="https://github.com/williamverdolini/discitur-web/blob/sprint2/test/unit/modules/jservicesSpec.js#L285" target="_blank">unit test</a> utilizza il mock dei dati creato e tutte le
      altre impostazioni comuni alle chiamate reali (ad es. URL di base delle
      api per i servizi già integrati)
-3. nel test cerco di individuare ed [isolare il
-     codice da produrre](https://github.com/williamverdolini/discitur-web/blob/sprint2/test/unit/modules/jservicesSpec.js#L287) nell’applicazione reale
+3. nel test cerco di individuare ed <a href="https://github.com/williamverdolini/discitur-web/blob/sprint2/test/unit/modules/jservicesSpec.js#L287" target="_blank">isolare il
+     codice da produrre</a> nell’applicazione reale
 4. Eseguo il test per ottenere il “RED”
 5. sviluppo il codice applicativo per soddisfare
      il test. In questa fase, dal mio punto di vista, è importante fare in modo

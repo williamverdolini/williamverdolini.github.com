@@ -21,7 +21,7 @@ risorse alla realizzazione di queste componenti, anche con azione di “terroris
 psicologico” (se non lo farai la tua casa sarà invasa da migliaia di
 cavallette…). Scherzi a parte (ma non troppo), per questi aspetti trovo vangelo
 quanto condiviso da Henrik Kniberg nel suo favoloso libro (lettura obbligata
-per chi vuole avventurarsi nello SCRUM): [http://www.infoq.com/minibooks/scrum-xp-from-the-trenches](http://www.infoq.com/minibooks/scrum-xp-from-the-trenches)
+per chi vuole avventurarsi nello SCRUM): <a href="http://www.infoq.com/minibooks/scrum-xp-from-the-trenches" target="_blank">http://www.infoq.com/minibooks/scrum-xp-from-the-trenches</a>
 
 Buona lettura!
 
@@ -34,12 +34,11 @@ comprendere anche attività ristrutturazione, isolamento ed astrazione del
 codice, che possono essere anche molto dispendiose. Per citarne alcune (qualora
 possa servire a non perdere pezzi nelle stime iniziali):
 
-- separazione layer, modularità, Single
-     Responsibility Principle
+- separazione layer, modularità, <a href="http://en.wikipedia.org/wiki/Single_responsibility_principle" target="_blank">Single Responsibility Principle</a>
 - bug-fixing
 - tracing, logging ed altri “aspetti”
      cross-layer
-- configurazioni ambienti di test e CI
+- configurazioni ambienti di test e <a href="http://en.wikipedia.org/wiki/Continuous_integration" target="_blank">CI</a>
 - attività di scaffolding
 
 Gli approcci che trovo più utili per gestire il refactoring sono:
@@ -52,7 +51,7 @@ Gli approcci che trovo più utili per gestire il refactoring sono:
 Entrambe hanno pro e contro e quindi il miglior approccio in assoluto è
 quello di usarle entrambe contemporaneamente. Attenzione però (e sempre) a
 cercare di individuare il vero valore di queste attività tecniche, in modo che
-il PO non possa minimizzare, sottovalutare e passare ad altro.
+il PO (product Owner) non possa minimizzare, sottovalutare e passare ad altro.
 
 ### Sprint Re-Planning
 

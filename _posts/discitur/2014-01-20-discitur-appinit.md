@@ -227,7 +227,7 @@ controller dell’applicazione).
 Questa sarebbe l’occasione giusta di gestire classi base dalle quali ogni
 controller dovrebbe derivare.
 
-Per far questo la soluzione che alla fine trovo più pulita è questa: [http://blog.omkarpatil.com/2013/02/controller-inheritance-in-angularjs.html](http://blog.omkarpatil.com/2013/02/controller-inheritance-in-angularjs.html)
+Per far questo la soluzione che alla fine trovo più pulita è questa: <a href="http://blog.omkarpatil.com/2013/02/controller-inheritance-in-angularjs.html" target="_blank">http://blog.omkarpatil.com/2013/02/controller-inheritance-in-angularjs.html</a>
 che si basa sulla creazione di una classe che realizza il controller “padre”
 che può essere ereditato dai singoli controller:
  

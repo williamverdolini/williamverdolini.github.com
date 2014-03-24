@@ -32,7 +32,7 @@ but after a lot of effort I start to breath a bit of fresh air ... 
 
 I decided to change a bit of the framework chosen in the first sprint, 
 just to be more "standard" and find more support in the web, which is vital in the exploratory stage. 
-So now I use [jasmine](http://pivotal.github.io/jasmine/) as a assertion framework for the unit test (no more mocha). 
+So now I use <a href="http://jasmine.github.io/" target="_blank">jasmine</a> as a assertion framework for the unit test (no more mocha). 
 For now I focus on unit tests to do some real TDD. 
 
 Note: In an exploratory project like this is ok, but if I were asked to implement TDD in a real project, 
@@ -54,7 +54,7 @@ the effectiveness and I have made ​​some progress , list them and then deepe
 
 For the first two points do an in-depth later. I would now like
 to see the first results obtained with the TDD . Let's start by testing that
-fails. On the [repository](https://github.com/williamverdolini/discitur-web) is all the code, but here I want to focus on a
+fails. On the <a href="https://github.com/williamverdolini/discitur-web" target="_blank">repository</a> is all the code, but here I want to focus on a
 couple of tests.
 
 The scenario is a scenario in which they are quite common in real-world projects ,
@@ -70,10 +70,10 @@ My development :
      have to integrate some external, third-party, services, beyond the 
      technical aspects of the invocation, the main thing is to manage the data 
      exchanged with the service and then understand and manage the interface and 
-     create the mock to work independently. Having the data in a lesson it was quite easy to define the [initial mock](https://github.com/williamverdolini/discitur-web/blob/sprint2/mock/modules/lesson/mocks.js#L6) 
-2. At this point I create the test for the service's invocation. The [unit test](https://github.com/williamverdolini/discitur-web/blob/sprint2/test/unit/modules/jservicesSpec.js#L285) using the mock data created and all 
+     create the mock to work independently. Having the data in a lesson it was quite easy to define the <a href="https://github.com/williamverdolini/discitur-web/blob/sprint2/mock/modules/lesson/mocks.js#L6" target="_blank">initial mock</a> 
+2. At this point I create the test for the service's invocation. The <a href="https://github.com/williamverdolini/discitur-web/blob/sprint2/test/unit/modules/jservicesSpec.js#L285" target="_blank">unit test</a> using the mock data created and all 
      other settings common to the actual calls (eg. ApiURL basis for services already integrated)
-3. in the test code try to find and [isolate the code to develop](https://github.com/williamverdolini/discitur-web/blob/sprint2/test/unit/modules/jservicesSpec.js#L287) in the real application 
+3. in the test code try to find and <a href="https://github.com/williamverdolini/discitur-web/blob/sprint2/test/unit/modules/jservicesSpec.js#L287" target="_blank">isolate the code to develop</a> in the real application 
 4. I run the test to get the "RED" 
 5. Develop application code to pass 
       the test. At this stage, from my point of view, it is important to make sure 

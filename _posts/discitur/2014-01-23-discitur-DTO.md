@@ -76,7 +76,7 @@ scenario riscontrabile molto spesso anche in realtà enterprise, infatti capita 
 
 Trovo sempre utile ed importante, quindi, marcare una linea netta di
 separazione tra FE e BE per una svariata serie di motivi. Ecco perché, anche
-senza avere a che fare con sistemi remoti, mi piace implementare classi [DTO](http://en.wikipedia.org/wiki/Data_transfer_object) per il
+senza avere a che fare con sistemi remoti, mi piace implementare classi <a href="http://en.wikipedia.org/wiki/Data_transfer_object" target="_blank">DTO</a> per il
 trasferimento dei dati dai servizi ad un Object Model più aderente alle
 esigenze dello specifico Front-End.
 
@@ -86,9 +86,9 @@ In Angular ho realizzato il tutto attraverso l’uso dei concetti di Services
 e Promises, di seguito alcuni articoli utili nei miei approfondimenti (oltre la
 documentazione ufficiale) :
 
-- [http://blog.brunoscopelliti.com/angularjs-promise-or-dealing-with-asynchronous-requests-in-angularjs](http://blog.brunoscopelliti.com/angularjs-promise-or-dealing-with-asynchronous-requests-in-angularjs)
-- [http://www.bennadel.com/blog/2527-Defining-Instantiatable-Classes-In-The-AngularJS-Dependency-Injection-Framework.htm](http://www.bennadel.com/blog/2527-Defining-Instantiatable-Classes-In-The-AngularJS-Dependency-Injection-Framework.htm)
-- [https://egghead.io/lessons/angularjs-chained-promises](https://egghead.io/lessons/angularjs-chained-promises)
+- <a href="http://blog.brunoscopelliti.com/angularjs-promise-or-dealing-with-asynchronous-requests-in-angularjs" target="_blank">http://blog.brunoscopelliti.com/angularjs-promise-or-dealing-with-asynchronous-requests-in-angularjs</a>
+- <a href="http://www.bennadel.com/blog/2527-Defining-Instantiatable-Classes-In-The-AngularJS-Dependency-Injection-Framework.htm" target="_blank">http://www.bennadel.com/blog/2527-Defining-Instantiatable-Classes-In-The-AngularJS-Dependency-Injection-Framework.htm</a>
+- <a href="https://egghead.io/lessons/angularjs-chained-promises" target="_blank">https://egghead.io/lessons/angularjs-chained-promises</a>
 
  
 

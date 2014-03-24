@@ -58,7 +58,7 @@ Nel far questo ho fatto una considerazione:
 
 A questo punto mi è venuto in mente il concetto (tra design e performance
 tuning) di servire il contenuto statico da un web server diverso da quello
-usato per generare contenuto dinamico. Una buona lettura al riguardo: [http://www.webforefront.com/performance/webservers_statictier.html](http://www.webforefront.com/performance/webservers_statictier.html)
+usato per generare contenuto dinamico. Una buona lettura al riguardo: <a href="http://www.webforefront.com/performance/webservers_statictier.html" target="_blank">http://www.webforefront.com/performance/webservers_statictier.html</a>
 
  
 

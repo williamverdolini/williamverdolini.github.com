@@ -62,10 +62,10 @@ particolarmente semplice. Ecco i passaggi nel dettaglio:
 
  
 
-**1) Utilizzo di [Angular-ui Bootstrap](http://angular-ui.github.io/bootstrap/)**
+**1) Utilizzo di <a href="http://angular-ui.github.io/bootstrap/" target="_blank">Angular-ui Bootstrap</a>**
 
 Nella libreria Angular Bootstrap esiste un componente/direttiva già pronta
-per il rendering utente: il [Typeahead](http://angular-ui.github.io/bootstrap/#/typeahead).
+per il rendering utente: il <a href="http://angular-ui.github.io/bootstrap/#/typeahead" target="_blank">Typeahead</a>.
 
 Il componente consente di essere configurato per bindare un promises,
 quindi il risultato di servizi di backend (i classici $http o $resource). Ecco un
@@ -181,5 +181,4 @@ qualcun altro l’ha già fatto (meglio) prima di noi.
 
 
 
-_[Don’t
-reinvent the wheel](http://www.codinghorror.com/blog/2009/02/dont-reinvent-the-wheel-unless-you-plan-on-learning-more-about-wheels.html)_ dicono gli americani. 
+_<a href="http://www.codinghorror.com/blog/2009/02/dont-reinvent-the-wheel-unless-you-plan-on-learning-more-about-wheels.html" target="_blank">Don’t reinvent the wheel</a>_ dicono gli americani. 

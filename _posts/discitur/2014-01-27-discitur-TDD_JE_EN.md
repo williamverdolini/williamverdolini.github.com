@@ -338,7 +338,7 @@ I brought value doing it? Probably yes, but just as likely that the time it take
 I would have brought more value if I had developed directly and I were focused on TDD in other contexts.
 
 An important confirmation . Some days ago I had a pleasant conversation with Lorenzo Massacci , 
-co-founder of [E-xtrategy](http://www.e-xtrategy.net/) , a local reality, very active in the field of Agile Methodology. 
+co-founder of <a href="http://www.e-xtrategy.net/" target="_blank">E-xtrategy</a>, a local reality, very active in the field of Agile Methodology. 
 Lorenzo told me some experience and his perspective on the TDD and told me: "We are not the "Agile-Talibans", 
 we use it in the way that best suits our needs. We leave the pure TDD for complex things , 
 for the rest we create unit tests to be automated and let the framework 

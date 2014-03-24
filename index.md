@@ -8,10 +8,10 @@ tagline: Progetti, storie, riflessioni
 ## Progetti
 ###[Discitur]({{ BASE_PATH }}Discitur.html)
 
-Il progetto è versionato su repository pubblico: <https://github.com/williamverdolini?tab=repositories>
+Il progetto è versionato su repository pubblico: <a href="https://github.com/williamverdolini?tab=repositories" target="_blank">https://github.com/williamverdolini?tab=repositories</a>
 
 ## Chi sono
-La sintesi della mia storia lavorativa la potete leggere nel [mio profilo Linkedin] (http://www.linkedin.com/in/williamverdolini)
+La sintesi della mia storia lavorativa la potete leggere nel <a href="http://www.linkedin.com/in/williamverdolini" target="_blank">mio profilo Linkedin</a>
 
 <!--   
 ## I Posts

@@ -45,8 +45,7 @@ $http.get(DisciturSettings.apiUrl + 'lesson/' + inputParams.id, {cache: true})
 ]]></script> 
 
 in questa modalità si utilizza il cacheFactory di default, secondo quanto
-riportato dalla [documentazione
-ufficiale](http://docs.angularjs.org/api/ng/service/$http).
+riportato dalla <a href="http://docs.angularjs.org/api/ng/service/$http" target="_blank">documentazione ufficiale</a>.
 
 Con questa impostazione, dopo la prima volta, tutte le chiamate successive
 all’api di ricerca con i medesimi parametri di ricerca non produrrà
@@ -81,6 +80,6 @@ $http({ method: 'PUT', url: DisciturSettings.apiUrl + 'lesson/' + _lesson.Lesson
 ]]></script> 
 
 Un buon articolo che dettaglia le possibilità di caching e che presenta un
-modulo per definire politiche di refresh della cache angular è il seguente: [https://coderwall.com/p/40axlq](https://coderwall.com/p/40axlq).
+modulo per definire politiche di refresh della cache angular è il seguente: <a href="https://coderwall.com/p/40axlq" target="_blank">https://coderwall.com/p/40axlq</a>.
 
  

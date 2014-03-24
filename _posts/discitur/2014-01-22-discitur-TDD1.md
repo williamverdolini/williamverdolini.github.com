@@ -33,9 +33,9 @@ primo sprint, ecco un riepilogo:
 
 - il punto di partenza, oltre la documentazione
      ufficiale Angular, sono stati  gli
-     ottimi articoli di yearofmoo: [http://www.yearofmoo.com/2013/01/full-spectrum-testing-with-angularjs-and-karma.html](http://www.yearofmoo.com/2013/01/full-spectrum-testing-with-angularjs-and-karma.html)
-     e  [http://www.yearofmoo.com/2013/09/advanced-testing-and-debugging-in-angularjs.html](http://www.yearofmoo.com/2013/09/advanced-testing-and-debugging-in-angularjs.html).
-     Gran bell’inizio, ma per quanto riguarda il TDD mi ha un po’ confuso [http://www.yearofmoo.com/2013/09/advanced-testing-and-debugging-in-angularjs.html#so-when-do-you-do-your-testing](http://www.yearofmoo.com/2013/09/advanced-testing-and-debugging-in-angularjs.html#so-when-do-you-do-your-testing)
+     ottimi articoli di yearofmoo: <a href="http://www.yearofmoo.com/2013/01/full-spectrum-testing-with-angularjs-and-karma.html" target="blank">http://www.yearofmoo.com/2013/01/full-spectrum-testing-with-angularjs-and-karma.html</a>
+     e  <a href="http://www.yearofmoo.com/2013/09/advanced-testing-and-debugging-in-angularjs.html" target="blank">http://www.yearofmoo.com/2013/09/advanced-testing-and-debugging-in-angularjs.html</a>.
+     Gran bell’inizio, ma per quanto riguarda il TDD mi ha un po’ confuso <a href="http://www.yearofmoo.com/2013/09/advanced-testing-and-debugging-in-angularjs.html#so-when-do-you-do-your-testing" target="blank">http://www.yearofmoo.com/2013/09/advanced-testing-and-debugging-in-angularjs.html#so-when-do-you-do-your-testing</a>
       Avevo assimilato il concetto del
      test-develop-refactor ma leggere e studiare l’articolo mi aveva convinto
      (subito!) che questo non era il miglior approccio per portar subito valore
@@ -48,24 +48,22 @@ primo sprint, ecco un riepilogo:
      senza perdermi troppo nello scrivere test…per ora la domanda mi resta: che
      senso ha fare codice (anche automatizzabile) per testare le dipendenze dei
      moduli? Gli errori dell’assenza dei moduli si possono vedere in run-time o
-     tramite altri test e2e che li usa…forse è tempo sprecato fare quel [tipo
-     di test](http://www.yearofmoo.com/2013/01/full-spectrum-testing-with-angularjs-and-karma.html#testing-modules)…lo stesso vale per [routes](http://www.yearofmoo.com/2013/01/full-spectrum-testing-with-angularjs-and-karma.html#testing-routes)
+     tramite altri test e2e che li usa…forse è tempo sprecato fare quel <a href="http://www.yearofmoo.com/2013/01/full-spectrum-testing-with-angularjs-and-karma.html#testing-modules" target="_blank">tipo di test</a>…lo stesso vale per <a href="http://www.yearofmoo.com/2013/01/full-spectrum-testing-with-angularjs-and-karma.html#testing-routes" target="_blank">routes</a>
      (a meno di casi per la gestione delle eccezioni o logiche particolari).
      Nel prossimo sprint proverò a definire il test con un carattere più legato
      al design e meno al codice e poi vedrò il test (unit, e2e, midway) che mi
      permette di scriverlo meglio…vedremo. Molto interessante per i novizi come
-     me è vedere all’opera un esempio “reale”: [http://www.objectmentor.com/resources/articles/xpepisode.htm](http://www.objectmentor.com/resources/articles/xpepisode.htm)
+     me è vedere all’opera un esempio “reale”: <a href="http://www.objectmentor.com/resources/articles/xpepisode.htm" target="_blank">http://www.objectmentor.com/resources/articles/xpepisode.htm</a>
 - Per il momento sono concentrato sul Front-End
      e su Angular. Per il test sto trovando soddisfazione con l’uso di: 
-    - [Grunt](http://gruntjs.com/) per
+    - <a href="http://gruntjs.com/" target="_blank">Grunt</a> per
       la gestione dei task. Uno dei più importanti è quello del test continuo
       tramite task di watch changing del codice
-    - [karma](http://karma-runner.github.io/0.10/index.html) (per
-      unit-test e midway) + [mocha](http://visionmedia.github.io/mocha/)
+    - <a href="http://karma-runner.github.io/0.10/index.html" target="_blank">Karma</a> (per
+      unit-test e midway) + <a href="http://visionmedia.github.io/mocha/" target="_blank">mocha</a>
       (per la scrittura delle asserzioni)
-    - [protractor](https://github.com/angular/protractor) (ed il suo [runner per
-      Grunt](https://github.com/teerapap/grunt-protractor-runner)) per l’e2e (profondo, dato che consente di esplorare lo scope
-      Angular) + [jasmine](http://pivotal.github.io/jasmine/) (per test
+    - <a href="https://github.com/angular/protractor" target="_blank">Protractor</a> ed il suo <a href="https://github.com/teerapap/grunt-protractor-runner" target="_blank">runner per Grunt</a>) per l’e2e (profondo, dato che consente di esplorare lo scope
+      Angular) + <a href="http://jasmine.github.io/" target="_blank">jasmine</a> (per test
       e assertion framework)
     - per il debug del test trovo karma più
       semplice di protractor, ma devo approfondire meglio

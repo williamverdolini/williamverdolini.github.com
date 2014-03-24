@@ -83,8 +83,7 @@ vincente a prescindere, ma ho qualche riflessione generale in merito:
 Entriamo nel vivo. Front-end subito per l’utente finale e quindi Angular.js
 (sul perché della scelta di questo framework, eventualmente, mi soffermerò più
 avanti). Approfondendo da settimane il framework Angular.js, ho provato diversi
-approcci per strutturare il progetto, poi ho fatto tesoro dell’esperienza e dei
-[consigli di Marco Rinck](http://entwicklertagebuch.com/blog/2013/10/how-to-structure-large-angularjs-applications/).  
+approcci per strutturare il progetto, poi ho fatto tesoro dell’esperienza e dei <a href="http://entwicklertagebuch.com/blog/2013/10/how-to-structure-large-angularjs-applications/" target="_blank">consigli di Marco Rinck</a>.  
 
 ### TDD
 
@@ -97,6 +96,6 @@ sprint-review dei miei avanzamenti nell’uso di questa nuova filosofia di vita!
 ### Task Board
 
 Non ho particolari insight da aggiungere sull’argomento. Vi rimando
-all’antologia per i dettagli. L’unica cosa che ci tengo a dire è: usatela,
+all’<a href="http://www.infoq.com/minibooks/scrum-xp-from-the-trenches" target="_blank">antologia</a> per i dettagli. L’unica cosa che ci tengo a dire è: usatela,
 anche se vi sembra inutile. E’ tutto il contrario. Avere sotto gli occhi la
 situazione e gli obiettivi è importantissimo per migliorare la produttività. 

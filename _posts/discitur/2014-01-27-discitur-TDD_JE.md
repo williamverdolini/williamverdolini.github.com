@@ -338,7 +338,7 @@ non giustifica quel valore.
 Avrei portato più valore se avessi sviluppato direttamente e mi fossi concentrato sul TDD in altri contesti.
 
 Una conferma importante. 
-Qualche sera fa, ho avuto una piacevole conversazione con Lorenzo Massacci, co-fondatore di [E-xtrategy](http://www.e-xtrategy.net/), 
+Qualche sera fa, ho avuto una piacevole conversazione con Lorenzo Massacci, co-fondatore di <a href="http://www.e-xtrategy.net/" target="_blank">E-xtrategy</a>, 
 una realtà locale molto attiva in campo Agile. Lorenzo mi ha raccontato qualche esperienza ed 
 il suo punto di vista sul TDD e mi ha detto: “noi non siamo talebani dell’Agile, 
 lo utilizziamo nel modo in cui meglio si adatta alle esigenze. 

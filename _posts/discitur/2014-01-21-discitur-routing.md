@@ -58,9 +58,9 @@ configurazione del modulo.
 Esistono diversi progetti che stanno cercando di indirizzare in maniera
 ottimale questa lacuna:
 
-- [https://github.com/dotJEM/angular-routing](https://github.com/dotJEM/angular-routing)
-- [https://github.com/angular-ui/ui-router](https://github.com/angular-ui/ui-router)
-- [http://www.bennadel.com/blog/2441-Nested-Views-Routing-And-Deep-Linking-With-AngularJS.htm](http://www.bennadel.com/blog/2441-Nested-Views-Routing-And-Deep-Linking-With-AngularJS.htm)
+- <a href="https://github.com/dotJEM/angular-routing" target="_blank">https://github.com/dotJEM/angular-routing</a>
+- <a href="https://github.com/angular-ui/ui-router" target="_blank">https://github.com/angular-ui/ui-router</a>
+- <a href="http://www.bennadel.com/blog/2441-Nested-Views-Routing-And-Deep-Linking-With-AngularJS.htm" target="_blank">http://www.bennadel.com/blog/2441-Nested-Views-Routing-And-Deep-Linking-With-AngularJS.htm</a>
 
 
 Per ora inserisco questa tematica nelle attività di refactoring (to-do), ma

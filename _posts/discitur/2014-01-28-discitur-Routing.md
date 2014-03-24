@@ -33,7 +33,7 @@ e provare UI-Router. La cosa è risultata molto semplice e veloce.
 Reingegnerizzare l’app ed i test per togliere angular-route e mettere dentro
 UI-Router è stato un passo senza grosse difficoltà. Uno di quegli step che ti
 fanno aumentare la considerazione del framework Angular e della sua
-estendibilità. Come immaginavo [UI-Router](https://github.com/angular-ui/ui-router)
+estendibilità. Come immaginavo <a href="https://github.com/angular-ui/ui-router" target="_blank">UI-Router</a>
 ha tutto quello che mi serviva:
 
 - possibilità di annidare in maniera dinamica
@@ -42,7 +42,7 @@ ha tutto quello che mi serviva:
      in parallelo
 - possibilità di gestire il routing in maniera
      più logica
-- [buona documentazione](https://github.com/angular-ui/ui-router/wiki)
+- <a href="https://github.com/angular-ui/ui-router/wiki" target="_blank">buona documentazione</a>
 
  
 

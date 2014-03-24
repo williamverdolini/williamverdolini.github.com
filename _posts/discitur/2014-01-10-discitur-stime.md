@@ -22,8 +22,7 @@ approfondimento:
      svolte con il resto del team, con il Cliente, con il Product Owner, crea
      un passo aziendale e crea un abitudine positiva che genera un’identità ed
      una cultura Aziendale chiara
-- **Story
-     Points**: nella metodologia
+- **<a href="http://agilefaq.wordpress.com/2007/11/13/what-is-a-story-point/" target="_blank">Story Points</a>**: nella metodologia
      agile si parla di story points per stimare le user stories. Credo che il
      concetto di fondo sia creare un’ulteriore separazione e distinzione tra
      valore per l’utente ed approccio progettuale. In cima c’è sempre il

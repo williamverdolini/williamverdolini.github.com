@@ -9,7 +9,7 @@ tags: [Agile]
 ---
 {% include JB/setup %}
 
-Il product Backlog
+Il product <a href="http://en.wikipedia.org/wiki/Scrum_(software_development)#Product_backlog" target="_blank">Backlog</a>
 utilizzato ha diversi campi. Questi quelli che ritengo più utili (con un
 esempio, che parla più di tante parole):
 
@@ -110,7 +110,7 @@ esempio, che parla più di tante parole):
      via mail, sempre meglio riferirsi a riferimenti non interpretabili
 - **Titolo**: il nome della funzionalità, della user
      story
-- **User Story**: tipica dello SCRUM. Va espressa nella forma
+- **User Story**: tipica dello <a href="http://en.wikipedia.org/wiki/Scrum_(software_development)" target="_blank">SCRUM</a>. Va espressa nella forma
      canonica “come &lt;utente&gt; voglio poter &lt;funzionalità&gt; per ottenere &lt;valore&gt;”. Può sembrare
      ridondante (e a volte lo è), ma mai sottovalutarne l’importanza: è
      fondamentale riuscire a ragionare in termini di valore per l’utente
@@ -121,7 +121,7 @@ esempio, che parla più di tante parole):
      task-list estratta non sarebbe stata la stessa in assenza della user story
 - **Descrizione (Tasks)**: la suddivisione in task  e componenti da realizzare della user
      story. E’ pane per sviluppatori, è redatto dal reparto tecnico a seguito
-     di approfondimenti con il Product Owner. 
+     di approfondimenti con il <a href="http://en.wikipedia.org/wiki/Scrum_(software_development)#Product_Owner" target="_blank">Product Owner</a>. 
 - **Importanza**: due le caratteristiche fondamentali:
     - più il numero è alto, più la user story è importante per l’utente
     - non ci possono essere due user story con la stessa importanza. Anche
@@ -137,7 +137,7 @@ esempio, che parla più di tante parole):
       d’onda di pensiero sul concetto di importanza è vitale in questa
       metodologia
 
-- **Stima (Story point)**:
+- **Stima (<a href="http://agilefaq.wordpress.com/2007/11/13/what-is-a-story-point/" target="_blank">Story point</a>)**:
      la stima in story point. Per
      story point assumo un giorno/uomo (ovvero 8 ore pienamente dedicate all’attività).
      Trovo efficace spaccare la stima in sottostime dedicate a UI, servizi,

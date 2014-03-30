@@ -166,7 +166,7 @@ funzionali. In particolare questo aspetto lo vedo nel "dominio" del controller, 
 in quello della view; è il controller, infatti, che chiama i servizi e gestisce il dato 
 ed è nel controller che si ha quindi la conoscenza del fatto che la singola espressione sia statica o dinamica.
 
-Resta il fatto che Bindonce è molto elegante e rappresenta l' "Angular way" di approcciare questa problematica.
+Resta il fatto che <a href="http://slid.es/pasqualevazzana/angularjs-binding" target="_blank">Bindonce è molto elegante e rappresenta l'"Angular way" di approcciare questa problematica</a>.
 
 Inoltre ho avuto modo di conoscere l'<a href="https://twitter.com/PasqualeVazzana" target="_blank">autore della libreria</a> e di vedere all'opera le performance di una applicazione che utilizzava Bindonce.
 Risultato? Lo userò presto nel progetto. 

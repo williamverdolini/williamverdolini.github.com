@@ -20,7 +20,7 @@ tags: [Angular.js,$chacheFactory,Performance]
   },
   "datePublished" : "2014-02-22",
   "articleSection" : [ "Angular.js", "$chacheFactory", "Performance" ],
-  "url" : "http://williamverdolini.github.io/2014/02/18/discitur-Angular_chacheFactory"
+  "url" : "http://williamverdolini.github.io/2014/02/22/discitur-Angular_chacheFactory"
 }
 </script>
 

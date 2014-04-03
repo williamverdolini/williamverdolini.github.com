@@ -1,11 +1,92 @@
-angular.module('Common',
-    []);
-;angular.module('Lesson',
+angular.module('disc.common',
+    [])
+/*
+    .constant('DisciturSettings', {
+        apiUrl: 'http://localhost:59739/api/',
+        //apiUrl: 'http://www.discitur.somee.com/api/',
+        authToken: 'disc.auth.token',
+        criptoKey: '7061737323313233',
+        viewHelp: 'disc.viewHelp',
+        lastLessonsNum: 5,
+        testEnv: true,
+        isInMaintenance: false
+    })
+*/
+/*
+    .factory('DiscUtil', ['$cacheFactory', function ($cacheFactory) {
+        var _getMessage = function (obj) {
+            var _message = "";
+            for (var key in obj) {
+                if (obj[key].constructor === Object)
+                    _message += _getMessage(obj[key])
+                else
+                    _message += key + ":" + obj[key] + " ";
+            }
+            return _message;
+        }
+
+        return {
+            validateInput: function (functionName, validInput, actualInput) {
+                // accept only Object
+                if (angular.isUndefined(actualInput) || !(Object.prototype.toString.call(actualInput) === '[object Object]'))
+                    throw { code: 20001, message: 'invalid Input Type for ' + functionName + ' :' + _getMessage(actualInput) }
+                if (angular.isDefined(actualInput)) {
+                    // loop to check if input.properties (aka parametrs) are expected by the service validInput template
+                    for (key in actualInput) {
+                        // Angular private ($$) and Discitur private (_) are ignored
+                        if (!(key.indexOf('$$') == 0 || key.indexOf('_') == 0) && !validInput.hasOwnProperty(key))
+                            throw { code: 20002, message: 'invalid Input Parameter for ' + functionName + ' :' + _getMessage(actualInput) }
+                        // If not passed in actualInput and if defined in validInput, set default value
+                        //if (angular.isUndefined(actualInput[key]) && validInput[key] != null)
+                        //    actualInput[key] = validInput[key];
+                    }
+                    // loop to set default values, if not set in actualInput
+                    for (key in validInput) {
+                        if ((angular.isUndefined(actualInput[key]) || actualInput[key] == null) && validInput[key] != null)
+                            actualInput[key] = validInput[key];
+                    }
+                }
+
+            },
+            cache: $cacheFactory('disciturCache')
+
+
+        }
+
+
+    }])
+    // LoadingInterceptor Intercepor:
+    // display/hide loading bar
+    .factory('LoadingInterceptor', [
+        '$q',
+        '$rootScope',
+        'DisciturSettings',
+        function ($q, $rootScope, DisciturSettings) {
+            return {
+                request: function (config) {
+                    if (config.url.indexOf(DisciturSettings.apiUrl) >= 0)
+                        $rootScope.$loading = true;
+                    return config || $q.when(config);
+                },
+                response: function (result) {
+                    if (result.config.url.indexOf(DisciturSettings.apiUrl) >= 0)
+                        $rootScope.$loading = false;
+                    return result || $q.when(result);
+                },
+                responseError: function (result) {
+                    if ($rootScope.$loading)
+                        $rootScope.$loading = false;
+                    return $q.reject(result);
+                }
+            }
+        }
+    ])
+
+*/;angular.module('disc.lesson',
     [
-        'Discitur',
+        'disc.settings',
         'disc.user',
-        'Common',
-        //'ngResource',
+        'disc.common',
         'ui.router',
         'ngSanitize',
         'ui.bootstrap',
@@ -16,160 +97,164 @@ angular.module('Common',
         '$stateProvider',
         '$urlRouterProvider',
         '$uiViewScrollProvider',
-        function ($stateProvider, $urlRouterProvider, $uiViewScrollProvider) {
+        'DisciturSettings',
+        function ($stateProvider, $urlRouterProvider, $uiViewScrollProvider, DisciturSettings) {
             // to prevent autoscroll (introduced by angular-ui-router 0.2.8 https://github.com/angular-ui/ui-router/releases/tag/0.2.8)
             // see: https://github.com/angular-ui/ui-router/issues/787
             $uiViewScrollProvider.useAnchorScroll();
 
+            if (!DisciturSettings.isInMaintenance) {
 
-            // provate method to load Lesson data by lessonId passed through $stateParams
-            var _getLessonData = function (LessonService, $q, $stateParams, $state, DiscUtil, AuthService) {
-                // create deferring result
-                var deferred = $q.defer();
+                // provate method to load Lesson data by lessonId passed through $stateParams
+                var _getLessonData = function (LessonService, $q, $stateParams, $state, DiscUtil, AuthService) {
+                    // create deferring result
+                    var deferred = $q.defer();
 
-                // During routing phase the $routeParams is not injected yet
-                var lessondId = $stateParams.lessonId //$route.current.params.lessonId;
+                    // During routing phase the $routeParams is not injected yet
+                    var lessondId = $stateParams.lessonId //$route.current.params.lessonId;
 
-                // timeout only for test and study purpose (to erase)
-                //$timeout(function () {
-                LessonService.get({ id: lessondId })
-                    .then(
-                        // Success Callback
-                        function (lesson) {
-                            //var cache = $cacheFactory('disciturCache');
-                            //cache.put('currentLesson', result)
-                            // if lesson is private is visible only for the author
-                            if (!lesson.isPublished && lesson.author.userid != AuthService.user.userid) {
+                    // timeout only for test and study purpose (to erase)
+                    //$timeout(function () {
+                    LessonService.get({ id: lessondId })
+                        .then(
+                            // Success Callback
+                            function (lesson) {
+                                //var cache = $cacheFactory('disciturCache');
+                                //cache.put('currentLesson', result)
+                                // if lesson is private is visible only for the author
+                                if (!lesson.isPublished && lesson.author.userid != AuthService.user.userid) {
+                                    deferred.reject("no Lesson for id:" + lessondId);
+                                }
+                                DiscUtil.cache.put('lesson', lesson)
+                                deferred.resolve(lesson)
+                            },
+                            // Error Callback
+                            function () {
                                 deferred.reject("no Lesson for id:" + lessondId);
-                            }
-                            DiscUtil.cache.put('lesson', lesson)
-                            deferred.resolve(lesson)
+                                //$state.go('404lesson')
+
+                            });
+                    //}, 2000);
+
+                    return deferred.promise;
+                }
+
+
+                $stateProvider
+                    .state('lessonSearch', {
+                        url: 'lesson?keyword?discipline?school?classroom?rate?tags?publishedOn?publishedBy?startRow?pageSize?orderBy?orderDir',
+                        parent: 'master.2cl',
+                        onEnter: function () {
+                            console.log("Entering Lesson Search");
                         },
-                        // Error Callback
-                        function () {
-                            deferred.reject("no Lesson for id:" + lessondId);
-                            //$state.go('404lesson')
-
-                        });
-                //}, 2000);
-
-                return deferred.promise;
-            }
-
-            $stateProvider
-                .state('lessonSearch', {
-                    url: 'lesson?keyword?discipline?school?classroom?rate?tags?publishedOn?publishedBy?startRow?pageSize?orderBy?orderDir',
-                    parent: 'master.2cl',
-                    onEnter: function () {
-                        console.log("Entering Lesson Search");
-                    },
-                    resolve: {
-                        lessonsData: ['LessonService', '$stateParams',function (LessonService, $stateParams) {
-                            return LessonService.search($stateParams);
+                        resolve: {
+                            lessonsData: ['LessonService', '$stateParams', function (LessonService, $stateParams) {
+                                return LessonService.search($stateParams);
+                            }],
+                            lastLessonList: ['LessonService', function (LessonService) {
+                                return LessonService.getLastLessons();
+                            }]
+                        },
+                        views: {
+                            'sidebar': {
+                                templateUrl: 'modules/lesson/LessonListSideBar.html',
+                                controller: 'LessonListSideBarCtrl'
+                            },
+                            'main': {
+                                templateUrl: 'modules/lesson/LessonList.html',
+                                controller: 'LessonListCtrl'
+                            }
+                        }
+                    })
+                    .state('lessonDetail', {
+                        url: 'lesson/:lessonId',
+                        parent: 'master.2cl',
+                        onEnter: function () {
+                            console.log("Entering Lesson Detail");
+                        },
+                        // resolve create service data shared by component views
+                        resolve: {
+                            lessonData: ['LessonService', '$q', '$stateParams', '$state', 'DiscUtil', 'AuthService', _getLessonData],
+                            lastLessonList: ['LessonService', function (LessonService) {
+                                return LessonService.getLastLessons();
+                            }]
+                        },
+                        views: {
+                            'sidebar': {
+                                templateUrl: 'modules/lesson/LessonSideBar.html',
+                                controller: 'LessonSideBarCtrl'
+                            },
+                            'main': {
+                                templateUrl: 'modules/lesson/Lesson.html',
+                                controller: 'LessonCtrl'
+                            }
+                        }
+                    })
+                    .state('lessonEdit', {
+                        authorized: true,
+                        url: 'edit/lesson/:lessonId',
+                        parent: 'master.1cl',
+                        onEnter: ['AuthService', 'lessonData', '$location', function (AuthService, lessonData, $location) {
+                            console.log("Entering Lesson Edit");
+                            // the controller can be accessed only if authenticated
+                            if (!AuthService.user.isLogged ||
+                                (lessonData.lessonId != null && lessonData.author.userid != AuthService.user.userid))
+                                // use location due to $state.go land on blank page...
+                                $location.path('lesson');
                         }],
-                        lastLessonList: ['LessonService',function (LessonService) {
-                            return LessonService.getLastLessons();
-                        }]
-                    },
-                    views: {
-                        'sidebar': {
-                            templateUrl: 'modules/lesson/LessonListSideBar.html',
-                            controller: 'LessonListSideBarCtrl'
-                        },
-                        'main': {
-                            templateUrl: 'modules/lesson/LessonList.html',
-                            controller: 'LessonListCtrl'
-                        }
-                    }
-                })
-                .state('lessonDetail', {
-                    url: 'lesson/:lessonId',
-                    parent: 'master.2cl',
-                    onEnter: function () {
-                        console.log("Entering Lesson Detail");
-                    },
-                    // resolve create service data shared by component views
-                    resolve: {
-                        lessonData: ['LessonService', '$q', '$stateParams', '$state', 'DiscUtil', 'AuthService', _getLessonData],
-                        lastLessonList: ['LessonService',function (LessonService) {
-                            return LessonService.getLastLessons();
-                        }]
-                    },
-                    views: {
-                        'sidebar': {
-                            templateUrl: 'modules/lesson/LessonSideBar.html',
-                            controller: 'LessonSideBarCtrl'
-                        },
-                        'main': {
-                            templateUrl: 'modules/lesson/Lesson.html',
-                            controller: 'LessonCtrl'
-                        }
-                    }
-                })
-                .state('lessonEdit', {
-                    authorized: true,
-                    url: 'edit/lesson/:lessonId',
-                    parent: 'master.1cl',
-                    onEnter: ['AuthService', 'lessonData', '$location',function (AuthService, lessonData, $location) {
-                        console.log("Entering Lesson Edit");
-                        // the controller can be accessed only if authenticated
-                        if (!AuthService.user.isLogged ||
-                            (lessonData.lessonId != null && lessonData.author.userid != AuthService.user.userid))
-                            // use location due to $state.go land on blank page...
-                            $location.path('lesson');
-                    }],
-                    templateUrl: 'modules/lesson/LessonEdit.html',
-                    controller: 'LessonEditCtrl',
-                    resolve: {
-                        lessonData: ['LessonService', '$q', '$stateParams', '$state', 'DiscUtil', 'AuthService',function (LessonService, $q, $stateParams, $state, DiscUtil, AuthService) {
-                            // try to get lesson from cache
-                            // if not exists then load from service
-                            var lessondId = $stateParams.lessonId
-                            if (lessondId) {
-                                var cachedLessonData = DiscUtil.cache.get('lesson')
+                        templateUrl: 'modules/lesson/LessonEdit.html',
+                        controller: 'LessonEditCtrl',
+                        resolve: {
+                            lessonData: ['LessonService', '$q', '$stateParams', '$state', 'DiscUtil', 'AuthService', function (LessonService, $q, $stateParams, $state, DiscUtil, AuthService) {
+                                // try to get lesson from cache
+                                // if not exists then load from service
+                                var lessondId = $stateParams.lessonId
+                                if (lessondId) {
+                                    var cachedLessonData = DiscUtil.cache.get('lesson')
 
-                                if (!angular.isDefined(cachedLessonData) || cachedLessonData.lessonId.toString() !== lessondId)
-                                    return _getLessonData(LessonService, $q, $stateParams, $state, DiscUtil, AuthService);
+                                    if (!angular.isDefined(cachedLessonData) || cachedLessonData.lessonId.toString() !== lessondId)
+                                        return _getLessonData(LessonService, $q, $stateParams, $state, DiscUtil, AuthService);
+                                    else
+                                        return cachedLessonData;
+                                }
                                 else
-                                    return cachedLessonData;
-                            }
-                            else
-                                return LessonService.newLesson();
-                        }]
-                    }
-
-                })
-                .state('404lesson', {
-                    //authorized: true,
-                    url: '404lesson',
-                    parent: 'master.2cl',
-                    onEnter: function () {
-                        console.log("master.2cl.404lesson");
-                    },
-                    resolve: {
-                        lastLessonList: ['LessonService',function (LessonService) {
-                            return LessonService.getLastLessons();
-                        }]
-                    },
-                    views: {
-                        'sidebar': {
-                            templateUrl: 'modules/lesson/LessonListSideBar.html',
-                            controller: 'LessonListSideBarCtrl'
-                        },
-                        'main': {
-                            controller: 'Lesson404Ctrl',
-                            templateUrl: 'modules/lesson/Lesson404.html'
+                                    return LessonService.newLesson();
+                            }]
                         }
-                    }
-                });
+
+                    })
+                    .state('404lesson', {
+                        //authorized: true,
+                        url: '404lesson',
+                        parent: 'master.2cl',
+                        onEnter: function () {
+                            console.log("master.2cl.404lesson");
+                        },
+                        resolve: {
+                            lastLessonList: ['LessonService', function (LessonService) {
+                                return LessonService.getLastLessons();
+                            }]
+                        },
+                        views: {
+                            'sidebar': {
+                                templateUrl: 'modules/lesson/LessonListSideBar.html',
+                                controller: 'LessonListSideBarCtrl'
+                            },
+                            'main': {
+                                controller: 'Lesson404Ctrl',
+                                templateUrl: 'modules/lesson/Lesson404.html'
+                            }
+                        }
+                    });
+            }
 
         }
 
     ]
 );angular.module('disc.user',
     [
-        'Discitur',
-        'Common',
+        //'discitur',
+        'disc.common',
         'ngResource',
         'ui.router',
         'ngSanitize',
@@ -205,10 +290,10 @@ angular.module('Common',
 
         }
     ]
-    );;angular.module('Common')
+    );;angular.module('disc.common')
 .value('dictionary',
     {
-        brand: "Discitur (Test)",
+        brand: "Discitur",
         appTitle: "Discitur - Insieme si migliora",
         loading: "Caricamento in corso...",
         lessonTitleHeading: "Titolo della Lezione",
@@ -343,7 +428,8 @@ angular.module('Common',
         minLengthNewPassword: "inserisci una nuova Password di almeno 7 caratteri",
         changedPassword: "Password aggiornata con successo.",
         confirm: "Conferma",
-        modify: "Modifica"
+        modify: "Modifica",
+        testEnv: "Ambiente di Test"
         }
 )
 .value('overrides',
@@ -367,7 +453,7 @@ angular.module('Common',
         }
     }
 )
-;angular.module('Common')
+;angular.module('disc.common')
         .factory('LabelService',
         [
             'dictionary',
@@ -390,7 +476,76 @@ angular.module('Common',
         ]
 );
 
-;angular.module('Common')
+;angular.module('disc.common')
+    .factory('DiscUtil', ['$cacheFactory', function ($cacheFactory) {
+        var _getMessage = function (obj) {
+            var _message = "";
+            for (var key in obj) {
+                if (obj[key].constructor === Object)
+                    _message += _getMessage(obj[key])
+                else
+                    _message += key + ":" + obj[key] + " ";
+            }
+            return _message;
+        }
+
+        return {
+            // validate service input
+            validateInput: function (functionName, validInput, actualInput) {
+                // accept only Object
+                if (angular.isUndefined(actualInput) || !(Object.prototype.toString.call(actualInput) === '[object Object]'))
+                    throw { code: 20001, message: 'invalid Input Type for ' + functionName + ' :' + _getMessage(actualInput) }
+                if (angular.isDefined(actualInput)) {
+                    // loop to check if input.properties (aka parametrs) are expected by the service validInput template
+                    for (key in actualInput) {
+                        // Angular private ($$) and Discitur private (_) are ignored
+                        if (!(key.indexOf('$$') == 0 || key.indexOf('_') == 0) && !validInput.hasOwnProperty(key))
+                            throw { code: 20002, message: 'invalid Input Parameter for ' + functionName + ' :' + _getMessage(actualInput) }
+                        // If not passed in actualInput and if defined in validInput, set default value
+                        //if (angular.isUndefined(actualInput[key]) && validInput[key] != null)
+                        //    actualInput[key] = validInput[key];
+                    }
+                    // loop to set default values, if not set in actualInput
+                    for (key in validInput) {
+                        if ((angular.isUndefined(actualInput[key]) || actualInput[key] == null) && validInput[key] != null)
+                            actualInput[key] = validInput[key];
+                    }
+                }
+
+            },
+            // cache manager
+            cache: $cacheFactory('disciturCache')
+        }
+
+    }])
+    // LoadingInterceptor Intercepor:
+    // display/hide loading bar
+    .factory('LoadingInterceptor', [
+        '$q',
+        '$rootScope',
+        'DisciturSettings',
+        function ($q, $rootScope, DisciturSettings) {
+            return {
+                request: function (config) {
+                    if (config.url.indexOf(DisciturSettings.apiUrl) >= 0)
+                        $rootScope.$loading = true;
+                    return config || $q.when(config);
+                },
+                response: function (result) {
+                    if (result.config.url.indexOf(DisciturSettings.apiUrl) >= 0)
+                        $rootScope.$loading = false;
+                    return result || $q.when(result);
+                },
+                responseError: function (result) {
+                    if ($rootScope.$loading)
+                        $rootScope.$loading = false;
+                    return $q.reject(result);
+                }
+            }
+        }
+    ])
+
+;angular.module('disc.common')
     .directive('wrInput', [
         '$rootScope',
         'LabelService',
@@ -450,7 +605,7 @@ angular.module('Common',
                 }
             }
         }
-    ]);angular.module('Common')
+    ]);angular.module('disc.common')
     .directive('socialBar', [
         '$rootScope',
         'DisciturBaseCtrl',
@@ -536,7 +691,7 @@ angular.module('Common',
                 }
             }
         }
-    ]);angular.module('Common')
+    ]);angular.module('disc.common')
     .directive('pwCheck', [
         '$rootScope',
         function ($rootScope) {
@@ -571,7 +726,7 @@ angular.module('Common',
             }
         }
         }
-    ]);;angular.module('Lesson')
+    ]);;angular.module('disc.lesson')
     /*-------------------------------------------------------------------------------
     Vantaggi del DTO:
     - disaccoppiamento tra i dati restituite dal BE e quelli gestiti dal FE
@@ -1330,7 +1485,7 @@ angular.module('Common',
             };
 
             return _lessonService;
-      }]);;angular.module('Lesson')
+      }]);;angular.module('disc.lesson')
     .directive('lessonComment', [
         '$rootScope',
         'LabelService',
@@ -1478,7 +1633,7 @@ angular.module('Common',
                 }
             }
         }
-    ]);angular.module('Lesson')
+    ]);angular.module('disc.lesson')
     .directive('lessonRating', [
         '$rootScope',
         'LabelService',
@@ -1630,7 +1785,7 @@ angular.module('Common',
                 }
             }
         }
-    ]);angular.module('Lesson')
+    ]);angular.module('disc.lesson')
     .controller('LessonCtrl', [
         '$scope',
         'LabelService',
@@ -1845,7 +2000,7 @@ angular.module('Common',
 
         }
     ]);
-;angular.module('Lesson')
+;angular.module('disc.lesson')
     .controller('LessonSideBarCtrl', [
         '$scope',
         'AuthService',
@@ -1893,7 +2048,7 @@ angular.module('Common',
             //--------- Controller initialization ------            
         }
     ]);
-;angular.module('Lesson')
+;angular.module('disc.lesson')
     .controller('Lesson404Ctrl', [
         '$scope',
         'LabelService',
@@ -1911,7 +2066,7 @@ angular.module('Common',
             
             console.log('404 Controller')
         }
-    ]);;angular.module('Lesson')
+    ]);;angular.module('disc.lesson')
     .controller('LessonListCtrl', [
         '$scope',
         'LabelService',
@@ -1960,7 +2115,7 @@ angular.module('Common',
             _setPageData(lessonsData)
         }
     ]);
-;angular.module('Lesson')
+;angular.module('disc.lesson')
     .controller('LessonSearchCtrl', [
         '$scope',
         'LabelService',
@@ -2021,7 +2176,7 @@ angular.module('Common',
             };
             $scope.keyword;
         }
-    ]);;angular.module('Lesson')
+    ]);;angular.module('disc.lesson')
     .controller('LessonAdvSearchCtrl', [
         '$scope',
         '$modalInstance',
@@ -2151,7 +2306,7 @@ angular.module('Common',
         }
     ]);
 
-;angular.module('Lesson')
+;angular.module('disc.lesson')
     .controller('LessonListSideBarCtrl', [
         '$scope',
         'DisciturBaseCtrl',
@@ -2193,7 +2348,7 @@ angular.module('Common',
             }
         }
     ]);
-;angular.module('Lesson')
+;angular.module('disc.lesson')
     .controller('LessonEditCtrl', [
         '$scope',
         //'LabelService',
@@ -2562,8 +2717,8 @@ angular.module('Common',
                     })
                     .error(function (error, status) {
                         var _authErr = {
-                            code: error.error,
-                            description: error.error_description,
+                            code: error.error || "invalid_grant",
+                            description: error.error_description || "The user name or password is incorrect.",
                             status: status
                         }
                         deferred.reject(_authErr);
@@ -2723,8 +2878,8 @@ angular.module('Common',
                             // Error Callback
                             function (error, status) {
                                 var _authErr = {
-                                    code: error.Message,
-                                    description: error.ModelState[""][0],
+                                    code: error==""? "Error_Registration": error.Message,
+                                    description: error == "" ? "Error on registration, please contact support" : error.ModelState[""][0],
                                     status: status
                                 }
                                 deferred.reject(_authErr);
@@ -3349,152 +3504,100 @@ angular.module('Common',
 
         }
     ]);
-;angular.module("Discitur",
+;angular.module("discitur",
     [
         'ui.router',
-        'Common',
-        'Lesson',
-        'disc.user',
         'ui.bootstrap',
+        'disc.settings',
+        'disc.common',
+        'disc.lesson',
+        'disc.user'
     ])
     .config(
     [
         '$stateProvider',
         '$urlRouterProvider',
         '$httpProvider',
-        function ($stateProvider, $urlRouterProvider, $httpProvider) {
-        $httpProvider.interceptors.push('LoadingInterceptor');
+        'DisciturSettings',
+        function ($stateProvider, $urlRouterProvider, $httpProvider, DisciturSettings) {
+            $httpProvider.interceptors.push('LoadingInterceptor');
 
-        // For any unmatched url, redirect to HomePage
-        $urlRouterProvider.otherwise('/project/home');
+            $stateProvider
+                //MasterPages (Abstract States)
+                .state('master', {
+                    url: '/',
+                    abstract: true,
+                    templateUrl: 'masterpages/master.html'
+                })
+                // One Column Layout (Abstract States)
+                .state('master.1cl', {
+                    url: '',
+                    abstract: true,
+                    parent: 'master',
+                    templateUrl: 'masterpages/1cl.html'
+                })
+                // Two Columns Layout (Abstract States)
+                .state('master.2cl', {
+                    url: '',
+                    abstract: true,
+                    parent: 'master',
+                    templateUrl: 'masterpages/2cl.html'
+                })
 
-        $stateProvider
-            //MasterPages (Abstract States)
-            .state('master', {
-                url: '/',
-                abstract: true,
-                templateUrl: 'masterpages/master.html'
-            })
-            // One Column Layout (Abstract States)
-            .state('master.1cl', {
-                url: '',
-                abstract: true,
-                parent: 'master',
-                templateUrl: 'masterpages/1cl.html'
-            })
-            // Two Columns Layout (Abstract States)
-            .state('master.2cl', {
-                url: '',
-                abstract: true,
-                parent: 'master',
-                templateUrl: 'masterpages/2cl.html'
-            })
-            // Web Site (Content States)
-            .state('master.1cl.home', {
-                url: 'project/home',
-                parent: 'master.1cl',
-                templateUrl: 'modules/main/site/HomePage.html'
-            })
-            .state('master.1cl.mission', {
-                url: 'project/mission',
-                parent: 'master.1cl',
-                templateUrl: 'modules/main/site/Project.html'
-            })
-            .state('master.1cl.about', {
-                url: 'project/About',
-                parent: 'master.1cl',
-                templateUrl: 'modules/main/site/About.html'
-            })
-            .state('master.1cl.backstage', {
-                url: 'project/backstage',
-                parent: 'master.1cl',
-                templateUrl: 'modules/main/site/BackStage.html'
-            })
-            .state('master.1cl.contribute', {
-                url: 'project/contribute',
-                parent: 'master.1cl',
-                templateUrl: 'modules/main/site/Contribute.html'
-            })
+            if (DisciturSettings.isInMaintenance) {
+                $urlRouterProvider.otherwise('/project/maintenance');
+                $stateProvider
+                // Web Site (Content States)
+                .state('master.1cl.home', {
+                    url: 'project/maintenance',
+                    parent: 'master.1cl',
+                    templateUrl: 'modules/main/site/Maintenance.html'
+                })
+            }
+            else {
+                // For any unmatched url, redirect to HomePage
+                $urlRouterProvider.otherwise('/project/home');
+
+                $stateProvider
+                // Web Site (Content States)
+                .state('master.1cl.home', {
+                    url: 'project/home',
+                    parent: 'master.1cl',
+                    templateUrl: 'modules/main/site/HomePage.html'
+                })
+                .state('master.1cl.mission', {
+                    url: 'project/mission',
+                    parent: 'master.1cl',
+                    templateUrl: 'modules/main/site/Project.html'
+                })
+                .state('master.1cl.about', {
+                    url: 'project/About',
+                    parent: 'master.1cl',
+                    templateUrl: 'modules/main/site/About.html'
+                })
+                .state('master.1cl.backstage', {
+                    url: 'project/backstage',
+                    parent: 'master.1cl',
+                    templateUrl: 'modules/main/site/BackStage.html'
+                })
+                .state('master.1cl.contribute', {
+                    url: 'project/contribute',
+                    parent: 'master.1cl',
+                    templateUrl: 'modules/main/site/Contribute.html'
+                })
+
+            }
 
     }
     ])
-    .constant('DisciturSettings', {
-        //apiUrl: 'http://localhost:59739/api/',
-        apiUrl: 'http://www.discitur.somee.com/api/',
-        authToken: 'disc.auth.token',
-        criptoKey: '7061737323313233',
-        viewHelp: 'disc.viewHelp',
-        lastLessonsNum: 5
-    })
-    .factory('DiscUtil', ['$cacheFactory', function ($cacheFactory) {
-        var _getMessage = function (obj) {
-            var _message = "";
-            for (var key in obj) {
-                if (obj[key].constructor === Object)
-                    _message += _getMessage(obj[key])
-                else
-                    _message += key + ":" + obj[key] + " ";
-            }
-            return _message;
-        }
-
-        return {
-            validateInput: function (functionName, validInput, actualInput) {
-                // accept only Object
-                if (angular.isUndefined(actualInput) || !(Object.prototype.toString.call(actualInput) === '[object Object]'))
-                    throw { code: 20001, message: 'invalid Input Type for ' + functionName + ' :' + _getMessage(actualInput) }
-                if (angular.isDefined(actualInput)) {
-                    // loop to check if input.properties (aka parametrs) are expected by the service validInput template
-                    for (key in actualInput) {
-                        // Angular private ($$) and Discitur private (_) are ignored
-                        if (!(key.indexOf('$$') == 0 || key.indexOf('_') == 0) && !validInput.hasOwnProperty(key))
-                            throw { code: 20002, message: 'invalid Input Parameter for ' + functionName + ' :' + _getMessage(actualInput) }
-                        // If not passed in actualInput and if defined in validInput, set default value
-                        //if (angular.isUndefined(actualInput[key]) && validInput[key] != null)
-                        //    actualInput[key] = validInput[key];
-                    }
-                    // loop to set default values, if not set in actualInput
-                    for (key in validInput) {
-                        if ((angular.isUndefined(actualInput[key]) || actualInput[key] == null) && validInput[key] != null)
-                            actualInput[key] = validInput[key];
-                    }
-                }
-
-            },
-            cache: $cacheFactory('disciturCache')
-
-
-        }
-
-
-    }])
-    // LoadingInterceptor Intercepor:
-    // display/hide loading bar
-    .factory('LoadingInterceptor', [
-        '$q',
-        '$rootScope',
+    .run([
         'DisciturSettings',
-        function ($q, $rootScope,DisciturSettings ) {
-            return {
-                request: function (config) {
-                    if (config.url.indexOf(DisciturSettings.apiUrl)>=0)
-                        $rootScope.$loading = true;
-                    return config || $q.when(config);
-                },
-                response: function (result) {
-                    if (result.config.url.indexOf(DisciturSettings.apiUrl) >= 0)
-                        $rootScope.$loading = false;
-                    return result || $q.when(result);
-                },
-                responseError: function (result) {
-                    if ($rootScope.$loading)
-                        $rootScope.$loading = false;
-                    return $q.reject(result);
-                }
-            }
+        '$rootScope',
+        function (DisciturSettings, $rootScope) {
+            $rootScope.testEnv = DisciturSettings.testEnv;
         }
-    ]);
-;angular.module('Discitur')
+    ])
+;angular.module('discitur')
     .directive('doSignIn', [
         '$rootScope',
         'AuthService',
@@ -3510,7 +3613,7 @@ angular.module('Common',
                 }
             }
         }
-    ]);angular.module('Discitur')
+    ]);angular.module('discitur')
     .factory('DisciturBaseCtrl',
     [
         //'LabelService',
@@ -3556,7 +3659,7 @@ angular.module('Common',
         }
     ]);
 
-;angular.module("Discitur")
+;angular.module("discitur")
     .controller('DisciturRootCtrl', [
         '$scope',
         '$rootScope',
@@ -3611,7 +3714,8 @@ angular.module('Common',
             //-------- public properties -------
             $scope.labels = {
                 appTitle: $scope.getLabel('appTitle'),
-                loading: $scope.getLabel('loading')
+                loading: $scope.getLabel('loading'),
+                testEnv: $scope.getLabel('testEnv')
             };
 
             //------- Global Event Management -------//
@@ -3635,14 +3739,15 @@ angular.module('Common',
 
 
 
-;angular.module("Discitur")
+;angular.module("discitur")
     .controller('NavCtrl', [
         '$scope',
         '$rootScope',
         '$location',
         'DisciturBaseCtrl',
         '$injector',
-        function ($scope, $rootScope, $location, DisciturBaseCtrl, $injector) {
+        'DisciturSettings',
+        function ($scope, $rootScope, $location, DisciturBaseCtrl, $injector, DisciturSettings) {
             // inherit Discitur Base Controller
             $injector.invoke(DisciturBaseCtrl, this, { $scope: $scope });
 
@@ -3653,6 +3758,9 @@ angular.module('Common',
                 brand: $scope.getLabel('brand')
             };
             
+            $scope.local = {
+                isInMaintenance: DisciturSettings.isInMaintenance
+            }
             $scope.menu = [
                 { id: 1, title: "Lezioni", route: "/lesson" },
                 {

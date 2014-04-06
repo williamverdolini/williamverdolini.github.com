@@ -276,7 +276,7 @@ angular.module('disc.common',
 
             $stateProvider
                 .state('userProfile', {
-                    url: 'userProfile',
+                    url: 'user/profile',
                     parent: 'master.1cl',
                     authorized: true,
                     templateUrl: 'modules/user/UserProfile.html',
@@ -285,6 +285,25 @@ angular.module('disc.common',
                         user: ['AuthService',function (AuthService) {
                             return AuthService.user;
                         }]
+                    }
+                })
+                .state('userActivation', {
+                    url: 'user/activation?username?key',
+                    parent: 'master.1cl',
+                    onEnter: function (activation) {
+                        console.log(activation);
+                    },
+                    onExit: function (activation) {
+                        console.log(activation);
+                    },
+                    templateUrl: 'modules/user/UserActivation.html',
+                    controller: 'UserActivationCtrl',
+                    resolve: {
+                        activation: function (AuthService, $stateParams) {
+                            return AuthService.activate($stateParams).catch(
+                                function (data) { return { notActive: true };}
+                                );
+                        }
                     }
                 })
 
@@ -429,7 +448,10 @@ angular.module('disc.common',
         changedPassword: "Password aggiornata con successo.",
         confirm: "Conferma",
         modify: "Modifica",
-        testEnv: "Ambiente di Test"
+        testEnv: "Ambiente di Test",
+        signupSuccess: 'Registrazione avvenuta con successo. Controlla la tua email ed attiva il tuo account.',
+        activationSuccess: 'Il tuo account è stato attivato. Accedi e inizia a dare il tuo contributo!',
+        activationFailed: 'Il tuo account NON è stato attivato. Controlla la tua mail o contatta il supporto tecnico.'
         }
 )
 .value('overrides',
@@ -2860,6 +2882,8 @@ angular.module('disc.common',
                                 // server-2-client mapping
                                 var _user = _setUserData(result);
                                 angular.copy(_user, _authService.user);
+                                deferred.resolve(_authService.user);
+                                /*
                                 // load auth token from server 
                                 _loadToken(
                                     {
@@ -2872,7 +2896,8 @@ angular.module('disc.common',
                                         function (data) {
                                             deferred.reject(data);
                                         }
-                                    )
+                                    );
+                                */
                             })
                         .error(
                             // Error Callback
@@ -2993,6 +3018,35 @@ angular.module('disc.common',
                                 deferred.reject("Error updating user id:" + user.id + " -> " + data);
                             });
                     // create deferring result
+                    return deferred.promise;
+
+                },
+                // Activate user account
+                activate: function (inputParams) {
+                    DiscUtil.validateInput(
+                        'UserService.activate',   // function name for logging purposes
+                        {                         // hashmap to check inputParameters
+                            username: null,
+                            key: null
+                        },
+                        inputParams               // actual input params
+                    );
+
+                    var deferred = $q.defer();
+                    $http.post(DisciturSettings.apiUrl + 'Account/Activate', inputParams)
+                        .success(
+                            function (result, status) {
+                                deferred.resolve(result);
+                            })
+                        .error(
+                            function (error, status) {
+                                var _authErr = {
+                                    code: error.Message,
+                                    //description: error.ModelState[""][0],
+                                    status: status
+                                }
+                                deferred.reject(_authErr);
+                            });
                     return deferred.promise;
 
                 }
@@ -3170,7 +3224,11 @@ angular.module('disc.common',
                 sentNewPwd: {
                     show: false,
                     message: ''
+                },
+                SUSuccess: {
+                    show: false
                 }
+
             };
 
             $scope.labels = {
@@ -3199,7 +3257,8 @@ angular.module('disc.common',
                 requiredConfirmPassword: $scope.getLabel('requiredConfirmPassword'),
                 minLengthConfirmPassword: $scope.getLabel('minLengthConfirmPassword'),
                 matchConfirmPassword: $scope.getLabel('matchConfirmPassword'),
-                forgottenPassword: $scope.getLabel('forgottenPassword')
+                forgottenPassword: $scope.getLabel('forgottenPassword'),
+                signupSuccess: $scope.getLabel('signupSuccess')
             };
 
             //-------- private methods -------
@@ -3265,7 +3324,9 @@ angular.module('disc.common',
                                 password: $scope.local.SUpassword
                             })
                         .then(
-                            _validLoginCB,
+                            function (user) {
+                                $scope.local.SUSuccess.show = true;
+                            },
                             function (error) {
                                 _validationErrors.init();
                                 _validationErrors.addMessage(error.description);
@@ -3504,6 +3565,46 @@ angular.module('disc.common',
 
         }
     ]);
+;angular.module('disc.user')
+    .controller('UserActivationCtrl', [
+        '$scope',
+        'DisciturBaseCtrl',
+        '$injector',
+        'activation',
+        '$state',
+        function (
+            $scope,
+            DisciturBaseCtrl,
+            $injector,
+            activation,
+            $state
+            ) {
+            // inherit Discitur Base Controller
+            $injector.invoke(DisciturBaseCtrl, this, { $scope: $scope });
+
+            //-------- private properties -------
+            $scope._ctrl = 'UserActivationCtrl';
+            //-------- private methods -------
+
+            //--------- public properties ------
+            $scope.labels = {
+                activationSuccess: $scope.getLabel('activationSuccess'),
+                activationFailed: $scope.getLabel('activationFailed')
+            };
+
+            $scope.local = {
+                activated : activation.notActive ? false : true
+            }
+            //-------- public methods -------
+            $scope.actions = {
+                ok: function () {
+                    $state.go('lessonSearch', {}, { inherit: false });
+                }
+            }
+
+
+        }
+    ]);
 ;angular.module("discitur",
     [
         'ui.router',
@@ -3733,6 +3834,9 @@ angular.module('disc.common',
                     //event.preventDefault();
                     return $state.go('404lesson');
                 }
+                return error;
+                //else
+                //    return $state.go(toState);
             });
         }
     ])

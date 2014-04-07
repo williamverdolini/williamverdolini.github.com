@@ -73,11 +73,10 @@ metodologia Agile applicata
 2.    Per prima
 cosa vorrei coniugare un aspetto architetturale, conseguenza di realizzare una <a href="http://en.wikipedia.org/wiki/Single_Page_Application" target="_blank">SPA</a> ed un aspetto tipico delle metodologie agili:
 
-        -       Uno dei principi espressi nel manifesto Agile è questo: 
-        >_Our highest priority is to satisfy the customer through early and
-        >continuous delivery of valuable software_
-        >######<a href="http://agilemanifesto.org/principles.html" target="_blank">http://agilemanifesto.org/principles.html</a>
-        Una delle più efficacy chiavi di lettura che ho trovato a questo principio è 
+        -       Uno dei principi espressi nel manifesto Agile è questo:   
+                <blockquote> <i>Our highest priority is to satisfy the customer through early and continuous delivery of valuable software</i>
+                 <h6> <a href="http://agilemanifesto.org/principles.html" target="_blank">http://agilemanifesto.org/principles.html</a></h6></blockquote>
+                 Una delle più efficacy chiavi di lettura che ho trovato a questo principio è 
         quella di progettare e realizzare le interfacce di front-end subito senza
         preoccuparsi di “sistemare” le cose dietro le quinte (aka back-end) e ricevere
         quanto prima feedback da parte dell’utente su quello che sarà il risultato

@@ -455,47 +455,85 @@ angular.module('disc.common',
         }
 )
 .value('overrides',
-    {
-        'LessonCtrl': {
-            lessonGoods: "Cosa è andato bene",
-            lessonBads: "Cosa è andato male"
-        },
-        'LessonListCtrl': {
-            publishedOn: "Pubblicato il",
-            noLessonFound: "Nessuna Lezione trovata."
-        },
-        'LessonListSideBarCtrl': {
-            newLessonButton: "Nuova Lezione"
-        },
-        'LessonEditCtrl': {
-            saveLessonButton: "Salva la Lezione",
-            deleteLessonButton: "Elimina la Lezione",
-            cancelButton: "Annulla",
-            publicLesson: "Pubblica"
-        }
+{
+    'LessonCtrl': {
+        lessonGoods: "Cosa è andato bene",
+        lessonBads: "Cosa è andato male"
+    },
+    'LessonListCtrl': {
+        publishedOn: "Pubblicato il",
+        noLessonFound: "Nessuna Lezione trovata."
+    },
+    'LessonListSideBarCtrl': {
+        newLessonButton: "Nuova Lezione"
+    },
+    'LessonEditCtrl': {
+        saveLessonButton: "Salva la Lezione",
+        deleteLessonButton: "Elimina la Lezione",
+        cancelButton: "Annulla",
+        publicLesson: "Pubblica"
     }
-)
-;angular.module('disc.common')
-        .factory('LabelService',
-        [
-            'dictionary',
-            'overrides',
-            function (dictionary, overrides) {
-                //console.debug("factory: LabelService Creation");
+})
+.value('errors',
+{
+    discerr01 : 'Username già usato da un altro account',
+    discerr02: 'Email già associata ad un altro account',
+    discerr03: 'Username o password non corretti'
+});angular.module('disc.common')
+    .factory('ErrorDTO', function () {
+        function ErrorDTO() {
+            this.code = null;
+            this.description = null;
+        }
+        return (ErrorDTO);
+    })
+    .factory('LabelService',
+    [
+        'dictionary',
+        'overrides',
+        'errors',
+        'ErrorDTO',
+        function (dictionary, overrides, errors, ErrorDTO) {
+            //console.debug("factory: LabelService Creation");
 
-                return {
-                    get: function (controller, label) {
-                        //console.debug("LabelService.get " + controller + " - " + label)
-                        // if exists the overriden label within the Controller is returned 
-                        // otherwise the dictionary's label is returned
-                        return (overrides[controller] && overrides[controller][label]) ?
-                            overrides[controller][label] :
-                            dictionary[label] || 'Label (' + label + ') not set!';
+            return {
+                get: function (controller, label) {
+                    //console.debug("LabelService.get " + controller + " - " + label)
+                    // if exists the overriden label within the Controller is returned 
+                    // otherwise the dictionary's label is returned
+                    return (overrides[controller] && overrides[controller][label]) ?
+                        overrides[controller][label] :
+                        dictionary[label] || 'Label (' + label + ') not set!';
 
+                },
+                apiErrorCode: function (errorCode) {
+                    var _err = new ErrorDTO();
+                    _err.code = errorCode;
+                    _err.description = errors[errorCode] || errorCode;
+                    return _err;
+                },
+                apiError: function (apiError) {
+                    var _errs = [];
+                    if (apiError.ModelState && apiError.ModelState.discerrors) {
+                        var _discerrors = apiError.ModelState.discerrors;
+                        for (var i = 0; i < _discerrors.length; i++) {
+                            var _err = new ErrorDTO();
+                            _err.code = _discerrors[i];
+                            _err.description = (errors[_discerrors[i]] ? errors[_discerrors[i]] : _discerrors[i]);
+                            _errs.push(_err);
+                        }
                     }
-                };
-            }
-        ]
+                    else {
+                        var _err = new ErrorDTO();
+                        _err.code = apiError;
+                        _err.description = apiError;
+                        _errs.push(_err);
+                    }
+                    return _errs;
+                }
+            };
+        }
+    ]
 );
 
 ;angular.module('disc.common')
@@ -747,6 +785,37 @@ angular.module('disc.common',
 
             }
         }
+        }
+    ]);;angular.module('disc.common')
+    .directive('serverValidation', [
+        '$rootScope',
+        function ($rootScope) {
+            return {
+                restrict: 'A',
+                require: 'ngModel',
+                scope: {
+                    serverValidation: '&'
+                },
+
+                link: function (scope, element, attrs, ngModel) {
+                    if (!ngModel) return;
+                    //var scope = scope;
+
+                    element.blur(function () {
+                        //console.log("Controlla a server il valore:" + ngModel.$viewValue);
+                        ngModel.$setValidity('serverCheck', false);
+                        scope.serverValidation({ inputValue: ngModel.$viewValue }).then(
+                                function (result) {
+                                    ngModel.$setValidity('serverCheck', result)
+                                },
+                                function (error) {
+                                    ngModel.$setValidity('serverCheck', false)
+                                }
+                            );
+                    })
+
+                }
+            }
         }
     ]);;angular.module('disc.lesson')
     /*-------------------------------------------------------------------------------
@@ -2642,7 +2711,8 @@ angular.module('disc.common',
         'DiscUtil',
         'DisciturSettings',
         'UserDTO',
-        function ($http, $q, DiscUtil, DisciturSettings, UserDTO) {
+        'LabelService',
+        function ($http, $q, DiscUtil, DisciturSettings, UserDTO, LabelService) {
             //-------- private methods -------
 
             // encode message with CriptoJS
@@ -2738,11 +2808,14 @@ angular.module('disc.common',
                         }
                     })
                     .error(function (error, status) {
+                        var _authErr = LabelService.apiErrorCode(error.error);
+                        /*
                         var _authErr = {
                             code: error.error || "invalid_grant",
                             description: error.error_description || "The user name or password is incorrect.",
                             status: status
                         }
+                        */
                         deferred.reject(_authErr);
                     });
 
@@ -2760,7 +2833,6 @@ angular.module('disc.common',
                 data2api.Email = user.email;
                 return data2api;
             }
-
 
             var _authService = {
                 //-------- public properties-------
@@ -2883,30 +2955,11 @@ angular.module('disc.common',
                                 var _user = _setUserData(result);
                                 angular.copy(_user, _authService.user);
                                 deferred.resolve(_authService.user);
-                                /*
-                                // load auth token from server 
-                                _loadToken(
-                                    {
-                                        username: inputParams.username,
-                                        password: inputParams.password
-                                    }).then(
-                                        function () {
-                                            deferred.resolve(_authService.user);
-                                        },
-                                        function (data) {
-                                            deferred.reject(data);
-                                        }
-                                    );
-                                */
                             })
                         .error(
                             // Error Callback
                             function (error, status) {
-                                var _authErr = {
-                                    code: error==""? "Error_Registration": error.Message,
-                                    description: error == "" ? "Error on registration, please contact support" : error.ModelState[""][0],
-                                    status: status
-                                }
+                                var _authErr = LabelService.apiError(error);
                                 deferred.reject(_authErr);
                             });
                     return deferred.promise;
@@ -3049,8 +3102,29 @@ angular.module('disc.common',
                             });
                     return deferred.promise;
 
-                }
+                },
+                // check fo email existance (NOT USED)
+                checkEmail: function (inputParams) {
+                    DiscUtil.validateInput(
+                        'UserService.checkEmail', // function name for logging purposes
+                        {                         // hashmap to check inputParameters
+                            email: null
+                        },
+                        inputParams               // actual input params
+                    );
 
+                    var deferred = $q.defer();
+                    $http.get(DisciturSettings.apiUrl + 'User/anyEmail', { params: inputParams })
+                        .success(
+                            function (result, status) {
+                                deferred.resolve(!(result=='true'));
+                            })
+                        .error(
+                            function (error, status) {
+                                deferred.resolve(false);
+                            });
+                    return deferred.promise;
+                }
             }
 
             //-------- Singleton Initialization -------
@@ -3254,6 +3328,7 @@ angular.module('disc.common',
                 requiredSurname: $scope.getLabel('requiredSurname'),
                 requiredEmail: $scope.getLabel('requiredEmail'),
                 validEmail: $scope.getLabel('validEmail'),
+                serverValidationEmail: 'Esiste già un account associato a questo indirizzo email',
                 requiredConfirmPassword: $scope.getLabel('requiredConfirmPassword'),
                 minLengthConfirmPassword: $scope.getLabel('minLengthConfirmPassword'),
                 matchConfirmPassword: $scope.getLabel('matchConfirmPassword'),
@@ -3327,9 +3402,12 @@ angular.module('disc.common',
                             function (user) {
                                 $scope.local.SUSuccess.show = true;
                             },
-                            function (error) {
+                            function (errors) {
                                 _validationErrors.init();
-                                _validationErrors.addMessage(error.description);
+                                for (var i = 0; i < errors.length; i++) {
+                                    _validationErrors.addMessage(errors[i].description);
+                                }
+                                //_validationErrors.addMessage(error.description);
                                 $scope.local.SUerrors.message = _validationErrors.message;
                                 $scope.local.SUerrors.show = true;
                             }
@@ -3347,6 +3425,8 @@ angular.module('disc.common',
                                 _validationErrors.addMessage($scope.labels.requiredEmail);
                             else if ($scope.local.SignupForm.email.$error.email)
                                 _validationErrors.addMessage($scope.labels.validEmail);
+                            //else if ($scope.local.SignupForm.email.$error.serverCheck)
+                            //    _validationErrors.addMessage($scope.labels.serverValidationEmail);
                             if ($scope.local.SignupForm.username.$error.required)
                                 _validationErrors.addMessage($scope.labels.requiredUserName);
                             else if ($scope.local.SignupForm.username.$error.minlength)
@@ -3397,6 +3477,10 @@ angular.module('disc.common',
                         $scope.local.errorsPwd.show = true;
 
                     }
+                },
+                checkEmail: function (email) {
+                    console.log("Controlla a server il valore:" + email);
+                    return AuthService.checkEmail({ email: email });
                 }
             }
 

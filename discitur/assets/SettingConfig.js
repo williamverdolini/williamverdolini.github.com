@@ -8,5 +8,5 @@ angular.module('disc.settings',
         viewHelp: 'disc.viewHelp',
         lastLessonsNum: 5,
         testEnv: true,
-        isInMaintenance: true
+        isInMaintenance: false
     })

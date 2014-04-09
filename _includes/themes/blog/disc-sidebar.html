@@ -10,6 +10,7 @@
   {% for node in myArray sorted %}
 
     {% assign _i = _i | plus: 1 %}
+    {% assign level = 0 %}
     {% assign summaryLine = node | split: "," %}
     {% for prop in summaryLine sorted %}
 
@@ -28,8 +29,11 @@
     	{% endif %}
   	{% endfor %}
 
+  	{% if level == 0 and prevLevel != 0%}
+        </div>
+      </div>
+  	{% endif %}
 
-  	
 
   	{% if level != 0 and prevLevelTitle != levelTitle %}
 

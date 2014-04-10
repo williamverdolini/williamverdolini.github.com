@@ -30,10 +30,9 @@ angular portasse qualche miglioramento). Quello che ho fatto può
 tranquillamente annoverarsi tra le worst-practices del Configuration
 Management, quindi, siccome sbagliando (ma nel mio caso posso tranquillamente
 dire, perseverando) si impara, ecco cosa è successo.
-
  
 
-**bower update (bad practice #1)**
+###bower update (bad practice #1)
 
 Questo il comando lanciato con molto candore alle due di notte di un
 venerdì qualunque…cosa è successo? Bower ha fatto “semplicemente” quello che
@@ -52,7 +51,7 @@ verificare che tutto sia ok.
 
  
 
-**packages versioning (bad practice #2)**
+###packages versioning (bad practice #2)
 
 Nel versionamento del progetto, ho fatto la scelta di versionere il file
 delle regole di dipendenza (bower.json), ma NON versionare i packages
@@ -110,7 +109,7 @@ poter ripristinare velocemente situazioni…complicate…
 
  
 
-**breaking changes (bad practice #3)**
+###breaking changes (bad practice #3)
 
 Dopo diversi tentativi di ripristinare i packages allo stato originale ed
 aggiornando uno alla volta i package ho scoperto che il problema l’avevo sul

@@ -32,14 +32,10 @@ fondo…)
 
 Ok, finito il momento autocelebrativo.
 
- 
-
 E’ il momento per analizzare un po’ questa esperienza e definirne i
 pro-contro.
 
- 
-
-**Partiamo dai numeri**
+###Partiamo dai numeri
 
 prima i dati oggettivi.
 
@@ -93,11 +89,7 @@ ma i tratti migliorativi credo di averli colti a pieno.
 
  
 
- 
-
-**Una valutazione sulle tecnologie**
-
- 
+###Una valutazione sulle tecnologie
 
 **_Front-end_**
 
@@ -191,12 +183,9 @@ progettino qualunque come era il mio ad una segnalazione qualunque hanno
 risposto in diverse occasioni nel giro di mezz’ora. WOW.
 
 Se devo proprio trovare una nota spiacevole è stato leggere <a href="http://techcrunch.com/2014/03/15/julie-ann-horvath-describes-sexism-and-intimidation-behind-her-github-exit//" target="_blank">questo articolo</a>: molto spiacevole leggere queste cose…
-
  
 
- 
-
-**Una valutazione sulla metodologia Agile**
+###Una valutazione sulla metodologia Agile
 
 Non nego che gli aspetti metodologici sono stati quelli più duri da
 abbracciare, perché richiedono (per quelli come me che hanno un po’ di “storia”

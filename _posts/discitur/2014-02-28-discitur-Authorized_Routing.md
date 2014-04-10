@@ -33,7 +33,7 @@ valutato sono due:
 2. In caso di accesso non autenticato a pagine
      con autorizzazione si reindereizza verso una route custom
      
-**Redirect verso Login Page**
+###Redirect verso Login Page
 
 Il primo caso rappresenta uno scenario semplice, ma abbastanza comune e
 quindi ho fatto delle prove di implementazione. Il risultato è abbastanza
@@ -50,7 +50,7 @@ di seguito il codice:
 
  
 
-***Proprietà custom***
+####Proprietà custom
 
 <script type="syntaxhighlighter" class="brush: javascript;highlight: [5]">
 <![CDATA[
@@ -68,7 +68,7 @@ $stateProvider
 
 ]]></script>  
 
-***Redirect***
+####Redirect
 
 <script type="syntaxhighlighter" class="brush: javascript;highlight: [3]">
 <![CDATA[
@@ -84,7 +84,7 @@ $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromStat
 
  
 
-**Redirect con logiche Custom**
+###Redirect con logiche Custom
 
 Questa casistica è stata quella richiesta in questo sprint nella gestione
 della modifica dei dati di una lezione. Il requisito era che solo l’utente
@@ -131,7 +131,7 @@ stato e quindi implementare logiche come quella descritta.
 
  
 
-**Gestione avanzata del routing autenticato**
+###Gestione avanzata del routing autenticato
 
 Le due soluzioni descritte sopra funzionano, ma non sono complete perché
 non tengono conto del caso in cui qualcuno digiti l’url direttamente (o perché

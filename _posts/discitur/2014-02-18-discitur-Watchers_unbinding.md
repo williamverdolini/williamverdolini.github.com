@@ -59,7 +59,7 @@ Ho provato due metodi per realizzare questo obiettivo:
 
  
 
-**_Metodo custom_**
+###Metodo custom
 
 Ho sperimentato il metodo più per scopi didattici/architetturali che per
 applicarlo nell’app, anche perché il risultato non è molto elegante. Ecco il
@@ -144,7 +144,7 @@ performante.
 
  
 
-**_<a href="https://github.com/Pasvaz/bindonce" target="_blank">Bindonce</a>_**
+###<a href="https://github.com/Pasvaz/bindonce" target="_blank">Bindonce</a>
 
 Questa libreria nasce proprio a questo scopo e realizza il mio obiettivo in
 maniera decisamente più elegante e standard, ovvero utilizzando delle
@@ -175,7 +175,7 @@ Risultato? Lo userò presto nel progetto.
 
  
 
-**_Altre riflessioni_**_:_
+###Altre riflessioni:
 
 Avevo provato anche una cosa del genere nel controller:
 

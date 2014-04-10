@@ -248,7 +248,7 @@ continuerò ad approfondire, provare e fare pratica, ma il sospetto che Dio
 
  
 
-In fondo, ad esempio, la creazione…non era forse un bel progetto in 6
+In fondo, ad esempio, la Creazione…non era forse un bel progetto in 6
 sprint?
 
  

@@ -36,6 +36,8 @@ ha a che fare con un prodotto per il web è una cosa abbastanza comune e
 consente a Clienti diversi di poter inserire il proprio testo specifico per
 ogni label visualizzata; con lo stesso meccanismo si poteva gestire anche
 l’internazionalizzazione delle label. 
+
+
 ###From Server to Client
 
 Passare ad Angular significava passare dal server al client e questo
@@ -47,6 +49,8 @@ l’applicazione riceveva; mentre in SPA con framework di templating js come
 Angular l’applicazione risiede tutta sul client ed il backend è in genere
 state-less e quindi quelle che saranno oggetti di applicazione, sono oggetti
 ricreati su ogni client.
+
+
 ###Angular Constants
 In Angular un buon candidato per gestire queste costanti di applicazioni è
 un servizio, in particolare nella forma **value** che semplifica l’implementazione di oggetti literal instanziati una sola volta

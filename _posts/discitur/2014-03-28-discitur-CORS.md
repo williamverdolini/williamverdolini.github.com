@@ -97,12 +97,13 @@ potrei realizzare il mio ambiente di UAT con questo Environment Management:
 
 <img src="{{ BASE_PATH }}/images/discitur/UAT_env.png" /> 
 
-
-A questo punto il client deve poter fare chiamate CORS. Per far questo le
-web api devono essere configurate per consentire l’accesso all’esterno.
+Ogni Client quindi interroga il server Github per le risorse statiche (.html, .js, .css, ecc.) ed il
+server Somee per le risorse dinamiche (i servizi).
+In questo scenario, il client deve poter fare chiamate CORS e le
+web api devono essere configurate per consentire l’accesso dall’esterno.
 Considerando questo scenario, vorrei anche prevedere che l’origine autorizzata
 sia configurabile e annullabile (perché in produzione avrei origini differenti
-o potri non avere affatto bisogno di questo scenario).
+o potrei non avere affatto bisogno di questo scenario).
 
  
 

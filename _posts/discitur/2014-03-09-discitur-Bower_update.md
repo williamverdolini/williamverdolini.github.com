@@ -53,7 +53,7 @@ verificare che tutto sia ok.
 
 ###packages versioning (bad practice #2)
 
-Nel versionamento del progetto, ho fatto la scelta di versionere il file
+Nel versionamento del progetto, ho fatto la scelta di versionare il file
 delle regole di dipendenza (bower.json), ma NON versionare i packages
 scaricati. Ritenevo inutile fare un versionamento di componenti che possono
 essere ricreati con un click ogni volta…peccato che il mio file di versionamento

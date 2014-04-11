@@ -55,7 +55,8 @@ tagline: Progetti, storie, riflessioni
 Il progetto è versionato su repository pubblico: <a href="https://github.com/williamverdolini?tab=repositories" target="_blank">https://github.com/williamverdolini?tab=repositories</a>
 
 -->
-## Chi sono
+
+###Chi sono
 La sintesi della mia storia lavorativa la potete leggere nel <a href="http://www.linkedin.com/in/williamverdolini" target="_blank">mio profilo Linkedin</a>
 
 <!--   

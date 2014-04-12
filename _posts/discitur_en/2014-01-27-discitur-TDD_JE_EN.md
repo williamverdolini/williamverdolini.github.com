@@ -4,7 +4,7 @@ title: "Discitur Project"
 tagline: Angular.js TDD, JE (Just Enough)
 header: Angular.js TDD, JE (Just Enough)
 description: Progetto Discitur, Tech, Angular.js, TDD
-group: Discitur
+group: Discitur_en
 tags: [Angular.js,TDD]
 ---
 {% include JB/setup %}

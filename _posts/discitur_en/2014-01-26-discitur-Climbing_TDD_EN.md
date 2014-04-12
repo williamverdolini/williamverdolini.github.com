@@ -4,7 +4,7 @@ title: "Discitur Project"
 tagline: Climbing Angular.js TDD
 header: Climbing Angular.js TDD
 description: Progetto Discitur, Tech, Angular.js, TDD
-group: Discitur
+group: Discitur_en
 tags: [Angular.js,TDD]
 ---
 {% include JB/setup %}

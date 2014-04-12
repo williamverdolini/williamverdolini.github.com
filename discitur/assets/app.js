@@ -1,88 +1,12 @@
 angular.module('disc.common',
     [])
-/*
-    .constant('DisciturSettings', {
-        apiUrl: 'http://localhost:59739/api/',
-        //apiUrl: 'http://www.discitur.somee.com/api/',
-        authToken: 'disc.auth.token',
-        criptoKey: '7061737323313233',
-        viewHelp: 'disc.viewHelp',
-        lastLessonsNum: 5,
-        testEnv: true,
-        isInMaintenance: false
-    })
-*/
-/*
-    .factory('DiscUtil', ['$cacheFactory', function ($cacheFactory) {
-        var _getMessage = function (obj) {
-            var _message = "";
-            for (var key in obj) {
-                if (obj[key].constructor === Object)
-                    _message += _getMessage(obj[key])
-                else
-                    _message += key + ":" + obj[key] + " ";
-            }
-            return _message;
-        }
+.filter('beautyURL', function () {
+    var encodeURL = function (title) {
+        return encodeURI(title.replace(/\s/g, '-'));
+    }
 
-        return {
-            validateInput: function (functionName, validInput, actualInput) {
-                // accept only Object
-                if (angular.isUndefined(actualInput) || !(Object.prototype.toString.call(actualInput) === '[object Object]'))
-                    throw { code: 20001, message: 'invalid Input Type for ' + functionName + ' :' + _getMessage(actualInput) }
-                if (angular.isDefined(actualInput)) {
-                    // loop to check if input.properties (aka parametrs) are expected by the service validInput template
-                    for (key in actualInput) {
-                        // Angular private ($$) and Discitur private (_) are ignored
-                        if (!(key.indexOf('$$') == 0 || key.indexOf('_') == 0) && !validInput.hasOwnProperty(key))
-                            throw { code: 20002, message: 'invalid Input Parameter for ' + functionName + ' :' + _getMessage(actualInput) }
-                        // If not passed in actualInput and if defined in validInput, set default value
-                        //if (angular.isUndefined(actualInput[key]) && validInput[key] != null)
-                        //    actualInput[key] = validInput[key];
-                    }
-                    // loop to set default values, if not set in actualInput
-                    for (key in validInput) {
-                        if ((angular.isUndefined(actualInput[key]) || actualInput[key] == null) && validInput[key] != null)
-                            actualInput[key] = validInput[key];
-                    }
-                }
-
-            },
-            cache: $cacheFactory('disciturCache')
-
-
-        }
-
-
-    }])
-    // LoadingInterceptor Intercepor:
-    // display/hide loading bar
-    .factory('LoadingInterceptor', [
-        '$q',
-        '$rootScope',
-        'DisciturSettings',
-        function ($q, $rootScope, DisciturSettings) {
-            return {
-                request: function (config) {
-                    if (config.url.indexOf(DisciturSettings.apiUrl) >= 0)
-                        $rootScope.$loading = true;
-                    return config || $q.when(config);
-                },
-                response: function (result) {
-                    if (result.config.url.indexOf(DisciturSettings.apiUrl) >= 0)
-                        $rootScope.$loading = false;
-                    return result || $q.when(result);
-                },
-                responseError: function (result) {
-                    if ($rootScope.$loading)
-                        $rootScope.$loading = false;
-                    return $q.reject(result);
-                }
-            }
-        }
-    ])
-
-*/;angular.module('disc.lesson',
+    return encodeURL;
+});;angular.module('disc.lesson',
     [
         'disc.settings',
         'disc.user',
@@ -167,7 +91,7 @@ angular.module('disc.common',
                         }
                     })
                     .state('lessonDetail', {
-                        url: 'lesson/:lessonId',
+                        url: 'lesson/:lessonId/{title}',
                         parent: 'master.2cl',
                         onEnter: function () {
                             console.log("Entering Lesson Detail");
@@ -438,6 +362,7 @@ angular.module('disc.common',
         requiredConfirmPassword: "Conferma Password obbligatoria",
         minLengthConfirmPassword: "inserisci una Conferma Password di almeno 7 caratteri",
         matchConfirmPassword: "Conferma Password non corretta",
+        sentNewPwdEmail: "A breve riceverai via mail una nuova Password.",
         forgottenPassword: "Password dimenticata?",
         changePassword: "Modifica Password",
         currentPassword: "Password attuale",
@@ -457,8 +382,8 @@ angular.module('disc.common',
 .value('overrides',
 {
     'LessonCtrl': {
-        lessonGoods: "Cosa è andato bene",
-        lessonBads: "Cosa è andato male"
+        //lessonGoods: "Cosa è andato bene",
+        //lessonBads: "Cosa è andato male"
     },
     'LessonListCtrl': {
         publishedOn: "Pubblicato il",
@@ -494,8 +419,6 @@ angular.module('disc.common',
         'errors',
         'ErrorDTO',
         function (dictionary, overrides, errors, ErrorDTO) {
-            //console.debug("factory: LabelService Creation");
-
             return {
                 get: function (controller, label) {
                     //console.debug("LabelService.get " + controller + " - " + label)
@@ -688,33 +611,8 @@ angular.module('disc.common',
                     //-------- private properties -------
                     scope._ctrl = 'socialBarDrv';
 
-
-
-                    //-------- private methods-------
-                    // call Label Service to get dynamic labels
-                    /*
-                    var _getLabel = function (label) {
-                        return LabelService.get('LessonRatingDrv', label);
-                    }
-                    var _initVal = scope.wrText;
-                    */
-
-                    //-------- private variables-------
-                    //var form = element.find('form');
-
                     //-------- public properties-------
                     scope.local = {
-                        /*
-                        cssClass: scope.cssClass || 'social-bar',
-                        absUrl: encodeURIComponent(scope.absUrl),
-                        urlTitle: scope.urlTitle,
-                        FBShareHref: "http://www.facebook.com/sharer.php?u=" + scope.local.absUrl + (urlTitle ? "&t=" + scope.local.urlTitle : ""),
-                        FBLikeHref: "http://www.facebook.com/plugins/like.php?href=" + scope.local.absUrl,
-                        TWShareHref: "http://twitter.com/share?url=" + scope.local.absUrl + (urlTitle ? "&text=" + scope.local.urlTitle : "") + "&via=__wilver__",
-                        GPOneHref: "https://apis.google.com/_/+1/fastbutton?usegapi=1&size=large&url=" + scope.local.absUrl,
-                        GPShareHref: "https://plus.google.com/share?url=" + scope.local.absUrl,
-                        LIShareHref: "http://www.linkedin.com/shareArticle?url=" + scope.local.absUrl
-                        */
                         cssClass: null,
                         absUrl: null,
                         urlTitle: null,
@@ -723,8 +621,7 @@ angular.module('disc.common',
                         TWShareHref: null,
                         GPOneHref: null,
                         GPShareHref: null,
-                        LIShareHref: null
-                        
+                        LIShareHref: null                        
                     }
 
                     scope.labels = {
@@ -733,8 +630,7 @@ angular.module('disc.common',
                         socialTitleTWShare: scope.getLabel('socialTitleTWShare'),
                         socialTitleFBShare: scope.getLabel('socialTitleFBShare'),
                         socialTitleGPShare: scope.getLabel('socialTitleGPShare'),
-                        socialTitleLIShare: scope.getLabel('socialTitleLIShare')//,
-                        //deleteTooltip: _getLabel('deleteTooltip')
+                        socialTitleLIShare: scope.getLabel('socialTitleLIShare')
                     };
                     
                     //---------- Initialization --------------
@@ -746,8 +642,7 @@ angular.module('disc.common',
                     scope.local.TWShareHref = "http://twitter.com/share?url=" + scope.local.absUrl + (scope.urlTitle ? "&text=" + scope.local.urlTitle : "") + "&via=__wilver__";
                     scope.local.GPOneHref= "https://apis.google.com/_/+1/fastbutton?usegapi=1&size=large&url=" + scope.local.absUrl;
                     scope.local.GPShareHref= "https://plus.google.com/share?url=" + scope.local.absUrl;
-                    scope.local.LIShareHref = "http://www.linkedin.com/shareArticle?url=" + scope.local.absUrl;
-                    
+                    scope.local.LIShareHref = "http://www.linkedin.com/shareArticle?url=" + scope.local.absUrl;                    
                 }
             }
         }
@@ -799,10 +694,8 @@ angular.module('disc.common',
 
                 link: function (scope, element, attrs, ngModel) {
                     if (!ngModel) return;
-                    //var scope = scope;
 
                     element.blur(function () {
-                        //console.log("Controlla a server il valore:" + ngModel.$viewValue);
                         ngModel.$setValidity('serverCheck', false);
                         scope.serverValidation({ inputValue: ngModel.$viewValue }).then(
                                 function (result) {
@@ -3236,14 +3129,12 @@ angular.module('disc.common',
     .controller('UserSignInCtrl', [
         '$scope',
         '$modalInstance',
-        //'LabelService',
         'AuthService',
         'DisciturBaseCtrl',
         '$injector',
         function (
             $scope,
             $modalInstance,
-            //LabelService,
             AuthService,
             DisciturBaseCtrl,
             $injector
@@ -3333,15 +3224,11 @@ angular.module('disc.common',
                 minLengthConfirmPassword: $scope.getLabel('minLengthConfirmPassword'),
                 matchConfirmPassword: $scope.getLabel('matchConfirmPassword'),
                 forgottenPassword: $scope.getLabel('forgottenPassword'),
-                signupSuccess: $scope.getLabel('signupSuccess')
+                signupSuccess: $scope.getLabel('signupSuccess'),
+                sentNewPwdEmail: $scope.getLabel('sentNewPwdEmail')
             };
 
             //-------- private methods -------
-            /*
-            var _getLabel = function (label) {
-                return LabelService.get('UserSignInCtrl', label);
-            }
-            */
             var _validLoginCB = function (data) {
                 $scope.local.user = data;
                 $scope.actions.ok();
@@ -3374,7 +3261,6 @@ angular.module('disc.common',
                             $scope.local.errors.message = ""
                             $scope.local.errors.message += $scope.local.LoginForm.username.$error.required ? $scope.labels.requiredUserName : "";
                             $scope.local.errors.message += $scope.local.LoginForm.username.$error.minlength ? $scope.labels.minLengthUserName : "";
-                            //$scope.local.errors.message = _getLabel('usernameNotValid');
                             $scope.local.errors.show = true;
                         }
                         if ($scope.local.LoginForm.password.$invalid) {
@@ -3407,7 +3293,6 @@ angular.module('disc.common',
                                 for (var i = 0; i < errors.length; i++) {
                                     _validationErrors.addMessage(errors[i].description);
                                 }
-                                //_validationErrors.addMessage(error.description);
                                 $scope.local.SUerrors.message = _validationErrors.message;
                                 $scope.local.SUerrors.show = true;
                             }
@@ -3459,7 +3344,7 @@ angular.module('disc.common',
                         AuthService.retrievePassword({ username: $scope.local.usernamePwd }).then(
                             function () {
                                 $scope.local.sentNewPwd.message = ""
-                                $scope.local.sentNewPwd.message += "A breve riceverai via mail una nuova Password.";
+                                $scope.local.sentNewPwd.message += $scope.labels.sentNewPwdEmail;
                                 $scope.local.sentNewPwd.show = true;
                             },
                             function (error) {
@@ -3473,9 +3358,7 @@ angular.module('disc.common',
                         $scope.local.errorsPwd.message = ""
                         $scope.local.errorsPwd.message += $scope.local.ForgottenPwd.username.$error.required ? $scope.labels.requiredUserName : "";
                         $scope.local.errorsPwd.message += $scope.local.ForgottenPwd.username.$error.minlength ? $scope.labels.minLengthUserName : "";
-                        //$scope.local.errors.message = _getLabel('usernameNotValid');
                         $scope.local.errorsPwd.show = true;
-
                     }
                 },
                 checkEmail: function (email) {

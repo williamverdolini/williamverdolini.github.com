@@ -1,4 +1,4 @@
-angular.module('disc.settings',
+﻿angular.module('disc.settings',
     [])
     .constant('DisciturSettings', {
         //apiUrl: 'http://localhost:59739/api/',

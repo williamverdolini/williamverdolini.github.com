@@ -1,0 +1,81 @@
+---
+layout: wvmonopage
+title: Discitur
+tagline: Project Backstage
+header: Discitur
+group: navigation
+---
+{% include JB/setup %}
+
+<h2>Abstract</h2>
+Discitur is a <b>web application for teachers</b> that aimed to be a platform for sharing good and bad teaching practices, for analyzing pro and contra, 
+in order to improve them, thanks to the usage by a lot of teachers in real life.<br/>
+Besides that, it's a <b>learning gym</b> for <a href="http://en.wikipedia.org/wiki/Single-page_application" target="_blank">Single Page Application</a> development with 
+<a href="http://angularjs.org/" target="_blank">Angular.js</a> and for <a href="http://en.wikipedia.org/wiki/Agile_software_development" target="_blank">Agile software development</a> tecniques.
+
+<h2>Live Application</h2>
+<a href="http://williamverdolini.github.io/discitur/" target="blank">Ambiente di test</a>.
+         
+<h2>Contents</h2>
+
+{% comment %}
+{% assign pages_list = site.pages %}
+<ul>
+  {% for node in site.pages %}
+    {% if node.title != null %}
+      {% if node.group == 'Discitur' %}
+      	{% if page.url == node.url %}
+      	<li class="active"><a href="{{ BASE_PATH }}{{node.url}}" class="active">{{node.header}}</a></li>
+      	{% else %}
+      	<li><a href="{{ BASE_PATH }}{{node.url}}">{{node.header}}</a></li>
+      	{% endif %}
+      {% endif %}
+    {% endif %}
+  {% endfor %}
+</ul>
+{% endcomment %}
+
+{% include themes/blog/disc-summary-en.html %}
+
+{% assign myArray = finalSummary | split: "|" %}
+
+<ul style="list-style-type: none;">
+  {% for node in myArray sorted %}
+    {% assign summaryLine = node | split: "," %}
+    {% for prop in summaryLine sorted %}
+      {% assign keyval = prop | split: ":" %}
+      {% if keyval[0] == 'title' %}
+        {% assign title = keyval[1] %}
+    	{% endif %}
+      {% if keyval[0] == 'url' %}
+        {% assign url = keyval[1] %}
+    	{% endif %}
+  	{% endfor %}
+  	{% if page.url == url %}
+  	<li class="active"><a href="{{ BASE_PATH }}{{url}}">{{title}}</a></li>
+  	{% else %}
+  	<li><a href="{{ BASE_PATH }}{{url}}">{{title}}</a></li>
+  	{% endif %}
+
+  {% endfor %}
+</ul>
+
+
+
+<h2>Repositories</h2>
+<ul>
+<li><a href="https://github.com/williamverdolini/discitur-web" target="blank">Front-End Code</a>.</li>
+<li><a href="https://github.com/williamverdolini/discitur-api" target="blank">Back-End Code</a>.</li>
+</ul>
+
+
+{% comment %}
+<ul>
+{% assign pages_list = site.pages %}
+{% include JB/pages_list %}
+</ul>
+
+Discitur<br>
+<p>{{pages_list}}</p>
+{% endcomment %}
+

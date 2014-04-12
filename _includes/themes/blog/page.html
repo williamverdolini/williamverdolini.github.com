@@ -29,7 +29,13 @@
       </div>
     </div>
     <div class="col-md-3">
+        {% if page.group == 'Discitur' %}
           {% include themes/blog/disc-sidebar.html %}
+        {% endif %}
+        
+        {% if page.group == 'Discitur_en' %}
+          {% include themes/blog/disc-sidebar-en.html %}
+        {% endif %}
         
     
   {% comment %}    

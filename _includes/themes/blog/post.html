@@ -17,7 +17,13 @@
           </div>
         </div>
         <div class="col-md-3">
-          {% include themes/blog/disc-sidebar.html %}        
+        {% if page.group == 'Discitur' %}
+          {% include themes/blog/disc-sidebar.html %}
+        {% endif %}
+        
+        {% if page.group == 'Discitur_en' %}
+          {% include themes/blog/disc-sidebar-en.html %}
+        {% endif %}        
         </div>
     
     
@@ -39,6 +45,8 @@
       {% include JB/tags_list %}
     </ul>
   {% endunless %}  
+    <hr>
+    {% include JB/comments %}
 
     <hr>
     <div class="pagination">
@@ -56,7 +64,5 @@
       {% endif %}
       </ul>
     </div>
-    <hr>
-    {% include JB/comments %}
   </div>
 </div>

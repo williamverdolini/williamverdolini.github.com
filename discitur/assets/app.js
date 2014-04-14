@@ -2813,7 +2813,7 @@ angular.module('disc.common',
 
                                 var _authErr = {
                                     code: status,
-                                    description: result,
+                                    description: error.Message ? error.Message : error,
                                     status: status
                                 }
                                 deferred.reject(_authErr);

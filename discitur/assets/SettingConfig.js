@@ -1,4 +1,4 @@
-﻿angular.module('disc.settings',
+angular.module('disc.settings',
     [])
     .constant('DisciturSettings', {
         //apiUrl: 'http://localhost:59739/api/',
@@ -8,5 +8,5 @@
         viewHelp: 'disc.viewHelp',
         lastLessonsNum: 5,
         testEnv: true,
-        isInMaintenance: false
+        isInMaintenance: true
     })

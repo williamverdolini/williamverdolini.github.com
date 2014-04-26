@@ -1098,3 +1098,15 @@ fieldset[disabled] .btn-youtube.active {
             min-height: 400px;
         }
 
+/***************/
+.share-comment .popover {
+                        max-width: 400px;
+                        width: 400px;
+                    }   
+
+.social-bar-comment{
+            text-align: right;
+            height: 30px;
+            /*overflow: hidden;*/
+            margin-top: 5px;
+}

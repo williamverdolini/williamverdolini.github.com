@@ -237,7 +237,7 @@ angular.module('disc.common',
 .value('dictionary',
     {
         brand: "Discitur",
-        appTitle: "Discitur - Insieme si migliora",
+        appTitle: "Discitur | Insieme si migliora",
         loading: "Caricamento in corso...",
         lessonTitleHeading: "Titolo della Lezione",
         lessonTitle: "Titolo",
@@ -265,6 +265,9 @@ angular.module('disc.common',
         commentSave: "Salva",
         commentRequired: "Inserisci almeno un carattere",
         commentNotDelete: "Il commento non può essere rimosso: altri utenti hanno linkato la tua risposta",
+        commentShare: "Condividi",
+        commentShareClose: "Esci",
+        commentShareTitle: "Condividi il link alla risposta",
 
         ratings: "Le Valutazioni",
         ratingPlaceholder: "Se vuoi, commenta il tuo giudizio",
@@ -274,7 +277,7 @@ angular.module('disc.common',
         ratingNotDelete: "Il commento non può essere rimosso dall'Autore della lezione.",
         ratingInput: "Il tuo giudizio: ",
 
-        noLessonIdFound: "Oooops...la Lezione non esiste! <br>Segnalalo al <a href='mailto:support@discitur.org'>supporto tecnico</a>",
+        noLessonIdFound: "Oooops...la Lezione non esiste! <br>Segnalalo al <a href='mailto:team.discitur@gmail.com'>supporto tecnico</a>",
         viewMore: "Approfondisci >>",
         keywordPlaceholder: "Ricerca la lezione per titolo",
         advKeyword: "Titolo",
@@ -376,7 +379,11 @@ angular.module('disc.common',
         testEnv: "Ambiente di Test",
         signupSuccess: 'Registrazione avvenuta con successo. Controlla la tua email ed attiva il tuo account.',
         activationSuccess: 'Il tuo account è stato attivato. Accedi e inizia a dare il tuo contributo!',
-        activationFailed: 'Il tuo account NON è stato attivato. Controlla la tua mail o contatta il supporto tecnico.'
+        activationFailed: 'Il tuo account NON è stato attivato. Controlla la tua mail o contatta il supporto tecnico.',
+        manifestTitle: 'Il Manifesto',
+        backstageTitle: 'Il Backstage del progetto',
+        contributeTitle: 'Contribuisci al progetto',
+        aboutTitle: 'Chi siamo'
         }
 )
 .value('overrides',
@@ -601,8 +608,10 @@ angular.module('disc.common',
                 transclude: false,
                 scope: {
                     cssClass: '@?',
-                    absUrl: '@',
-                    urlTitle: '@?'
+                    absUrl: '@?',
+                    urlTitle: '@?',
+                    hideFbLike: '@?',
+                    hideGpOne: '@?'
                 },
                 link: function (scope, element, attrs) {
                     // inherit Discitur Base Controller
@@ -621,7 +630,9 @@ angular.module('disc.common',
                         TWShareHref: null,
                         GPOneHref: null,
                         GPShareHref: null,
-                        LIShareHref: null                        
+                        LIShareHref: null,
+                        showFBLike: angular.isDefined(scope.hideFbLike) ? false : true,
+                        showGPone: angular.isDefined(scope.hideGpOne) ? false : true
                     }
 
                     scope.labels = {
@@ -635,8 +646,8 @@ angular.module('disc.common',
                     
                     //---------- Initialization --------------
                     scope.local.cssClass =  scope.cssClass || 'social-bar';
-                    scope.local.absUrl= encodeURIComponent(scope.absUrl);
-                    scope.local.urlTitle = encodeURIComponent(scope.urlTitle);
+                    scope.local.absUrl= encodeURIComponent(angular.isDefined(attrs.absUrl) ? attrs.absUrl : scope.absUrl);
+                    scope.local.urlTitle = encodeURIComponent(angular.isDefined(scope.urlTitle) ? scope.urlTitle : scope.absUrl);
                     scope.local.FBShareHref = "http://www.facebook.com/sharer.php?u=" + scope.local.absUrl + (scope.urlTitle ? "&t=" + scope.local.urlTitle : "");
                     scope.local.FBLikeHref= "http://www.facebook.com/plugins/like.php?href=" + scope.local.absUrl;
                     scope.local.TWShareHref = "http://twitter.com/share?url=" + scope.local.absUrl + (scope.urlTitle ? "&text=" + scope.local.urlTitle : "") + "&via=__wilver__";
@@ -1472,12 +1483,15 @@ angular.module('disc.common',
       }]);;angular.module('disc.lesson')
     .directive('lessonComment', [
         '$rootScope',
-        'LabelService',
         'LessonService',
         'AuthService',
         'CommentDTO',
         '$timeout',
-        function ($rootScope, LabelService, LessonService, AuthService, CommentDTO, $timeout) {
+        '$location',
+        '$anchorScroll',
+        'DisciturBaseCtrl',
+        '$injector',
+        function ($rootScope, LessonService, AuthService, CommentDTO, $timeout, $location, $anchorScroll, DisciturBaseCtrl, $injector) {
             return {
                 restrict: 'E',
                 templateUrl: 'modules/lesson/LessonComment.html',
@@ -1487,15 +1501,14 @@ angular.module('disc.common',
                     comment: '=?',
                     lessonId: '@',
                     addComment: '&',
-                    deleteComment: '&'
+                    deleteComment: '&',
+                    absUrl: '@?',
                 },
                 link: function (scope, element, attrs) {
-                    //-------- private methods-------
-
-                    // call Label Service to get dynamic labels
-                    var _getLabel = function (label) {
-                        return LabelService.get('LessonCtrl', label);
-                    }
+                    // inherit Discitur Base Controller
+                    $injector.invoke(DisciturBaseCtrl, this, { $scope: scope });
+                    //-------- private properties -------
+                    scope._ctrl = 'lessonCommentDrv';
 
                     //-------- private variables-------
                     var form = element.find('form');
@@ -1510,21 +1523,25 @@ angular.module('disc.common',
                         sameUser: scope.comment ? (scope.comment.author.username == AuthService.user.username) : false,
                         answer: false,
                         edit: false,
-                        showDeleteCommentErr: false
+                        showDeleteCommentErr: false,
+                        commentIdHtml: angular.isDefined(scope.comment) ? 'l' + scope.lessonId + '-c' + scope.comment.id : null
                     }
 
                     scope.labels = {
-                        comments: _getLabel('comments'),
-                        commentPlaceholder: _getLabel('commentPlaceholder'),
-                        commentHelp: _getLabel('commentHelp'),
-                        commentAnswer: _getLabel('commentAnswer'),
-                        commentEdit: _getLabel('commentEdit'),
-                        commentPreview: _getLabel('commentPreview'),
-                        commentSave: _getLabel('commentSave'),
-                        commentRequired: _getLabel('commentRequired'),
-                        commentNotDelete: _getLabel('commentNotDelete'),
-                        editTooltip: _getLabel('editTooltip'),
-                        deleteTooltip: _getLabel('deleteTooltip')
+                        comments: scope.getLabel('comments'),
+                        commentPlaceholder: scope.getLabel('commentPlaceholder'),
+                        commentHelp: scope.getLabel('commentHelp'),
+                        commentAnswer: scope.getLabel('commentAnswer'),
+                        commentEdit: scope.getLabel('commentEdit'),
+                        commentPreview: scope.getLabel('commentPreview'),
+                        commentSave: scope.getLabel('commentSave'),
+                        commentRequired: scope.getLabel('commentRequired'),
+                        commentNotDelete: scope.getLabel('commentNotDelete'),
+                        editTooltip: scope.getLabel('editTooltip'),
+                        deleteTooltip: scope.getLabel('deleteTooltip'),
+                        commentShare: scope.getLabel('commentShare'),
+                        commentShareClose: scope.getLabel('commentShareClose'),
+                        commentShareTitle: scope.getLabel('commentShareTitle')
                     };
 
                     //-------- public methods-------
@@ -1600,7 +1617,13 @@ angular.module('disc.common',
                                 !scope.actions.openSignIn();
                             }
                             scope.local.answer = !scope.local.answer;
+                        },
+                        closeShare : function () {
+                            var _link = jQuery('#share' + scope.local.commentIdHtml);
+                            var _scope = angular.element('#share' + scope.local.commentIdHtml).scope()
+                            _scope.tt_isOpen = false;
                         }
+
                     }
 
                     //-------- Initialization -------
@@ -1613,6 +1636,12 @@ angular.module('disc.common',
                             scope.local.sameUser = scope.comment ? (scope.comment.author.username == AuthService.user.username) : false;
                         }
                     );
+
+
+                    var _hash = $location.hash();
+                    if (angular.isDefined(_hash) && _hash === scope.local.commentIdHtml) {
+                        $timeout(function () { $anchorScroll(); }, 300);
+                    }
 
                 }
             }
@@ -1823,8 +1852,11 @@ angular.module('disc.common',
                 comments: $scope.getLabel('comments'),
                 ratings: $scope.getLabel('ratings'),
                 ratingtHelp: $scope.getLabel('ratingtHelp'),
-                notPublished: $scope.getLabel('notPublished')
+                notPublished: $scope.getLabel('notPublished')                
             };
+
+            //$rootScope.labels.appTitle = $scope.getLabel('appTitle') + ' ' + lessonData.title
+            $scope._actions.setTitle(lessonData.title);
 
             $scope.local = {
                 commentText: null,
@@ -2539,13 +2571,13 @@ angular.module('disc.common',
                             $scope.local.lesson.lessonId = 0;
                             LessonService.create($scope.local.lesson)
                                 .then(function (data) {// success
-                                    $state.go('lessonDetail', { lessonId: data.lessonId }, { inherit: false });
+                                    $state.go('lessonDetail', { lessonId: data.lessonId, title: $scope.filter('beautyURL')(data.title) }, { inherit: false });
                                 })
                         }
                         else {
                             LessonService.update($scope.local.lesson)
                                 .then(function (data) {// success
-                                    $state.go('lessonDetail', { lessonId: data.lessonId }, { inherit: false });
+                                    $state.go('lessonDetail', { lessonId: data.lessonId, title: $scope.filter('beautyURL')(data.title) }, { inherit: false });
                                 })
                         }
 
@@ -2555,7 +2587,7 @@ angular.module('disc.common',
                 cancelEditing: function () {
                     // set inherit option to false to avoid conflict with parameters in URL set by advancedSearch
                     if ($scope.local.lesson.lessonId > 0)
-                        $state.go('lessonDetail', { lessonId: lessonData.lessonId }, { inherit: false });
+                        $state.go('lessonDetail', { lessonId: lessonData.lessonId, title: $scope.filter('beautyURL')(lessonData.title) }, { inherit: false });
                     else
                         $state.go('lessonSearch', { keywod: ''}, { inherit: false });
                 },
@@ -3378,13 +3410,15 @@ angular.module('disc.common',
         'user',
         'AuthService',
         '$state',
+        '$modal',
         function (
             $scope,
             DisciturBaseCtrl,
             $injector,
             user,
             AuthService,
-            $state
+            $state,
+            $modal
             ) {
             // inherit Discitur Base Controller
             $injector.invoke(DisciturBaseCtrl, this, { $scope: $scope });
@@ -3447,6 +3481,8 @@ angular.module('disc.common',
                     }
                 }
             }
+
+            var modalInstance;
             //-------- public methods -------
             $scope.actions = {
                 changePassword: function () {
@@ -3516,6 +3552,39 @@ angular.module('disc.common',
                     }
                     else
                         alert("NON VALIDO")
+                },
+                changeImage: function () {
+                    modalInstance = $modal.open({
+                        backdrop: true,
+                        //windowClass: 'modal-signin',
+                        template: '<div class="container"><div class="row"><img ng-src="{{local.user.image}}" alt="" class="img-rounded img-responsive" /></div><form name="ImgForm" novalidate><div class="form-group"><input type="file" id="ImageData" name="ImageData" onchange="angular.element(this).scope().setFiles(this)" /></div></form></div>',
+                        controller: function ($scope, $modalInstance, AuthService) {
+                            var prevImage = AuthService.user.image;
+                            $scope.local = {
+                                user: AuthService.user
+                            }
+                            $scope.setFiles = function (element) {
+                                scope.$apply(function (scope) {
+                                    console.log('files:', element.files);
+                                    // Turn the FileList object into an Array
+                                    scope.files = []
+                                    for (var i = 0; i < element.files.length; i++) {
+                                        scope.files.push(element.files[i])
+                                    }
+                                    //scope.progressVisible = false
+                                });
+                            };
+                        }
+                    });
+
+                    modalInstance.result.then(function (selectedItem) {
+                        // login caller callback
+                        //if (actions && actions.ok)
+                        //    actions.ok();
+                    }, function () {
+                        console.log('Modal dismissed at: ' + new Date());
+                    });
+
                 }
             }
 
@@ -3587,7 +3656,12 @@ angular.module('disc.common',
         '$urlRouterProvider',
         '$httpProvider',
         'DisciturSettings',
-        function ($stateProvider, $urlRouterProvider, $httpProvider, DisciturSettings) {
+        '$locationProvider',
+        function ($stateProvider, $urlRouterProvider, $httpProvider, DisciturSettings, $locationProvider) {
+            // for HTML5 mode
+            //$locationProvider.html5Mode(true)
+            // for HashBang mode
+            $locationProvider.html5Mode(false).hashPrefix('!');
             $httpProvider.interceptors.push('LoadingInterceptor');
 
             $stateProvider
@@ -3636,21 +3710,25 @@ angular.module('disc.common',
                 .state('master.1cl.mission', {
                     url: 'project/mission',
                     parent: 'master.1cl',
+                    title : 'manifestTitle',
                     templateUrl: 'modules/main/site/Project.html'
                 })
                 .state('master.1cl.about', {
                     url: 'project/About',
                     parent: 'master.1cl',
+                    title: 'aboutTitle',
                     templateUrl: 'modules/main/site/About.html'
                 })
                 .state('master.1cl.backstage', {
                     url: 'project/backstage',
                     parent: 'master.1cl',
+                    title: 'backstageTitle',
                     templateUrl: 'modules/main/site/BackStage.html'
                 })
                 .state('master.1cl.contribute', {
                     url: 'project/contribute',
                     parent: 'master.1cl',
+                    title: 'contributeTitle',
                     templateUrl: 'modules/main/site/Contribute.html'
                 })
 
@@ -3686,7 +3764,7 @@ angular.module('disc.common',
     [
         //'LabelService',
         function () {
-            function DisciturBaseCtrl($scope, LabelService,$location) {
+            function DisciturBaseCtrl($scope, LabelService, $location, $rootScope, $filter) {
                 //-------- public methods-------
                 $scope.absUrl = $location.absUrl();
                 $scope.absUrlComponent = encodeURIComponent($scope.absUrl);
@@ -3718,10 +3796,21 @@ angular.module('disc.common',
                         _detachStaticWatchers();
                     }
                 })
+                // in order to use filters in Controllers
+                $scope.filter = $filter;
 
+                $scope._labels = {
+                    appTitle : ''
+                }
+
+                $scope._actions = {
+                    setTitle: function (iTitle) {
+                        $rootScope.$broadcast('disc.setTitleEvent', { title: iTitle });
+                    }
+                }
 
             }
-            DisciturBaseCtrl.$inject = ['$scope', 'LabelService', '$location'];
+            DisciturBaseCtrl.$inject = ['$scope', 'LabelService', '$location','$rootScope','$filter'];
             return (DisciturBaseCtrl);
 
         }
@@ -3789,6 +3878,9 @@ angular.module('disc.common',
             //------- Global Event Management -------//
             $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
                 //console.log("$stateChangeStart")
+                // reset title
+                var _cTitle = $scope.getLabel('appTitle') + (toState.title ? ' | ' + $scope.getLabel(toState.title) : '');
+                $scope.labels.appTitle = _cTitle;
                 changeStartCallbacks[0](event, toState, toParams, fromState, fromParams);
             });
             $rootScope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState, fromParams) {
@@ -3805,6 +3897,12 @@ angular.module('disc.common',
                 //else
                 //    return $state.go(toState);
             });
+
+            $scope.$on('disc.setTitleEvent', function (event, args) {
+                if(angular.isDefined(args.title))
+                    $scope.labels.appTitle = $scope.getLabel('appTitle') + ' | '+ args.title;
+            })
+
         }
     ])
 
@@ -3833,13 +3931,13 @@ angular.module('disc.common',
                 isInMaintenance: DisciturSettings.isInMaintenance
             }
             $scope.menu = [
-                { id: 1, title: "Lezioni", route: "/lesson" },
+                { id: 1, title: "Lezioni", route: "/lesson", state: "lessonSearch" },
                 {
-                    id: 2, title: "Il Progetto", route: "/project", subMenu: [
-                        { id: 21, title: "Il Manifesto", route: "/project/mission" },
-                        { id: 22, title: "Chi siamo", route: "/project/About" },
-                        { id: 23, title: "Contribuisci", route: "/project/contribute" },
-                        { id: 24, title: "BackStage", route: "/project/backstage" }
+                    id: 2, title: "Il Progetto", route: "/project", state: "master.1cl.home", subMenu: [
+                        { id: 21, title: "Il Manifesto", route: "/project/mission", state: "master.1cl.mission" },
+                        { id: 23, title: "Contribuisci", route: "/project/contribute", state: "master.1cl.contribute" },
+                        { id: 24, title: "BackStage", route: "/project/backstage", state: "master.1cl.backstage" },
+                        { id: 22, title: "Chi siamo", route: "/project/About", state: "master.1cl.about" }
                     ]
                 }/*,
                 { id: 3, title: "Contatti", route: "/project/contact" }*/

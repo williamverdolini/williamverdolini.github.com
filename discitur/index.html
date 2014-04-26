@@ -2,13 +2,15 @@
 <html ng-app="discitur" ng-controller="DisciturRootCtrl" xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <!--------------------- Styles --------------------------->
+    <title ng-bind="labels.appTitle"></title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css" media="screen">
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/flatly-bootstrap.min.css" media="screen">
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
 
-<link type="text/css" rel="stylesheet" href="assets/app.min.css?d2470596" />
+<link type="text/css" rel="stylesheet" href="assets/app.min.css?66e055d6" />
 
     <!--------------------- /Styles --------------------------->
 
@@ -18,18 +20,17 @@
     <script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/aes.js"></script>
     <script type="text/javascript" src="bower_components/tinymce/tinymce.min.js"></script>
 
-<script type="text/javascript" src="assets/libraries.min.js?95373e4d"></script>
+<script type="text/javascript" src="assets/libraries.min.js?e837c202"></script>
 
-<script type="text/javascript" src="assets/SettingConfig.js?04b5f5c7"></script>
+<script type="text/javascript" src="assets/SettingConfig.js?06a4f5c7"></script>
 
-<script type="text/javascript" src="assets/app.js?96d49cee"></script>
+<script type="text/javascript" src="assets/app.js?5dc66984"></script>
 
 
 
     <!--------------------- /Scripts --------------------------->
 
     
-    <!--<title>{{labels.appTitle}}</title>-->
 </head>
 <body>
     <div id="fb-root"></div>
@@ -45,6 +46,7 @@
         js.async = true;
         js.src = "//connect.facebook.net/it_IT/all.js#xfbml=1";
         fjs.parentNode.insertBefore(js, fjs);
+        
     }(document, 'script', 'facebook-jssdk'));
     </script>
     <script>
@@ -53,9 +55,7 @@
             p = /^http:/.test(d.location) ? 'http' : 'https';
         if (!d.getElementById(id)) {
             js = d.createElement(s);
-            js.id = id; 
-            js.async = true;
-            js.src = p + '://platform.twitter.com/widgets.js';
+            js.id = id; js.src = p + '://platform.twitter.com/widgets.js';
             fjs.parentNode.insertBefore(js, fjs);
         }
     }(document, 'script', 'twitter-wjs');

@@ -11,10 +11,11 @@ tagline: Progetti, storie, riflessioni
   <div class="panel panel-default">
     <div class="panel-body">
       <div class="col-sm-12 col-md-4 col-lg-4">
-        <a href="http://williamverdolini.github.io/discitur/" target="_blank">
+        <a href="http://www.disciturweb.com/" target="_blank">
           <img src="{{ BASE_PATH }}/images/discitur/Project-Logo.png" class="img-rounded" style="width: 300px; height: 200px;"/>
         </a>
-        <h4><a href="http://williamverdolini.github.io/discitur/" target="_blank">Ambiente di test</a></h4>      
+        <h4><a href="http://www.disciturweb.com/" target="_blank">Ambiente di Produzione</a></h4>      
+        <h5><a href="http://williamverdolini.github.io/discitur/" target="_blank">Ambiente di test</a></h5>      
       </div>
       <div class="col-sm-12 col-md-8 col-lg-8">
         <dl class="dl-horizontal">
@@ -58,6 +59,10 @@ Il progetto è versionato su repository pubblico: <a href="https://github.com/wi
 
 ###Chi sono
 La sintesi della mia storia lavorativa la potete leggere nel <a href="http://www.linkedin.com/in/williamverdolini" target="_blank">mio profilo Linkedin</a>
+
+<a href="http://stackoverflow.com/users/3316654/wilver" target="_blank">
+<img src="http://stackoverflow.com/users/flair/3316654.png?theme=clean" width="208" height="58" alt="profile for wilver at Stack Overflow, Q&amp;A for professional and enthusiast programmers" title="profile for wilver at Stack Overflow, Q&amp;A for professional and enthusiast programmers">
+</a>
 
 <!--   
 ## I Posts

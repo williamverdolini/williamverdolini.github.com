@@ -23,7 +23,7 @@ tags: [Angular.js,TDD]
   "url" : "http://williamverdolini.github.io/2014/01/27/discitur-TDD_JE/"
 }
 </script>
-[_italian_]({{BASE_PATH }}/2014/01/26/discitur-TDD_JE)
+[_italian_]({{BASE_PATH }}/2014/01/27/discitur-TDD_JE)
 
  
 

@@ -24,7 +24,7 @@ tags: [Angular.js,Routing]
 }
 </script>
 
-Another aspect related to the management of the states and routing that I had to manage is paginated research. 
+Another aspect related to the states and routing management that I had to face is paginated research. 
 The scenario is quite simple and common:
 
 - search form that launches a server-side search

@@ -182,7 +182,8 @@ angular.module('disc.common',
         'ngResource',
         'ui.router',
         'ngSanitize',
-        'ui.bootstrap'
+        'ui.bootstrap',
+        'angularFileUpload'
     ])
     .config(
     [
@@ -190,7 +191,21 @@ angular.module('disc.common',
         '$stateProvider',
         '$urlRouterProvider', 
         '$uiViewScrollProvider',
+        //'$fileUploader',
         function ($httpProvider, $stateProvider, $urlRouterProvider, $uiViewScrollProvider) {
+
+            //delete $httpProvider.defaults.headers.common['X-Requested-With'];
+            //// File Upload settings:
+            //angular.extend(fileUploadProvider.defaults, {
+            //    // Enable image resizing, except for Android and Opera,
+            //    // which actually support image resizing, but fail to
+            //    // send Blob objects via XHR requests:
+            //    disableImageResize: /Android(?!.*Chrome)|Opera/
+            //        .test(window.navigator.userAgent),
+            //    //maxFileSize: 10000000,
+            //    acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i
+            //});
+
             $httpProvider.interceptors.push('UserAuthInterceptor');
 
             // to prevent autoscroll (introduced by angular-ui-router 0.2.8 https://github.com/angular-ui/ui-router/releases/tag/0.2.8)
@@ -277,7 +292,7 @@ angular.module('disc.common',
         ratingNotDelete: "Il commento non può essere rimosso dall'Autore della lezione.",
         ratingInput: "Il tuo giudizio: ",
 
-        noLessonIdFound: "Oooops...la Lezione non esiste! <br>Segnalalo al <a href='mailto:team.discitur@gmail.com'>supporto tecnico</a>",
+        noLessonIdFound: "Oooops...la Lezione non esiste! <br>Segnalalo al <a href='mailto:<%1%>'>supporto tecnico</a>",
         viewMore: "Approfondisci >>",
         keywordPlaceholder: "Ricerca la lezione per titolo",
         advKeyword: "Titolo",
@@ -304,9 +319,17 @@ angular.module('disc.common',
         //usernameNotValid: "User Name NON valido: inserisci un indirizzo email corretto",
         usernameNotValid: "User Name NON valido",
         register: "Registrati",
+        userProfileTitle: "Profilo Utente",
+        userProfileImageChange: "cambia l'immagine",
         userProfile: "Il tuo Profilo",
         userLessons: "Le tue Lezioni",
         userSignOff: "Esci",
+        userImageTitle: "Cambia l'immagine del profilo",
+        userImageChooseFile: "Scegli il file",
+        userImageUpload: 'Carica',
+        userImageCancel: 'Annulla',
+        userImageName: "Nome:",
+        userImageSize: "Dimensione:",
 
         editLessonButton: "Modifica",
         requiredField: "Dato obbligario",
@@ -426,14 +449,25 @@ angular.module('disc.common',
         'errors',
         'ErrorDTO',
         function (dictionary, overrides, errors, ErrorDTO) {
+            //-------- private methods-------
+            // allow dynamic labels (string with <%1%>, <%2%> can be replaced with arguments)
+            var replaceArgs = function (label, args) {
+                if (angular.isArray(args)) {
+                    for (var j = 0; j < args.length; j++) {
+                        label = label.replace('<%' + (j+1) + '%>', args[j]);
+                    }
+                }
+                return label;
+            }
+
             return {
-                get: function (controller, label) {
+                get: function (controller, label, strArguments) {
                     //console.debug("LabelService.get " + controller + " - " + label)
                     // if exists the overriden label within the Controller is returned 
                     // otherwise the dictionary's label is returned
                     return (overrides[controller] && overrides[controller][label]) ?
-                        overrides[controller][label] :
-                        dictionary[label] || 'Label (' + label + ') not set!';
+                        replaceArgs(overrides[controller][label], strArguments) :
+                        replaceArgs(dictionary[label], strArguments) || 'Label (' + label + ') not set!';
 
                 },
                 apiErrorCode: function (errorCode) {
@@ -721,7 +755,58 @@ angular.module('disc.common',
                 }
             }
         }
-    ]);;angular.module('disc.lesson')
+    ]);;'use strict';
+
+angular.module('disc.common')
+    /**
+    * The ng-thumb directive
+    * @author: nerv
+    * @version: 0.1.2, 2014-01-09
+    */
+    .directive('ngThumb', ['$window', function ($window) {
+        var helper = {
+            support: !!($window.FileReader && $window.CanvasRenderingContext2D),
+            isFile: function (item) {
+                return angular.isObject(item) && item instanceof $window.File;
+            },
+            isImage: function (file) {
+                var type = '|' + file.type.slice(file.type.lastIndexOf('/') + 1) + '|';
+                return '|jpg|png|jpeg|bmp|gif|'.indexOf(type) !== -1;
+            }
+        };
+
+        return {
+            restrict: 'A',
+            template: '<canvas/>',
+            link: function (scope, element, attributes) {
+                if (!helper.support) return;
+
+                var params = scope.$eval(attributes.ngThumb);
+
+                if (!helper.isFile(params.file)) return;
+                if (!helper.isImage(params.file)) return;
+
+                var canvas = element.find('canvas');
+                var reader = new FileReader();
+
+                reader.onload = onLoadFile;
+                reader.readAsDataURL(params.file);
+
+                function onLoadFile(event) {
+                    var img = new Image();
+                    img.onload = onLoadImage;
+                    img.src = event.target.result;
+                }
+
+                function onLoadImage() {
+                    var width = params.width || this.width / this.height * params.height;
+                    var height = params.height || this.height / this.width * params.width;
+                    canvas.attr({ width: width, height: height });
+                    canvas[0].getContext('2d').drawImage(this, 0, 0, width, height);
+                }
+            }
+        };
+    }]);;angular.module('disc.lesson')
     /*-------------------------------------------------------------------------------
     Vantaggi del DTO:
     - disaccoppiamento tra i dati restituite dal BE e quelli gestiti dal FE
@@ -872,7 +957,8 @@ angular.module('disc.common',
                 comment.level = commentData.Level
                 comment.author.userid = commentData.Author.UserId;
                 comment.author.username = commentData.Author.UserName;
-                comment.author.image = commentData.Author.Picture;
+                //comment.author.image = commentData.Author.Picture;
+                comment.author.image = commentData.Author.Thumb || commentData.Author.Picture;
                 return comment;
             }
             // Lesson Comments array data Transfer
@@ -945,7 +1031,8 @@ angular.module('disc.common',
                 rating.rating = ratingData.Rating;
                 rating.author.userid = ratingData.Author.UserId;
                 rating.author.username = ratingData.Author.UserName;
-                rating.author.image = ratingData.Author.Picture;
+                //rating.author.image = ratingData.Author.Picture;
+                rating.author.image = ratingData.Author.Thumb || ratingData.Author.Picture;
                 rating.version = ratingData.Vers;
                 return rating;
             }
@@ -2067,20 +2154,24 @@ angular.module('disc.common',
 ;angular.module('disc.lesson')
     .controller('Lesson404Ctrl', [
         '$scope',
-        'LabelService',
+        'DisciturBaseCtrl',
+        '$injector',
+        'DisciturSettings',
         function (
             $scope,
-            LabelService) {
-            /***** label initialization ****/
-            _getLabel = function (label) {
-                return LabelService.get('Lesson404Ctrl', label);
-            }
+            DisciturBaseCtrl,
+            $injector,
+            DisciturSettings) {
+            // inherit Discitur Base Controller
+            $injector.invoke(DisciturBaseCtrl, this, { $scope: $scope });
+
+            //-------- private properties -------
+            $scope._ctrl = 'Lesson404Ctrl';
 
             $scope.labels = {
-                noLessonIdFound: _getLabel('noLessonIdFound')
+                noLessonIdFound: $scope.getLabel('noLessonIdFound', DisciturSettings.supportEmail)
             };
             
-            console.log('404 Controller')
         }
     ]);;angular.module('disc.lesson')
     .controller('LessonListCtrl', [
@@ -2623,6 +2714,7 @@ angular.module('disc.common',
             this.surname = null;
             this.username = null;
             this.image = null;
+            this.thumb = null;
             this.email = null;
             this.roles = [];
             this.isLogged = null;
@@ -2637,7 +2729,10 @@ angular.module('disc.common',
         'DisciturSettings',
         'UserDTO',
         'LabelService',
-        function ($http, $q, DiscUtil, DisciturSettings, UserDTO, LabelService) {
+        '$fileUploader',
+        function ($http, $q, DiscUtil, DisciturSettings, UserDTO, LabelService, $fileUploader) {
+            //-------- private variables -------
+            
             //-------- private methods -------
 
             // encode message with CriptoJS
@@ -2678,6 +2773,7 @@ angular.module('disc.common',
                 _user.surname = apiData.Surname;
                 _user.username = apiData.UserName || apiData.userName;
                 _user.image = apiData.Picture;
+                _user.thumb = apiData.Thumb || apiData.Picture;
                 _user.email = apiData.Email;
                 _user.isLogged = true;
                 return _user;
@@ -3049,6 +3145,20 @@ angular.module('disc.common',
                                 deferred.resolve(false);
                             });
                     return deferred.promise;
+                },
+                // Update User Image
+                updateUserImage: function (item) {
+                    return $fileUploader.uploadItem(item);
+                },
+                // expose Authorizatin Token (BRUTTO!!)
+                getTokenHeader: function () {
+                    var _token = localStorage.getItem(DisciturSettings.authToken)
+                    var res = {};
+                    if (_token)
+                        res = {
+                            Authorization : 'Bearer ' + _token
+                        }
+                    return res;
                 }
             }
 
@@ -3437,9 +3547,14 @@ angular.module('disc.common',
                 }
             }
 
+            //$scope.options = {
+            //    url: '//jquery-file-upload.appspot.com/'
+            //};
+
             //--------- public properties ------
             $scope.labels = {
-                //userName: $scope.getLabel('userName')
+                userProfileTitle: $scope.getLabel('userProfileTitle'),
+                userProfileImageChange: $scope.getLabel('userProfileImageChange'),
                 email: $scope.getLabel('email'),
                 changePassword: $scope.getLabel('changePassword'),
                 currentPassword: $scope.getLabel('currentPassword'),
@@ -3556,25 +3671,9 @@ angular.module('disc.common',
                 changeImage: function () {
                     modalInstance = $modal.open({
                         backdrop: true,
-                        //windowClass: 'modal-signin',
-                        template: '<div class="container"><div class="row"><img ng-src="{{local.user.image}}" alt="" class="img-rounded img-responsive" /></div><form name="ImgForm" novalidate><div class="form-group"><input type="file" id="ImageData" name="ImageData" onchange="angular.element(this).scope().setFiles(this)" /></div></form></div>',
-                        controller: function ($scope, $modalInstance, AuthService) {
-                            var prevImage = AuthService.user.image;
-                            $scope.local = {
-                                user: AuthService.user
-                            }
-                            $scope.setFiles = function (element) {
-                                scope.$apply(function (scope) {
-                                    console.log('files:', element.files);
-                                    // Turn the FileList object into an Array
-                                    scope.files = []
-                                    for (var i = 0; i < element.files.length; i++) {
-                                        scope.files.push(element.files[i])
-                                    }
-                                    //scope.progressVisible = false
-                                });
-                            };
-                        }
+                        windowClass: 'modal-image-upload',
+                        templateUrl: 'UserImage',
+                        controller: 'UserImageCtrl'
                     });
 
                     modalInstance.result.then(function (selectedItem) {
@@ -3641,6 +3740,135 @@ angular.module('disc.common',
 
         }
     ]);
+;angular.module('disc.user')
+    .controller('UserImageCtrl', [
+        '$scope',
+        '$modalInstance',
+        'AuthService',
+        'DisciturBaseCtrl',
+        '$injector',
+        '$fileUploader',
+        'DisciturSettings',
+        function (
+            $scope,
+            $modalInstance,
+            AuthService,
+            DisciturBaseCtrl,
+            $injector,
+            $fileUploader,
+            DisciturSettings
+            ) {
+            // inherit Discitur Base Controller
+            $injector.invoke(DisciturBaseCtrl, this, { $scope: $scope });
+
+            //-------- private properties -------
+            $scope._ctrl = 'UserImageCtrl';
+
+            //-------- public properties ----
+            // Modal Dialog is inherited scope, so it's important to set internal object, 
+            // otherwhise Javascript search properties in parent scope if not exists in this scope
+            // very very very important for form validation!! (https://github.com/angular-ui/bootstrap/issues/969)
+            $scope.local = {
+                item: null
+            };
+
+            $scope.labels = {
+                userImageTitle: $scope.getLabel('userImageTitle'),
+                userImageChooseFile: $scope.getLabel('userImageChooseFile'),
+                userImageUpload: $scope.getLabel('userImageUpload'),
+                userImageCancel: $scope.getLabel('userImageCancel'),
+                userImageName: $scope.getLabel('userImageName'),
+                userImageSize: $scope.getLabel('userImageSize')
+            };
+            //-------- private methods -------
+
+            //--------- public methods ------   
+            $scope.actions = {
+                ok: function () {
+                    $modalInstance.close(0);
+                },
+                cancel: function () {
+                    $modalInstance.dismiss('cancel');
+                },
+                clearQueue: function () {
+                    uploader.clearQueue();
+                    $scope.local.item = null;
+                    console.log('uploader.clearQueue');
+                }
+            }
+
+
+            // Creates a uploader
+            var uploader = $scope.uploader = $fileUploader.create({
+                scope: $scope,
+                url: DisciturSettings.apiUrl + 'User/Image',
+                queueLimit: 1,
+                formData: [{ UserId: AuthService.user.userid }],
+                //removeAfterUpload: true,
+                headers: AuthService.getTokenHeader()
+            });
+
+            // Images only
+            uploader.filters.push(function (item /*{File|HTMLInputElement}*/) {
+                var type = uploader.isHTML5 ? item.type : '/' + item.value.slice(item.value.lastIndexOf('.') + 1);
+                type = '|' + type.toLowerCase().slice(type.lastIndexOf('/') + 1) + '|';
+                return '|jpg|png|jpeg|bmp|gif|'.indexOf(type) !== -1;
+            });
+
+            // REGISTER HANDLERS
+            uploader.bind('afteraddingfile', function (event, item) {
+                $scope.local.item = uploader.queue[0];
+                console.info('After adding a file', item);
+            });
+
+            uploader.bind('whenaddingfilefailed', function (event, item) {
+                console.info('When adding a file failed', item);
+            });
+
+            uploader.bind('afteraddingall', function (event, items) {
+                console.info('After adding all files', items);
+            });
+
+            uploader.bind('beforeupload', function (event, item) {
+                console.info('Before upload', item);
+            });
+
+            uploader.bind('progress', function (event, item, progress) {
+                console.info('Progress: ' + progress, item);
+            });
+
+            uploader.bind('success', function (event, xhr, item, response) {
+                console.info('Success', xhr, item, response);
+                $scope.local.item = null;
+                AuthService.getUserInfo().then(function () {
+                    $scope.actions.ok();
+                })
+            });
+
+            uploader.bind('cancel', function (event, xhr, item) {
+                console.info('Cancel', xhr, item);
+            });
+
+            uploader.bind('error', function (event, xhr, item, response) {
+                console.info('Error', xhr, item, response);
+            });
+
+            uploader.bind('complete', function (event, xhr, item, response) {
+                console.info('Complete', xhr, item, response);
+            });
+
+            uploader.bind('progressall', function (event, progress) {
+                console.info('Total progress: ' + progress);
+            });
+
+            uploader.bind('completeall', function (event, items) {
+                console.info('Complete all', items);
+            });
+
+
+        }
+    ]);
+
 ;angular.module("discitur",
     [
         'ui.router',
@@ -3659,7 +3887,7 @@ angular.module('disc.common',
         '$locationProvider',
         function ($stateProvider, $urlRouterProvider, $httpProvider, DisciturSettings, $locationProvider) {
             // for HTML5 mode
-            //$locationProvider.html5Mode(true)
+            //$locationProvider.html5Mode(true);
             // for HashBang mode
             $locationProvider.html5Mode(false).hashPrefix('!');
             $httpProvider.interceptors.push('LoadingInterceptor');
@@ -3698,7 +3926,7 @@ angular.module('disc.common',
             }
             else {
                 // For any unmatched url, redirect to HomePage
-                $urlRouterProvider.otherwise('/project/home');
+                $urlRouterProvider.otherwise('project/home');
 
                 $stateProvider
                 // Web Site (Content States)
@@ -3770,7 +3998,8 @@ angular.module('disc.common',
                 $scope.absUrlComponent = encodeURIComponent($scope.absUrl);
                 //-------- public methods-------
                 $scope.getLabel = function (label) {
-                    return LabelService.get($scope._ctrl, label);
+                    var strArguments = [].slice.call(arguments, 1);
+                    return LabelService.get($scope._ctrl, label, strArguments);
                 };
 
 
@@ -3853,6 +4082,8 @@ angular.module('disc.common',
                     AuthService.resolveAuth()['finally'](function () {
                         // http://angular-ui.github.io/ui-router/site/#/api/ui.router.router.$urlRouter
                         // Continue with the update and state transition if logic allows
+                        $urlRouter.sync();
+                        // Force again sync because $location.path() is not updated with "otherwise route"
                         $urlRouter.sync();
                     });
                     changeStartCallbacks.splice(0, 1);

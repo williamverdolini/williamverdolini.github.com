@@ -24,12 +24,16 @@
         {% if page.group == 'Discitur_en' %}
           {% include themes/blog/disc-sidebar-en.html %}
         {% endif %}        
+        
+        {% if page.group == 'CQRS_ES_Todos' %}
+          {% include themes/blog/cqrs-sidebar.html %}
+        {% endif %}        
         </div>
     
     
     </div>    
     
-
+{% comment %}
   {% unless page.categories == empty %}
     <ul class="tag_box inline">
       <li><i class="icon-folder-open"></i></li>
@@ -37,7 +41,7 @@
       {% include JB/categories_list %}
     </ul>
   {% endunless %}  
-
+{% endcomment%}
   {% unless page.tags == empty %}
     <ul class="tag_box inline">
       <li><i class="icon-tags"></i></li>

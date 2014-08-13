@@ -1,0 +1,111 @@
+---
+layout: wvmonopage
+title: CQRS+ES Todo List
+tagline: Project Backstage
+header: CQRS+ES Todo List
+group: navigation
+---
+{% include JB/setup %}
+
+<div class="row">
+  <div class="col-md-12">
+    <h2><img src="http://icons.iconarchive.com/icons/custom-icon-design/flag-3/32/United-Kingdom-flag-icon.png"></img> Abstract</h2>
+    <div class="col-md-12">
+Another todo list application…but this is in <b>CQRS-ES</b> sauce!<br/>
+This is my training journey into Command Query Responsibility Segregation (CQRS) + Event Sourcing (ES) patterns.
+    </div>
+  </div>
+</div>
+
+<!--
+<div class="row">
+  <div class="col-md-6">
+    <h2><a href="http://www.disciturweb.com/" target="blank">Applicazione Online</a></h2>
+    <a href="http://williamverdolini.github.io/discitur/" target="blank">Ambiente di test</a>.
+  </div>
+  <div class="col-md-6">
+    <h2><a href="http://www.disciturweb.com/" target="blank">Live Application</a></h2>
+    <a href="http://williamverdolini.github.io/discitur/" target="blank">Test Environment</a>.
+  </div>
+</div>
+-->         
+
+<div class="row">
+<!--
+  <div class="col-md-6">
+  
+    <h2>Contenuti</h2>
+    {% include themes/blog/disc-summary.html %}
+    
+    {% assign myArray = finalSummary | split: "|" %}
+    <ul style="list-style-type: none;">
+      {% for node in myArray sorted %}
+        {% assign summaryLine = node | split: "," %}
+        {% for prop in summaryLine sorted %}
+          {% assign keyval = prop | split: ":" %}
+          {% if keyval[0] == 'title' %}
+            {% assign title = keyval[1] %}
+        	{% endif %}
+          {% if keyval[0] == 'url' %}
+            {% assign url = keyval[1] %}
+        	{% endif %}
+      	{% endfor %}
+      	{% if page.url == url %}
+      	<li class="active"><a href="{{ BASE_PATH }}{{url}}">{{title}}</a></li>
+      	{% else %}
+      	<li><a href="{{ BASE_PATH }}{{url}}">{{title}}</a></li>
+      	{% endif %}
+    
+      {% endfor %}
+    </ul>
+
+
+  </div>
+  -->
+  <div class="col-md-12">
+    <h2>Contents</h2>
+    {% include themes/blog/cqrs-summary.html %}
+    
+    {% assign myArray = finalSummary | split: "|" %}
+    <ul style="list-style-type: none;">
+      {% for node in myArray sorted %}
+        {% assign summaryLine = node | split: "," %}
+        {% for prop in summaryLine sorted %}
+          {% assign keyval = prop | split: ":" %}
+          {% if keyval[0] == 'title' %}
+            {% assign title = keyval[1] %}
+        	{% endif %}
+          {% if keyval[0] == 'url' %}
+            {% assign url = keyval[1] %}
+        	{% endif %}
+      	{% endfor %}
+      	{% if page.url == url %}
+      	<li class="active"><a href="{{ BASE_PATH }}{{url}}">{{title}}</a></li>
+      	{% else %}
+      	<li><a href="{{ BASE_PATH }}{{url}}">{{title}}</a></li>
+      	{% endif %}
+    
+      {% endfor %}
+    </ul>
+    
+  </div>
+</div>
+
+
+
+<h2>Repositories</h2>
+<ul>
+<li><a href="https://github.com/williamverdolini/CQRS-ES-Todos" target="blank">CQRS+ES Todo List Code</a>.</li>
+</ul>
+
+
+{% comment %}
+<ul>
+{% assign pages_list = site.pages %}
+{% include JB/pages_list %}
+</ul>
+
+CQRS+ES Todo List<br>
+<p>{{pages_list}}</p>
+{% endcomment %}
+

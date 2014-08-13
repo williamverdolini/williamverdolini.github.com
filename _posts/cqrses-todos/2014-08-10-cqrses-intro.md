@@ -14,7 +14,7 @@ I couldn’t say exactly when I heard of Command Query Responsibility Segregatio
 
 1.    .NET Community Days 2014 Milano: <a href="http://www.communitydays.it/events/2014/vs05/" target="_blank">DDD+CQRS+ES session</a> with **Andrea Brandolini** and **Andrea Balducci**
 2.    <a href="https://play.google.com/store/books/details/Stefano_Ottaviani_Gestire_la_complessit%C3%A0_del_softw?id=-DECAwAAQBAJ" target="_blank">Bachelor's degree thesis</a> of **Stefano Ottaviani**
-3.    Slideshare Presentations of **<a href="http://www.slideshare.net/andreabalducci/alam-aeki-guida-illustrata-alla-modellazione-di-un-dominio-con-event-sourcing-event-storming" target="_blank">Andrea Balducci**</a> and **<a href="http://www.slideshare.net/ziobrando?utm_campaign=profiletracking&utm_medium=sssite&utm_source=ssslideview" target="_blank">Andrea Brandolini</a>**
+3.    Slideshare Presentations of **<a href="http://www.slideshare.net/andreabalducci/alam-aeki-guida-illustrata-alla-modellazione-di-un-dominio-con-event-sourcing-event-storming" target="_blank">Andrea Balducci</a>** and **<a href="http://www.slideshare.net/ziobrando?utm_campaign=profiletracking&utm_medium=sssite&utm_source=ssslideview" target="_blank">Andrea Brandolini</a>**
 4.    <a href="http://cqrs.files.wordpress.com/2010/11/cqrs_documents.pdf">CQRS Documents</a> by **Greg Young**
 5.    Implementing a <a href="http://www.adamtibi.net/06-2013/implementing-a-cqrs-based-architecture-with-mvc-and-document-db" target="_blank">CQRS-based Architecture with MVC and Document DB</a> by **Adam Tibi**
 6.    <a href="https://github.com/Iridio/CQRS-ES_MembershipProvider" target="_blank">CQRS-ES demo project</a> of **Alessandro Colla**

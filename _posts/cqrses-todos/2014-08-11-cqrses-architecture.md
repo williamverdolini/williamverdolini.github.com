@@ -17,7 +17,7 @@ Here is the scheme:
 <img src="{{ BASE_PATH }}/images/cqrses/CQRS-ES-architecture.png" class="img-rounded" />
  
 
-Some explanation: there’s a COMMAND part and a QUERY part, as CQRS has established and, it’s pretty evident, the Command part is the most complex. That’s cause we’re dealing with commands and events, their buses, their validations, their handlers, their repositories, in sync and async manner. For that, I will mainly focus onto the “write-model side”.
+Some explanation: there’s a COMMAND part and a QUERY part, as CQRS has stated and, it’s pretty evident, the Command part is the most complex. That’s cause we’re dealing with commands and events, their buses, their validations, their handlers, their repositories, in sync and async manner. For that, I will mainly focus onto the “write-model side”.
 
 I wanted to stress the importance of Inversion of Control and Dependency Injection showing in the scheme where DI was involved: it’s easy to see that is…everywhere. I’ve used Castle Windsor container and since I’ve never used it before, I wrote an article that describes my first steps and the technical and design errors I’ve faced.
 

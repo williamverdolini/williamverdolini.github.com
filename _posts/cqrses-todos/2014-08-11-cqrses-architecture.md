@@ -13,13 +13,16 @@ I’m one of those who cannot really understand a thing if he doesn’t represen
 
 An important premise: the following it’s NOT a tentative to depict CQRS+ES Architecture’s components and their relations, but it’s only the graphical representation of what _**I**_’ve understood after some months of studies. That’s not good for every CQRS+ES scenario, but I think that most of the components drawn are present in most of the cases. I’m continuously deepening these concepts, and I will have made some error for sure, so please, feel free to correct me (and let me grow). Thanks.
 
-Here is the scheme:
+
+###the scheme###
+
+I tried to draw a super-set of components that could be used in a generic CQRS+ES architecture. Some of these components could be used or not to introduce different functionalities and behaviours, like queues for async flows.
 <img src="{{ BASE_PATH }}/images/cqrses/CQRS-ES-architecture.png" class="img-rounded" />
  
 
 Some explanation: there’s a COMMAND part and a QUERY part, as CQRS has stated and, it’s pretty evident, the Command part is the most complex. That’s cause we’re dealing with commands and events, their buses, their validations, their handlers, their repositories, in sync and async manner. For that, I will mainly focus onto the “write-model side”.
 
-I wanted to stress the importance of Inversion of Control and Dependency Injection showing in the scheme where DI was involved: it’s easy to see that is…everywhere. I’ve used Castle Windsor container and since I’ve never used it before, I wrote an article that describes my first steps and the technical and design errors I’ve faced.
+I wanted to stress the importance of <a href="http://en.wikipedia.org/wiki/Inversion_of_control" target="_blank">Inversion of Control</a> and <a href="http://en.wikipedia.org/wiki/Dependency_injection" target="_blank">Dependency Injection</a> (DI) showing in the scheme where DI was involved: it’s easy to see that is…everywhere. I’ve used <a href="http://docs.castleproject.org/Windsor.MainPage.ashx" target="_blank">Castle Windsor</a> container and since I’ve never used it before, I wrote an article that describes my first steps and the technical and design errors I’ve faced.
 
 Anyway, describing what depicted in the write-model, here are these main steps:
 

@@ -1,11 +1,12 @@
 ---
 layout: wvmonopage
-title: In Code We Live
-tagline: Progetti, storie, riflessioni
+title: In Design We Live
+HTMLTitle: In <del style="color:grey;"><i>Code</i></del> Design We Live
+tagline: Projects, stories, thoughts
 ---
 {% include JB/setup %}
 
-## Progetti
+## Projects
 
 <div class="row">
   <div class="panel panel-default">
@@ -33,11 +34,63 @@ tagline: Progetti, storie, riflessioni
 
 
           <dt>Repository:</dt>
-          <dd>Il progetto è versionato su repository pubblico: <a href="https://github.com/williamverdolini?tab=repositories" target="_blank">https://github.com/williamverdolini?tab=repositories</a></dd>
+          <dd>Il progetto è versionato su repository pubblici: <a href="https://github.com/williamverdolini/discitur-web" target="_blank">discitur-web</a> e <a href="https://github.com/williamverdolini/discitur-api" target="_blank">discitur-api</a></dd>
 
 
           <dt>Tecnologie:</dt>
           <dd>Front-end: <a href="http://angularjs.org/" target="_blank">Angular.js 1.2.14</a><br/>Back-end: <a href="http://www.asp.net/vnext/overview/aspnet-web-api" target="_blank">.NET Web Api 2.0</a> e <a href="http://msdn.microsoft.com/en-us/data/ee712907.aspx" target="_blank">Entity Framework 6</a><br/>Database: SQL Server 2012<br/>VCS: <a href="http://git-scm.com/" target="_blank">Git</a><br/></dd>
+          </h5>      
+
+        </dl>
+      </div>
+    
+    </div>
+
+  </div>
+
+
+</div>
+
+
+
+<div class="row">
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <div class="col-sm-12 col-md-4 col-lg-4">
+        <!--<a href="http://www.disciturweb.com/" target="_blank">-->
+          <img src="{{ BASE_PATH }}/images/cqrses/CQRS-ES-TODOS-Logo.png" class="img-rounded" style="width: 300px; height: 200px;"/>
+        <!--</a>
+		
+        <h4><a href="http://www.disciturweb.com/" target="_blank">Ambiente di Produzione</a></h4>      
+        <h5><a href="http://williamverdolini.github.io/discitur/" target="_blank">Ambiente di test</a></h5>      
+		-->
+      </div>
+      <div class="col-sm-12 col-md-8 col-lg-8">
+        <dl class="dl-horizontal">
+          <h3 style="font-weight:normal;">
+            <dt>Name:</dt>
+            <dd><a href="{{ BASE_PATH }}Cqrs-es-todos.html">CQRS+ES Todo List</a></dd>
+          </h3>      
+          
+          <h5 style="font-weight:normal;">
+          <dt>Description:</dt>
+          <dd>Training journey into Command Query Responsibility Segregation (CQRS) + Event Sourcing (ES).</dd>
+
+          <dt>Project's Backstage</dt>
+          <dd>The diary of the implementation of this sample To-Do App in "CQRS+ES sauce" is collected in some articles in the <a href="{{ BASE_PATH }}Cqrs-es-todos.html">Project's Backstage</a>.</dd>
+
+
+          <dt>Repository:</dt>
+          <dd>The project is versionated on this public repository: <a href="https://github.com/williamverdolini/CQRS-ES-Todos" target="_blank">https://github.com/williamverdolini/CQRS-ES-Todos</a></dd>
+
+
+          <dt>Technologies:</dt>
+          <dd>Front-end: <a href="http://angularjs.org/" target="_blank">Angular.js 1.2.21</a><br/>
+		  Back-end: <a href="http://www.asp.net/vnext/overview/aspnet-web-api" target="_blank">.NET Web Api 2.0</a> and <a href="http://msdn.microsoft.com/en-us/data/ee712907.aspx" target="_blank">Entity Framework 6</a><br/>
+		  Database: SQL Server 2008 R2 +<br/>
+		  Inversion of Control: <a href="http://docs.castleproject.org/Windsor.MainPage.ashx" target="_blank">Castle Windsor</a><br/>
+		  Event Store: <a href="http://neventstore.org/" target="_blank">NEventStore</a><br/>		  
+		  VCS: <a href="http://git-scm.com/" target="_blank">Git</a><br/></dd>
           </h5>      
 
         </dl>
@@ -57,8 +110,9 @@ Il progetto è versionato su repository pubblico: <a href="https://github.com/wi
 
 -->
 
-###Chi sono
-La sintesi della mia storia lavorativa la potete leggere nel <a href="http://www.linkedin.com/in/williamverdolini" target="_blank">mio profilo Linkedin</a>
+###About me
+The summary of my work history you can read it in <a href="http://www.linkedin.com/in/williamverdolini" target="_blank">my Linkedin profile</a>
+<!--La sintesi della mia storia lavorativa la potete leggere nel <a href="http://www.linkedin.com/in/williamverdolini" target="_blank">mio profilo Linkedin</a>-->
 
 <a href="http://stackoverflow.com/users/3316654/wilver" target="_blank">
 <img src="http://stackoverflow.com/users/flair/3316654.png?theme=clean" width="208" height="58" alt="profile for wilver at Stack Overflow, Q&amp;A for professional and enthusiast programmers" title="profile for wilver at Stack Overflow, Q&amp;A for professional and enthusiast programmers">

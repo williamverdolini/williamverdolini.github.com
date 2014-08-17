@@ -19,10 +19,13 @@ I couldn’t say exactly when I heard of Command Query Responsibility Segregatio
 5.    Implementing a <a href="http://www.adamtibi.net/06-2013/implementing-a-cqrs-based-architecture-with-mvc-and-document-db" target="_blank">CQRS-based Architecture with MVC and Document DB</a> by **Adam Tibi**
 6.    <a href="https://github.com/Iridio/CQRS-ES_MembershipProvider" target="_blank">CQRS-ES demo project</a> of **Alessandro Colla**
 7.    Microsoft .NET - Architecting Applications for the Enterprise (2nd Edition): <a href="https://naa4e.codeplex.com/" target="_blank">CQRS+ES workshop</a> with **Andrea Saltarello**
+8.    <a href="http://cre8ivethought.com/blog/2009/11/12/cqrs--la-greg-young" target="_blank">CQRS à la Greg Young</a> by Mark Nijhof
+9.    <a href="http://www.udidahan.com/2009/12/09/clarified-cqrs/" target="_blank">Clarified CQRS</a> by Udi Dahan
 
 A heartfelt thanks to all those who have the ability and willingness to share their knowledge. For the rest, just passion and study.
 
- 
+What follows is the result of my studies and insights, and not everything that is written may be the correct interpretation of the different concepts. Anyone who wants to correct me or explain it better is welcome. 
+Thank you. 
 
 ###It’s NOT DDD (yet)
 

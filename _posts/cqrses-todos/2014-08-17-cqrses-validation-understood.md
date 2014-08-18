@@ -43,7 +43,10 @@ public class ChangeToDoItemImportanceCommandValidator : AbstractValidator<Change
 
 	private bool BeUniqueAmongItemsImportance(ChangeToDoItemImportanceCommand command, int importance)
 	{
-		return !database.ToDoItems.Any(todo => todo.Importance.Equals(importance));
+		return  (from todo in database.ToDoItems
+							   join list in database.ToDoLists on todo.ToDoListId equals list.Id
+							   where todo.Importance == importance
+							   select todo).Count() == 0;		
 	}
 }
 ]]></script> 

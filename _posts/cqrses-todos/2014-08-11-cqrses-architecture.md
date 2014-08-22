@@ -14,6 +14,8 @@ I’m one of those who cannot really understand a thing if he doesn’t represen
 An important premise: the following it’s NOT a tentative to depict CQRS+ES Architecture’s components and their relations, but it’s only the graphical representation of what _**I**_’ve understood after some months of studies. That’s not good for every CQRS+ES scenario, but I think that most of the components drawn are present in most of the cases. I’m continuously deepening these concepts, and I will have made some error for sure, so please, feel free to correct me (and let me grow). Thanks.
 
 
+<br/>
+
 ###the scheme###
 
 I tried to draw a super-set of components that could be used in a generic CQRS+ES architecture. Some of these components could be used or not to introduce different functionalities and behaviours, like queues for async flows.

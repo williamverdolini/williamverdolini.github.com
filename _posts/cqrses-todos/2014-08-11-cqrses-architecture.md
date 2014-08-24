@@ -26,14 +26,14 @@ Some explanation: there’s a COMMAND part and a QUERY part, as CQRS has stated 
 
 I wanted to stress the importance of <a href="http://en.wikipedia.org/wiki/Inversion_of_control" target="_blank">Inversion of Control</a> and <a href="http://en.wikipedia.org/wiki/Dependency_injection" target="_blank">Dependency Injection</a> (DI) showing in the scheme where DI was involved: it’s easy to see that is…everywhere. I’ve used <a href="http://docs.castleproject.org/Windsor.MainPage.ashx" target="_blank">Castle Windsor</a> container and since I’ve never used it before, I wrote an article that describes my first steps and the technical and design errors I’ve faced.
 
-Anyway, describing what depicted in the write-model, here are these main steps:
+Anyway, describing what depicted in the write-model, here are the main steps:
 
 1.    The Client send a command (an intent to do something) to the server. 
 2.    The server validates the command both from the formal and the business point of view, reading from Domain Store or Read-Model database
 3.    If the command is valid, it is sent to a command bus (for async flows)
 4.    The command bus dispatch the command to all command handlers subscribed for that particular command
 5.    The command handler, generally speaking, does always the same thing: gets some Aggregate from Domain repository, performs some action on it and saves eventual state changes. In this state change some events (notification about some changes happened) are emitted
-6.    Events are stores in Event Store
+6.    Events are stored in Event Store
 7.    Events store manager can work as event dispatcher and, so, it dispatches the events to an event bus (for async flows) 
 8.    The event bus dispatch the event to all event handlers subscribed for that particular event
 9.    One kind of event handler is the Denormalizer that handles event to update a Read-Model database (and here I’m already on Query side)

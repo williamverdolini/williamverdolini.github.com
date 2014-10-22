@@ -16,7 +16,7 @@ An important premise: the following it’s NOT a tentative to depict CQRS+ES Arc
 Thanks.
 
 
-<br/>
+<br/><br/>
 
 ###the scheme###
 

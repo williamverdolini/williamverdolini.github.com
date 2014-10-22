@@ -104,3 +104,29 @@ Again, these are my thoughts and my solution; I’m not sure is the best and I�
 
 If you are interested, all the code is present <a href="https://github.com/williamverdolini/CQRS-ES-Todos/tree/master/Todo.Legacy.Migration" target="_blank">in the repository under a specific project (Todo.Legacy.Migration)</a>, but DI’s container specific installer and migration invocation, but just for the sake of this training journey.
 All the code about migration is visible in this <a href="https://github.com/williamverdolini/CQRS-ES-Todos/commit/0aa05acbe6d773ad2fa97af4faa9b1c8693b8103" target="_blank">commit</a>.
+
+
+  
+  
+  
+####Update - 20/10/2014####
+Recently I've reviewed the last part of the migration strategy, cause I wanted to make some practices about Events-Replaying. Actually doing some experimentation about replaying the committed events (necessary for example to recreate a <a href="http://cqrs.wikidot.com/doc:projection" target="_blank">projection</a>) allowed me to figure out an important error in this strategy: **the migration event should be able to be listened (and rebuilt) by the read-model event-handlers**.
+
+That's why if we didn’t have an event-handler for that external events, the projection was not able to be correctly rebuilt, because it couldn't re-create the migrated entities and, afterwards, the next committed events could not be correctly handled. 
+So the migration logic was be modified in two points:
+
+<ol>
+<li><a href="https://github.com/williamverdolini/CQRS-ES-Todos/blob/master/Todo.Domain/Messages/Events/ToDoEvents.cs#L134" target="_blank">Memento Propagation events</a>: migration events were added in order to propagate the initial state of the Aggregates (from migration) to read model projection.
+</li>
+<li><a href="https://github.com/williamverdolini/CQRS-ES-Todos/blob/master/Todo.QueryStack/Logic/EventHandlers/ToDoEventHandlers.cs#L162-L211" target="_blank">Memento Propagation events Handlers</a>: the handlers were added. Some migration logic could be managed in these handlers, but I prefer to keep migration logic in Migration manager and leave in these handlers only the logic necessary for rebuilding task.
+</li>
+</ol>
+
+here the <a href="https://github.com/williamverdolini/CQRS-ES-Todos/blob/master/Todo.Legacy.Migration/Logic/LegacySnapshotCreator.cs#L48-L88" target="_blank">code for the reviewed migration strategy</a>.
+  
+  
+  
+####Some final consideration####
+The last update introduced something that could be considered an "open point". The migration event should carry a complete state of the AggregateRoots from previous system. To do that I consider reasonable to use a Memento as the event's single property.
+This kind of event could be named to give a full meaning of the Migration process (i.e. MigratedToDoListeEvent) or with a more general name, that could be used for maintenance purposes. For example to introduce some data-fix (cause bugs or whatever) in the events sequence.
+This is something like a "return to CRUD logic", using events without a specific domain meaning, but...it's convenient, and easy, and just for devops team.

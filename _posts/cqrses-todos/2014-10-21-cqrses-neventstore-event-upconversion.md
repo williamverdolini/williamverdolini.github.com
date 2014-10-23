@@ -9,7 +9,7 @@ tags: [Technology,CQRS+ES,NEventStore,Event Upconversion]
 ---
 {% include JB/setup %}
 
-First of all I want to thank **David Rettenbacher** and **Nathan Gonzalez** for their help in setting up the first tries of Event Upconverting, without them I would probably still be wasting my time tempting to do it...
+First of all I want to thank **<a href="http://warappa.wordpress.com/" target="_blank">David Rettenbacher</a>** and **<a href="http://stackoverflow.com/users/355785/nathan-gonzalez" target="_blank">Nathan Gonzalez</a>** for their help in setting up the first tries of Event Upconverting, without them I would probably still be wasting my time tempting to do it...
 
 Event Conversion is a necessity, because the requisites changes, always. NEventStore team knows it. For that reason has given us some feature to manage it.<br>
 Why is so important? An event is something happened in the past and the past is...past! True, but at this point I know that every time I get an aggregate from the repository, NEventStore replay all the committed events to re-build the last state of the aggregate.
@@ -21,7 +21,7 @@ Here it is where Event Upconverter comes to help!
 ###Event Versioning Strategies###
 Every time we need to modify an event class, we should always consider to create a new version of the event, keeping the old one still live, in order to re-hydrate the aggregate from the repository stream. So, it' important to define a versioning strategy for the events.
 
-There are different solutions explained by Damian Hickey in <a href="https://groups.google.com/forum/#!msg/neventstore/tscuQA1bZxQ/TE-u0_PpnyoJ" target="_blank">this post</a>. In the same post **David Rettenbacher** proposed a variant that I liked, because leave the same event's full name in the last version of the event itself and so, the code seems to be more readable and maintainable: **_using Attributes_**.
+There are different solutions explained by Damian Hickey in <a href="https://groups.google.com/forum/#!msg/neventstore/tscuQA1bZxQ/TE-u0_PpnyoJ" target="_blank">this post</a>. In the same post **David Rettenbacher** proposed a variant that I like, because it leaves the same event's full name in the last version of the event itself and so, the code seems to be more readable and maintainable: **_using Attributes_**.
 
 
 ####Attribute Versioning setup####
@@ -44,7 +44,9 @@ At this point to use this versioning strategy we need to:
 
 that's all.
 
-###Replay Events###
+###Some Consideration###
+
+####Replaying Events####
 Replay all the events from the beginning could be useful in different scenarios: create a new projection, rebuild an existent one (for example during a product upgrade) and before do it, it's very important having the event upconversion strategy set up.
 The following one it's a simple event rebuilder that re-publish all the events previously committed.
 
@@ -80,3 +82,8 @@ public class EventsRebuilder : IEventsRebuilder
 }
 ]]></script> 
 
+
+####Well begun is half done####
+Thinking about Event Upconversion should be one of the first strategies to define when you adopt Event Sourcing. That's just because the events are the data saved and serialized from the beginning, during all the live of your application. So, define at the very first moment how to serialize and deserialize the event data allow you to write more maintanable code, without having to adjust the target after. 
+But in this sample application I wanted to put me in the worst condition: that's, to add a event upconversion strategy after the application go-live.
+Using the VersionedEvent attribute as explained before allow me to add some more <a href="https://github.com/williamverdolini/CQRS-ES-Todos/blob/master/Todo.Infrastructure/Events/Versioning/VersionedEventSerializationBinder.cs#L18-L42" target="_blank">serialization/deserialization logic</a> in order to face this situation. 

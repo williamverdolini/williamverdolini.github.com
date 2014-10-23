@@ -10,7 +10,7 @@ tags: [Technology,CQRS+ES, NEventStore]
 {% include JB/setup %}
 
 
-In the <a href="/cqrses-todos/2014/08/22/cqrses-neventstore-identities/" target="_blank">previous article</a>, I was asking myself <<how does NEventStore work with legacy systems?>>. Here again I’m asking myself which kind of strategies could I implement to migrate data from Legacy System (n-tier) to CQRS+ES?
+In the <a href="/2014/08/22/cqrses-neventstore-identities/" target="_blank">previous article</a>, I was asking myself <<how does NEventStore work with legacy systems?>>. Here again I’m asking myself which kind of strategies could I implement to migrate data from Legacy System (n-tier) to CQRS+ES?
 
 From the data-layer perspective, here is the scenario I’m talking about:
 
@@ -110,7 +110,7 @@ All the code about migration is visible in this <a href="https://github.com/will
   
   
 ####Update - 20/10/2014####
-Recently I've reviewed the last part of the migration strategy, cause I wanted to make some practices about Events-Replaying. Actually doing some experimentation about replaying the committed events (necessary for example to recreate a <a href="http://cqrs.wikidot.com/doc:projection" target="_blank">projection</a>) allowed me to figure out an important error in this strategy: **the migration event should be able to be listened (and rebuilt) by the read-model event-handlers**.
+Recently I've reviewed the last part of the migration strategy, cause I wanted to make some practices about <a href="/2014/10/21/cqrses-neventstore-event-upconversion" target="_blank">Events-Replaying</a>. Actually doing some experimentation about replaying the committed events (necessary for example to recreate a <a href="http://cqrs.wikidot.com/doc:projection" target="_blank">projection</a>) allowed me to figure out an important error in this strategy: **the migration event should be able to be listened (and rebuilt) by the read-model event-handlers**.
 
 That's why if we didn’t have an event-handler for that external events, the projection was not able to be correctly rebuilt, because it couldn't re-create the migrated entities and, afterwards, the next committed events could not be correctly handled. 
 So the migration logic was be modified in two points:
@@ -128,5 +128,5 @@ here the <a href="https://github.com/williamverdolini/CQRS-ES-Todos/blob/master/
   
 ####Some final consideration####
 The last update introduced something that could be considered an "open point". The migration event should carry a complete state of the AggregateRoots from previous system. To do that I consider reasonable to use a Memento as the event's single property.
-This kind of event could be named to give a full meaning of the Migration process (i.e. MigratedToDoListeEvent) or with a more general name, that could be used for maintenance purposes. For example to introduce some data-fix (cause bugs or whatever) in the events sequence.
+This kind of event could be named to give a full meaning of the Migration process (i.e. MigratedToDoListeEvent) or with a more general name, that could be used also for maintenance purposes. For example to introduce some data-fix (cause bugs or whatever) in the events sequence.
 This is something like a "return to CRUD logic", using events without a specific domain meaning, but...it's convenient, and easy, and just for devops team.

@@ -34,7 +34,7 @@ tagline: Projects, stories, thoughts
 
 
           <dt>Repository:</dt>
-          <dd>Il progetto è versionato su repository pubblici: <a href="https://github.com/williamverdolini/discitur-web" target="_blank">discitur-web</a> e <a href="https://github.com/williamverdolini/discitur-api" target="_blank">discitur-api</a></dd>
+          <dd>Il progetto è versionato su repository pubblici: <a href="https://github.com/williamverdolini/discitur-web" target="_blank">discitur-web</a> e <a href="https://github.com/williamverdolini/discitur-api" target="_blank">discitur-api</a>. To-Be: <a href="https://github.com/williamverdolini/disciturCQRSES" target="_blank">disciturCQRSES</a></dd>
 
 
           <dt>Tecnologie:</dt>
@@ -102,6 +102,53 @@ tagline: Projects, stories, thoughts
 
 
 </div>
+
+
+<div class="row">
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <div class="col-sm-12 col-md-4 col-lg-4">
+          <img src="{{ BASE_PATH }}/images/umbracoUpd/umbraco_logo.png" class="img-rounded" style="width: 200px; height: 200px;margin-left: 40px; margin-top: 50px;"/>
+      </div>
+      <div class="col-sm-12 col-md-8 col-lg-8">
+        <dl class="dl-horizontal">
+          <h3 style="font-weight:normal;">
+            <dt>Name:</dt>
+            <dd><a href="{{ BASE_PATH }}Umbraco-Upgrade.html">Umbraco Upgrade</a></dd>
+          </h3>      
+          
+          <h5 style="font-weight:normal;">
+          <dt>Description:</dt>
+          <dd>Single upgrade jump from Umbraco version 4.7.1 to version 6.2.4.</dd>
+
+          <dt>Project's Backstage</dt>
+          <dd>The articles describe the prototyping steps that allowed me to upgrade and jump from version 4.7.1 to 6.2.4.
+Not without some obstacle and failure.
+And in these articles I wanted to highlight some principles concretely used during this prototype. Because prototyping is an hard discipline.
+</dd>
+
+
+          <dt>Repository:</dt>
+          <dd>Upgrade database script is versionated on this public repository: <a href="https://github.com/williamverdolini/CQRS-ES-Todos" target="_blank">Database Upgrade script</a></dd>
+
+
+          <dt>Technologies:</dt>
+          <dd>CMS: <a href="http://umbraco.com/" target="_blank">Umbraco</a> <a href="http://our.umbraco.org/contribute/releases/718/" target="_blank"><del>7.1.8</del></a> <a href="http://our.umbraco.org/contribute/releases/624" target="_blank">6.2.4</a><br/>
+		  Database: SQL Server 2008 R2 +<br/>		  
+		  VCS: <a href="https://gist.github.com/" target="_blank">Gist</a><br/></dd>
+          </h5>      
+
+        </dl>
+      </div>
+    
+    </div>
+
+  </div>
+
+
+</div>
+
+
 
 <!--
 ###[Discitur]({{ BASE_PATH }}Discitur.html)

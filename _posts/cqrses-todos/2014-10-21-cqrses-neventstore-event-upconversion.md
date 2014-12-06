@@ -84,6 +84,6 @@ public class EventsRebuilder : IEventsRebuilder
 
 
 ####Well begun is half done####
-Thinking about Event Upconversion should be one of the first strategies to define when you adopt Event Sourcing. That's just because the events are the data saved and serialized from the beginning, during all the live of your application. So, define at the very first moment how to serialize and deserialize the event data allow you to write more maintanable code, without having to adjust the target after. 
+Thinking about Event Upconversion should be one of the first strategies to define when you adopt Event Sourcing. That's just because the events are the data saved and serialized from the beginning, during all the life of your application. So, defining at the very first moment how to serialize and deserialize the event data allow you to write more maintanable code, without having to adjust the target after. 
 But in this sample application I wanted to put me in the worst condition: that's, to add a event upconversion strategy after the application go-live.
 Using the VersionedEvent attribute as explained before allow me to add some more <a href="https://github.com/williamverdolini/CQRS-ES-Todos/blob/master/Todo.Infrastructure/Events/Versioning/VersionedEventSerializationBinder.cs#L18-L42" target="_blank">serialization/deserialization logic</a> in order to face this situation. 

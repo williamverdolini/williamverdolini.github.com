@@ -1,0 +1,75 @@
+---
+layout: wvmonopage
+title: Umbraco Upgrade
+tagline: Project Backstage
+header: Umbraco Upgrade
+category: Umbraco Upgrade
+group: navigation
+---
+{% include JB/setup %}
+
+<div class="row">
+  <div class="col-md-12">
+    <h2><img src="http://icons.iconarchive.com/icons/custom-icon-design/flag-3/32/United-Kingdom-flag-icon.png"></img> Abstract</h2>
+    <div class="col-md-12">
+The following articles describe the prototyping steps that allowed me to upgrade and jump from Umbraco version 4.7.1 to version 6.2.4.
+Not without some obstacle and failure.
+And in these articles I wanted to highlight some principles concretely used during this prototype. Because prototyping is an hard discipline.
+    </div>
+  </div>
+</div>
+  
+
+<div class="row">
+  <div class="col-md-12">
+    <h2>Contents</h2>
+    {% include themes/blog/umbracoup-summary.html %}
+    
+    {% assign myArray = finalSummary | split: "|" %}
+    <ul style="list-style-type: none;">
+      {% for node in myArray sorted %}
+        {% assign summaryLine = node | split: "," %}
+        {% for prop in summaryLine sorted %}
+          {% assign keyval = prop | split: ":" %}
+          {% if keyval[0] == 'title' %}
+            {% assign title = keyval[1] %}
+        	{% endif %}
+          {% if keyval[0] == 'url' %}
+            {% assign url = keyval[1] %}
+        	{% endif %}
+      	{% endfor %}
+      	{% if page.url == url %}
+      	<li class="active"><a href="{{ BASE_PATH }}{{url}}">{{title}}</a></li>
+      	{% else %}
+      	<li><a href="{{ BASE_PATH }}{{url}}">{{title}}</a></li>
+      	{% endif %}
+    
+      {% endfor %}
+    </ul>
+    
+  </div>
+</div>
+
+<h2>Technologies</h2>
+<ul>
+<li>CMS: <a href="http://umbraco.com/" target="_blank">Umbraco</a> <a href="http://our.umbraco.org/contribute/releases/718/" target="_blank"><del>7.1.8</del></a> <a href="http://our.umbraco.org/contribute/releases/624" target="_blank">6.2.4</a></li>
+<li>Database: SQL Server 2008 R2 +</li>
+<li>VCS: <a href="http://git-scm.com/" target="_blank">Git</a></li>
+</ul>
+
+<h2>Repositories</h2>
+<ul>
+<li><a href="https://github.com/williamverdolini/CQRS-ES-Todos" target="blank">CQRS+ES Todo List Code</a>.</li>
+</ul>
+
+
+{% comment %}
+<ul>
+{% assign pages_list = site.pages %}
+{% include JB/pages_list %}
+</ul>
+
+CQRS+ES Todo List<br>
+<p>{{pages_list}}</p>
+{% endcomment %}
+

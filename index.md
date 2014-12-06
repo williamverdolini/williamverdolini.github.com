@@ -129,7 +129,7 @@ And in these articles I wanted to highlight some principles concretely used duri
 
 
           <dt>Repository:</dt>
-          <dd>Upgrade database script is versionated on this public repository: <a href="https://github.com/williamverdolini/CQRS-ES-Todos" target="_blank">Database Upgrade script</a></dd>
+          <dd>Upgrade database script is versionated on this public repository: <a href="https://gist.github.com/williamverdolini/5c369b4d620405033b35" target="_blank">Database Upgrade script</a></dd>
 
 
           <dt>Technologies:</dt>

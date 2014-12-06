@@ -108,7 +108,7 @@ tagline: Projects, stories, thoughts
   <div class="panel panel-default">
     <div class="panel-body">
       <div class="col-sm-12 col-md-4 col-lg-4">
-          <img src="{{ BASE_PATH }}/images/umbracoUpd/umbraco_logo.png" class="img-rounded" style="width: 200px; height: 200px;margin-left: 40px; margin-top: 50px;"/>
+          <img src="{{ BASE_PATH }}/images/umbracoupd/umbraco_logo.png" class="img-rounded" style="width: 200px; height: 200px;margin-left: 40px; margin-top: 50px;"/>
       </div>
       <div class="col-sm-12 col-md-8 col-lg-8">
         <dl class="dl-horizontal">

@@ -5,7 +5,7 @@ tagline: The Upgrade Process
 header: The Upgrade Process
 description: Umbraco, Prototyping, Tech
 group: Umbraco_Update
-tags: [Technology,Umbraco]
+tags: [Technology,Umbraco,Prototyping]
 ---
 {% include JB/setup %}
 
@@ -17,6 +17,8 @@ Here are my <a href="http://en.wikipedia.org/wiki/Exit-criteria" target="_blank"
 
 1. **Time-box**: 3 weeks to have a complete and working prototype, with a retrospective every week. 
 2. **High fidelity prototype**: in this scenario a complete prototype consists in a working Umbraco installation (in the latest release) based on a migrated legacy database and most of customized back-office features verified. So, from prototyping point of view, what I want to reach is an <a href="http://www.svpg.com/high-fidelity-prototypes/" target="_blank">high-fidelity prototype</a>, that could be the starting point for the complete upgrade process.
+<span id="off-proc"></span>
+
 
 
 ###The official Process (and the first failure)

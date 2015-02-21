@@ -23,7 +23,7 @@ environment, because some very important aspect - especially for a configurable 
 - internationalization
 - and much others
 
-But, anyway, I think that the approach described in the following articles will be clear and easily appliable.
+But, anyway, I think that the approach described in the following articles will be clear and easily applicable.
 As always, any suggestions are welcome.
 
 ####Set-up####

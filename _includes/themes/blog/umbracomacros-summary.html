@@ -1,0 +1,25 @@
+{% comment %}
+-------------------------------------------------------------------
+  Definizione dell'indice del blog per il progetto Umbraco CustomMacros
+-------------------------------------------------------------------
+{% endcomment%}
+
+{% assign Summary = "title:1. Setup,url:/2015/02/02/umbmacro-setup" %}
+{% capture finalSummary%}{{Summary}}{% endcapture %}
+
+{% comment %}
+{% assign Summary = "title:2. Architecture,url:/2015/02/03/umbmacro-architecture" %}
+{% capture finalSummary%}{{finalSummary}}|{{Summary}}{% endcapture %}
+
+{% assign Summary = "title:3.1 MVC Controller Factory,url:/2015/02/04/umbmacro-controllerfact,level:1,levelTitle:3. Dependency Injection" %}
+{% capture finalSummary%}{{finalSummary}}|{{Summary}}{% endcapture %}
+
+{% assign Summary = "title:3.2 Properties Injection in MVC Filters,url:/2015/02/05/umbmacro-prop-inj-filters,level:1,levelTitle:3. Dependency Injection" %}
+{% capture finalSummary%}{{finalSummary}}|{{Summary}}{% endcapture %}
+
+{% assign Summary = "title:4. Ajax,url:/2015/02/06/umbmacro-ajax" %}
+{% capture finalSummary%}{{finalSummary}}|{{Summary}}{% endcapture %}
+
+{% assign Summary = "title:5 Properties Configurability,url:/2015/02/07/umbmacro-properties" %}
+{% capture finalSummary%}{{finalSummary}}|{{Summary}}{% endcapture %}
+{% endcomment%}

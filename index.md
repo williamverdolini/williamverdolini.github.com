@@ -154,7 +154,7 @@ And in these articles I wanted to highlight some principles concretely used duri
   <div class="panel panel-default">
     <div class="panel-body">
       <div class="col-sm-12 col-md-4 col-lg-4">
-          <img src="{{ BASE_PATH }}/images/umbracomacros/Umbraco-bo.png" class="img-rounded" style="width: 300px; margin-top: 50px;"/>
+          <img src="{{ BASE_PATH }}/images/umbracomacros/Umbraco-bo.PNG" class="img-rounded" style="width: 300px; margin-top: 50px;"/>
       </div>
       <div class="col-sm-12 col-md-8 col-lg-8">
         <dl class="dl-horizontal">

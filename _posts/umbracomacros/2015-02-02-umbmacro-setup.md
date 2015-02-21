@@ -20,7 +20,7 @@ environment, because some very important aspect - especially for a configurable 
 - macro's unique IDs management
 - command's configurability
 - command's consuming rules management ("who listens who")
-- internazionalization
+- internationalization
 - and much others
 
 But, anyway, I think that the approach described in the following articles will be clear and easily appliable.
@@ -31,12 +31,12 @@ Before to start, some steps in order to make working the <a href="https://github
 
 1. Download or fork the project.
 2. Build and run. The web.config is setup in order to launch Umbraco Installer for a fresh new Umbraco application
-3. follow the standard Intallation Wizard. The project is tested on MS SQL Server 2008 R2 (but I don't see problems if you use some later version).
-4. At the lat step of wizard choose to NOT install a starter kit
+3. follow the standard Installation Wizard. The project is tested on MS SQL Server 2008 R2 (but I don't see problems if you use some later version).
+4. At the last step of wizard choose to NOT install a starter kit
 5. You're done
 
 Go to the root page and have fun!
 
 _I know...another "To-Do List application"..._, but that's not the point! :)
 
-If you open the umbraco back-office panel you'll see my sample pages already configured. In the next articles I'll go deeper into these configurations.
+If you open the Umbraco back-office panel you'll see my sample pages already configured. In the next articles I'll go deeper into these configurations.

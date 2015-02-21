@@ -10,7 +10,7 @@ tags: [Technology,Umbraco]
 {% include JB/setup %}
 
 I've already explained <a href="/2014/12/01/umbup-intro" target="_blank">why we choose Umbraco</a> as our core framework.
-Recently we have migrated from 4.7.1 to 6.2.4 and we started also a migration from WebForms framework to MVC. Our main goals were Design (aka Quality) and Performance.
+Recently we have <a href="{{ BASE_PATH }}/Umbraco-Upgrade.html" target="_blank">migrated from 4.7.1 to 6.2.4</a> and we started also a migration from WebForms framework to MVC. Our main goals were Design (aka Quality) and Performance.
 
 ####Disclaimer####
 In the next articles I'll show some basic components of a modular architecture built upon Umbraco framework. What I'll share is not code for production
@@ -29,7 +29,7 @@ As always, any suggestions are welcome.
 ####Set-up####
 Before to start, some steps in order to make working the <a href="https://github.com/williamverdolini/Umbraco-CustomMacros" target="_blank">shared code</a>.
 
-1. Download or fork the project.
+1. Download or fork <a href="https://github.com/williamverdolini/Umbraco-CustomMacros" target="_blank">the repository</a>.
 2. Build and run. The web.config is setup in order to launch Umbraco Installer for a fresh new Umbraco application
 3. follow the standard Installation Wizard. The project is tested on MS SQL Server 2008 R2 (but I don't see problems if you use some later version).
 4. At the last step of wizard choose to NOT install a starter kit

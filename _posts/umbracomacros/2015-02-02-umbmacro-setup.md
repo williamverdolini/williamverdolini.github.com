@@ -39,4 +39,4 @@ Go to the root page and have fun!
 
 _I know...another "To-Do List application"..._, but that's not the point! :)
 
-If you open the umbraco back-office panel you'll see my sample pages already configured. In the next article I'll go deeper into these configurations.
+If you open the umbraco back-office panel you'll see my sample pages already configured. In the next articles I'll go deeper into these configurations.

@@ -1,8 +1,8 @@
 ---
 layout: wvpost
 title: "Umbraco Custom Macros"
-tagline: Architecture
-header: Architecture
+tagline: Properties Configurability
+header: Properties Configurability
 description: Umbraco, Architecture, Macros, Tech
 group: Umbraco_CustomMacros
 tags: [Technology,Umbraco,Architecture]

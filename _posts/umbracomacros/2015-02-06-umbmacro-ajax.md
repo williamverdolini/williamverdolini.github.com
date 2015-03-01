@@ -1,11 +1,11 @@
 ---
 layout: wvpost
 title: "Umbraco Custom Macros"
-tagline: Architecture
-header: Architecture
-description: Umbraco, Architecture, Macros, Tech
+tagline: Ajax
+header: Ajax
+description: Umbraco, Architecture, Macros, Ajax, Tech
 group: Umbraco_CustomMacros
-tags: [Technology,Umbraco,Architecture]
+tags: [Technology,Umbraco,Architecture,Ajax]
 ---
 {% include JB/setup %}
 

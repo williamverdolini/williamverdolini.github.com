@@ -1,11 +1,11 @@
 ---
 layout: wvpost
 title: "Umbraco Custom Macros"
-tagline: Architecture
-header: Architecture
-description: Umbraco, Architecture, Macros, Tech
+tagline: MVC Controller Factory
+header: MVC Controller Factory
+description: Umbraco, Castle Windsor, Inversion of Control, MVC, Tech
 group: Umbraco_CustomMacros
-tags: [Technology,Umbraco,Architecture]
+tags: [Umbraco,Castle Windsor,Inversion of Control,MVC,Technology]
 ---
 {% include JB/setup %}
 

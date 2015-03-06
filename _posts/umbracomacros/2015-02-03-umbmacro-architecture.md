@@ -61,11 +61,11 @@ To do that I've created a basic architecture in which every single macro can emi
 In the above picture you can see the communication flow among components:
 
 
-1. Umbraco composes the page using the back-office configurations. Macros in RTE are inserted as mvc child partial views (in MVC framework).
-2. each user action is a **Command** that the architecture can translate in mvc language (actions) in order to send them to the server components. 
+1. Umbraco composes the page using the back-office configurations. Macros in RTE are inserted as MVC child partial views (in the MVC framework).
+2. each user action is a **Command** that the architecture can translate in MVC language (actions) in order to send them to the server components. 
 There are two main parts of this basic architecture: 
-3. a client one (**Command.Engine.js**) responsible to translate client commands into actions 
-4. a server-side one (**MacroController**) responsible to implement business logic into the command handlers
+3. a client one (<a href="https://github.com/williamverdolini/Umbraco-CustomMacros/blob/master/CustomMacros/Areas/Framework/Scripts/Command.Engine.js" target="_blank">**Command.Engine.js**</a>) responsible to translate client commands into actions 
+4. a server-side one (Controllers derived from <a href="https://github.com/williamverdolini/Umbraco-CustomMacros/blob/master/CustomMacros/Areas/Infrastructure/Controllers/MacroController.cs" target="_blank">**MacroController**</a>) responsible to implement business logic into the command handlers
 5. as final step, Command.Engine replaces the macro area with the HTML result from server
 
 In the next articles I'll explain some other details about the flow, but before that, it's important to see something about Dependency Injection.

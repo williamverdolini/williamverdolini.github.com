@@ -10,10 +10,10 @@ tags: [Technology,Umbraco,Architecture]
 {% include JB/setup %}
 
 ###The Umbraco's Idea###
-Umbraco is a CMS Product. Its mission is to allow users to easily write and publish their own web contents. I don't want to explain all the Umbraco functionalities 
+Umbraco is a <a href="http://en.wikipedia.org/wiki/Content_management_system" target="_blank">CMS</a> Product. Its mission is to allow users to easily write and publish their own web contents. I don't want to explain all the Umbraco functionalities 
 (see <a href="https://our.umbraco.org/documentation" target="_blank">official docs</a>), but just highlight the basic idea around which Umbraco is based. Each page in Umbraco has two main properties, that are the Umbraco's pillars:
 
-1. **Document Type**: defines the types of pages that back-office users can create in the content tree. Each document type contains different properties or fields. 
+1. **Document Type**: defines the types of the pages that the back-office users can create in the content tree. Each document type contains different properties or fields. 
 Each field has a specific data type (e.g. text, number). In a MVC context, Document types are the Models passed to the Views
 2. **Template**: is where you define the HTML markup of your pages. In a MVC context, templates are the Views
 

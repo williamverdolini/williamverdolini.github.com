@@ -20,7 +20,7 @@ tags: [Angular.js,TDD]
   },
   "datePublished" : "2014-01-27",
   "articleSection" : [ "Angular.js", "TDD" ],
-  "url" : "http://williamverdolini.github.io/2014/01/27/discitur-TDD_JE/"
+  "url" : "http://williamverdolini.github.io/2014/01/27/discitur-TDD_JE_en/"
 }
 </script>
 [_italian_]({{BASE_PATH }}/2014/01/27/discitur-TDD_JE)

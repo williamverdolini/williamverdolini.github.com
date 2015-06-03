@@ -31,7 +31,8 @@
   	{% endfor %}
 
   	{% if level == 0 and prevLevel != 0%}
-        </div>
+		{% assign prevLevel = 0 %}
+    		</div>
       </div>
   	{% endif %}
 

@@ -1,0 +1,72 @@
+---
+layout: wvmonopage
+title: Fast Catalog
+tagline: Project Backstage
+header: Fast Catalog
+category: Fast Catalog
+group: navigation
+---
+{% include JB/setup %}
+
+<div class="row">
+  <div class="col-md-12">
+    <h2><img src="http://icons.iconarchive.com/icons/custom-icon-design/flag-3/32/United-Kingdom-flag-icon.png"></img> Abstract</h2>
+    <div class="col-md-12">
+		These few articles born to share some thoughts about common functionality in e-commerce: multi-property catalog search. In NoSQL.
+    </div>
+  </div>
+</div>
+  
+
+<div class="row">
+  <div class="col-md-12">
+    <h2>Contents</h2>
+    {% include themes/blog/fastcatalog-summary.html %}
+    
+    {% assign myArray = finalSummary | split: "|" %}
+    <ul style="list-style-type: none;">
+      {% for node in myArray sorted %}
+        {% assign summaryLine = node | split: "," %}
+        {% for prop in summaryLine sorted %}
+          {% assign keyval = prop | split: ":" %}
+          {% if keyval[0] == 'title' %}
+            {% assign title = keyval[1] %}
+        	{% endif %}
+          {% if keyval[0] == 'url' %}
+            {% assign url = keyval[1] %}
+        	{% endif %}
+      	{% endfor %}
+      	{% if page.url == url %}
+      	<li class="active"><a href="{{ BASE_PATH }}{{url}}">{{title}}</a></li>
+      	{% else %}
+      	<li><a href="{{ BASE_PATH }}{{url}}">{{title}}</a></li>
+      	{% endif %}
+    
+      {% endfor %}
+    </ul>
+    
+  </div>
+</div>
+
+<h2>Technologies</h2>
+<ul>
+<li>Database: SQL Server 2008 R2 +, <a href="https://www.mongodb.org/" target="_blank">MongoDB (3.0.3)</a>, <a href="https://www.elastic.co/" target="_blank">ElasticSearch (1.5)</a></li>		  
+<li>VCS: <a href="http://git-scm.com/" target="_blank">Git</a></li>
+</ul>
+
+<h2>Repositories</h2>
+<ul>
+<li><a href="https://github.com/williamverdolini/FastCatalog" target="blank">Fast Catalog</a>.</li>
+</ul>
+
+
+{% comment %}
+<ul>
+{% assign pages_list = site.pages %}
+{% include JB/pages_list %}
+</ul>
+
+Fast Catalog<br>
+<p>{{pages_list}}</p>
+{% endcomment %}
+

@@ -192,6 +192,45 @@ And in these articles I wanted to highlight some principles concretely used duri
 </div>
 
 
+<div class="row">
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <div class="col-sm-12 col-md-4 col-lg-4">
+          <img src="{{ BASE_PATH }}/images/fastcatalog/fastcatalog_logo.png" class="img-rounded" style="width: 300px; margin-top: 50px;"/>
+      </div>
+      <div class="col-sm-12 col-md-8 col-lg-8">
+        <dl class="dl-horizontal">
+          <h3 style="font-weight:normal;">
+            <dt>Name:</dt>
+            <dd><a href="{{ BASE_PATH }}FastCatalog.html">Fast Catalog</a></dd>
+          </h3>      
+          
+          <h5 style="font-weight:normal;">
+          <dt>Description:</dt>
+          <dd>Exploring solution for fast catalog search</dd>
+
+          <dt>Project's Backstage</dt>
+          <dd>The articles share some thoughts about common functionality in e-commerce: multi-property catalog search. In NoSQL.</dd>
+
+          <dt>Repository:</dt>
+          <dd>The project is versionated on this public repository: <a href="https://github.com/williamverdolini/FastCatalog" target="blank">Fast Catalog</a></dd>
+
+          <dt>Technologies:</dt>
+          <dd>Database: SQL Server 2008 R2 +,	<a href="https://www.mongodb.org/" target="_blank">MongoDB 3.0.3</a>,	<a href="https://www.elastic.co/" target="_blank">ElasticSearch 1.5</a><br/>
+		  VCS: <a href="http://git-scm.com/" target="_blank">Git</a><br/></dd>
+          </h5>      
+
+        </dl>
+      </div>
+    
+    </div>
+
+  </div>
+
+
+</div>
+
+
 
 
 <!--

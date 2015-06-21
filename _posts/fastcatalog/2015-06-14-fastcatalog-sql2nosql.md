@@ -9,7 +9,7 @@ tags: [Technology,Prototyping,NoSQL]
 ---
 {% include JB/setup %}
 
-SQL Migration to NoSQL means move from table/rows to documents. There are several ways to hit the goal, e.g. using <a href="http://docs.mongodb.org/manual/reference/program/mongoimport/" target="_blank">mongoimport</a> to import some csv or JSON files previously exported from RDBMS, but I’ve found a particularly efficient and clear way for my scenario: using <a href="https://msdn.microsoft.com/en-us/library/bb522446(v=sql.110).aspx" target="_blank">XML Format Query</a> with SQL Server. The general <a href="https://it.wikipedia.org/wiki/Extract,_transform,_load" target="_blank">ETL</a> flow is depicted below:
+SQL Migration to NoSQL means move from table/rows to documents. There are several ways to hit the goal, e.g. using <a href="http://docs.mongodb.org/manual/reference/program/mongoimport/" target="_blank">mongoimport</a> to import some csv or JSON files previously exported from RDBMS in MongoDB, but I’ve found a particularly efficient and clear way for my scenario: using <a href="https://msdn.microsoft.com/en-us/library/bb522446(v=sql.110).aspx" target="_blank">XML Format Query</a> with SQL Server. In this way I can try different NoSQL dbs, keeping the migration very quick. The general <a href="https://it.wikipedia.org/wiki/Extract,_transform,_load" target="_blank">ETL</a> flow is depicted below:
 
 
 <img src="{{ BASE_PATH }}/images/fastcatalog/fastcatalog_migration_flow.png"  class="img-rounded"  /><br/><br/>

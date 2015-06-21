@@ -12,84 +12,30 @@ tagline: Projects, stories, thoughts
   <div class="panel panel-default">
     <div class="panel-body">
       <div class="col-sm-12 col-md-4 col-lg-4">
-        <a href="http://www.disciturweb.com/" target="_blank">
-          <img src="{{ BASE_PATH }}/images/discitur/Project-Logo.png" class="img-rounded" style="width: 300px; height: 200px;"/>
-        </a>
-        <h4><a href="http://www.disciturweb.com/" target="_blank">Ambiente di Produzione</a></h4>      
-        <h5><a href="http://williamverdolini.github.io/discitur/" target="_blank">Ambiente di test</a></h5>      
-      </div>
-      <div class="col-sm-12 col-md-8 col-lg-8">
-        <dl class="dl-horizontal">
-          <h3 style="font-weight:normal;">
-            <dt>Nome:</dt>
-            <dd><a href="{{ BASE_PATH }}Discitur.html">Discitur</a></dd>
-          </h3>      
-          
-          <h5 style="font-weight:normal;">
-          <dt>Descrizione:</dt>
-          <dd>portale per la condivisione e la valutazione delle esperienze didattiche dei docenti. Obiettivo: perfezionare e migliorare le competenze didattiche sulla base dell'esperienza diretta.</dd>
-
-          <dt>Diario di Progetto:</dt>
-          <dd>La storia della realizzazione del progetto è raccolta in una serie di articoli nel <a href="{{ BASE_PATH }}Discitur.html">Backstage</a>.</dd>
-
-
-          <dt>Repository:</dt>
-          <dd>Il progetto è versionato su repository pubblici: <a href="https://github.com/williamverdolini/discitur-web" target="_blank">discitur-web</a> e <a href="https://github.com/williamverdolini/discitur-api" target="_blank">discitur-api</a>. To-Be: <a href="https://github.com/williamverdolini/disciturCQRSES" target="_blank">disciturCQRSES</a></dd>
-
-
-          <dt>Tecnologie:</dt>
-          <dd>Front-end: <a href="http://angularjs.org/" target="_blank">Angular.js 1.2.14</a><br/>Back-end: <a href="http://www.asp.net/vnext/overview/aspnet-web-api" target="_blank">.NET Web Api 2.0</a> e <a href="http://msdn.microsoft.com/en-us/data/ee712907.aspx" target="_blank">Entity Framework 6</a><br/>Database: SQL Server 2012<br/>VCS: <a href="http://git-scm.com/" target="_blank">Git</a><br/></dd>
-          </h5>      
-
-        </dl>
-      </div>
-    
-    </div>
-
-  </div>
-
-
-</div>
-
-
-
-<div class="row">
-  <div class="panel panel-default">
-    <div class="panel-body">
-      <div class="col-sm-12 col-md-4 col-lg-4">
-        <!--<a href="http://www.disciturweb.com/" target="_blank">-->
-          <img src="{{ BASE_PATH }}/images/cqrses/CQRS-ES-TODOS-Logo.png" class="img-rounded" style="width: 300px; height: 200px;"/>
-        <!--</a>
-		
-        <h4><a href="http://www.disciturweb.com/" target="_blank">Ambiente di Produzione</a></h4>      
-        <h5><a href="http://williamverdolini.github.io/discitur/" target="_blank">Ambiente di test</a></h5>      
-		-->
+          <img src="{{ BASE_PATH }}/images/fastcatalog/fastcatalog_logo.png" class="img-rounded" style="width: 300px; margin-top: 50px;"/>
       </div>
       <div class="col-sm-12 col-md-8 col-lg-8">
         <dl class="dl-horizontal">
           <h3 style="font-weight:normal;">
             <dt>Name:</dt>
-            <dd><a href="{{ BASE_PATH }}Cqrs-es-todos.html">CQRS+ES Todo List</a></dd>
+            <dd><a href="{{ BASE_PATH }}FastCatalog.html">Fast Catalog</a></dd>
           </h3>      
           
           <h5 style="font-weight:normal;">
           <dt>Description:</dt>
-          <dd>Training journey into Command Query Responsibility Segregation (CQRS) + Event Sourcing (ES).</dd>
+          <dd>Exploring solution for fast catalog search</dd>
+
+          <dt>Period:</dt>
+          <dd>June 2015 - current</dd>
 
           <dt>Project's Backstage</dt>
-          <dd>The diary of the implementation of this sample To-Do App in "CQRS+ES sauce" is collected in some articles in the <a href="{{ BASE_PATH }}Cqrs-es-todos.html">Project's Backstage</a>.</dd>
-
+          <dd>The articles share some thoughts about common functionality in e-commerce: multi-property catalog search. In NoSQL.</dd>
 
           <dt>Repository:</dt>
-          <dd>The project is versionated on this public repository: <a href="https://github.com/williamverdolini/CQRS-ES-Todos" target="_blank">https://github.com/williamverdolini/CQRS-ES-Todos</a></dd>
-
+          <dd>The project is versionated on this public repository: <a href="https://github.com/williamverdolini/FastCatalog" target="blank">Fast Catalog</a></dd>
 
           <dt>Technologies:</dt>
-          <dd>Front-end: <a href="http://angularjs.org/" target="_blank">Angular.js 1.2.21</a><br/>
-		  Back-end: <a href="http://www.asp.net/vnext/overview/aspnet-web-api" target="_blank">.NET Web Api 2.0</a> and <a href="http://msdn.microsoft.com/en-us/data/ee712907.aspx" target="_blank">Entity Framework 6</a><br/>
-		  Database: SQL Server 2008 R2 +<br/>
-		  Inversion of Control: <a href="http://docs.castleproject.org/Windsor.MainPage.ashx" target="_blank">Castle Windsor</a><br/>
-		  Event Store: <a href="http://neventstore.org/" target="_blank">NEventStore</a><br/>		  
+          <dd>Database: SQL Server 2008 R2 +,	<a href="https://www.mongodb.org/" target="_blank">MongoDB 3.0.3</a>,	<a href="https://www.elastic.co/" target="_blank">ElasticSearch 1.5</a><br/>
 		  VCS: <a href="http://git-scm.com/" target="_blank">Git</a><br/></dd>
           </h5>      
 
@@ -103,6 +49,49 @@ tagline: Projects, stories, thoughts
 
 </div>
 
+<div class="row">
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <div class="col-sm-12 col-md-4 col-lg-4">
+          <img src="{{ BASE_PATH }}/images/umbracomacros/Umbraco-bo.PNG" class="img-rounded" style="width: 300px; margin-top: 50px;"/>
+      </div>
+      <div class="col-sm-12 col-md-8 col-lg-8">
+        <dl class="dl-horizontal">
+          <h3 style="font-weight:normal;">
+            <dt>Name:</dt>
+            <dd><a href="{{ BASE_PATH }}Umbraco-CustomMacros.html">Umbraco Custom Macros</a></dd>
+          </h3>      
+          
+          <h5 style="font-weight:normal;">
+          <dt>Description:</dt>
+          <dd>A basic architecture to exploit flexibility and configurability in Umbraco+MVC</dd>
+
+          <dt>Period:</dt>
+          <dd>February 2015</dd>
+
+          <dt>Project's Backstage</dt>
+          <dd>The articles describe how to exploit Umbraco macros and MVC to create a (basic) flexible and configurable architecture.</dd>
+
+          <dt>Repository:</dt>
+          <dd>The project is versionated on this public repository: <a href="https://github.com/williamverdolini/Umbraco-CustomMacros" target="_blank">https://github.com/williamverdolini/Umbraco-CustomMacros</a></dd>
+
+          <dt>Technologies:</dt>
+          <dd>CMS: <a href="http://umbraco.com/" target="_blank">Umbraco</a> <a href="http://our.umbraco.org/contribute/releases/624" target="_blank">6.2.4</a><br/>
+		  Front-end: <a href="http://www.asp.net/mvc/mvc4" target="_blank">ASP.Net MVC 4</a><br/>		  
+		  Database: SQL Server 2008 R2 +<br/>		  
+		  Inversion of Control: <a href="http://docs.castleproject.org/Windsor.MainPage.ashx" target="_blank">Castle Windsor</a><br/>
+		  VCS: <a href="http://git-scm.com/" target="_blank">Git</a><br/></dd>
+          </h5>      
+
+        </dl>
+      </div>
+    
+    </div>
+
+  </div>
+
+
+</div>
 
 <div class="row">
   <div class="panel panel-default">
@@ -120,6 +109,9 @@ tagline: Projects, stories, thoughts
           <h5 style="font-weight:normal;">
           <dt>Description:</dt>
           <dd>Single upgrade jump from Umbraco version 4.7.1 to version 6.2.4.</dd>
+
+          <dt>Period:</dt>
+          <dd>December 2014</dd>
 
           <dt>Project's Backstage</dt>
           <dd>The articles describe the prototyping steps that allowed me to upgrade and jump from version 4.7.1 to 6.2.4.
@@ -148,36 +140,46 @@ And in these articles I wanted to highlight some principles concretely used duri
 
 </div>
 
-
-
 <div class="row">
   <div class="panel panel-default">
     <div class="panel-body">
       <div class="col-sm-12 col-md-4 col-lg-4">
-          <img src="{{ BASE_PATH }}/images/umbracomacros/Umbraco-bo.PNG" class="img-rounded" style="width: 300px; margin-top: 50px;"/>
+        <!--<a href="http://www.disciturweb.com/" target="_blank">-->
+          <img src="{{ BASE_PATH }}/images/cqrses/CQRS-ES-TODOS-Logo.png" class="img-rounded" style="width: 300px; height: 200px;"/>
+        <!--</a>
+		
+        <h4><a href="http://www.disciturweb.com/" target="_blank">Ambiente di Produzione</a></h4>      
+        <h5><a href="http://williamverdolini.github.io/discitur/" target="_blank">Ambiente di test</a></h5>      
+		-->
       </div>
       <div class="col-sm-12 col-md-8 col-lg-8">
         <dl class="dl-horizontal">
           <h3 style="font-weight:normal;">
             <dt>Name:</dt>
-            <dd><a href="{{ BASE_PATH }}Umbraco-CustomMacros.html">Umbraco Custom Macros</a></dd>
+            <dd><a href="{{ BASE_PATH }}Cqrs-es-todos.html">CQRS+ES Todo List</a></dd>
           </h3>      
           
           <h5 style="font-weight:normal;">
           <dt>Description:</dt>
-          <dd>A basic architecture to exploit flexibility and configurability in Umbraco+MVC</dd>
+          <dd>Training journey into Command Query Responsibility Segregation (CQRS) + Event Sourcing (ES).</dd>
+
+          <dt>Period:</dt>
+          <dd>August 2014 - October 2014</dd>
 
           <dt>Project's Backstage</dt>
-          <dd>The articles describe how to exploit Umbraco macros and MVC to create a (basic) flexible and configurable architecture.</dd>
+          <dd>The diary of the implementation of this sample To-Do App in "CQRS+ES sauce" is collected in some articles in the <a href="{{ BASE_PATH }}Cqrs-es-todos.html">Project's Backstage</a>.</dd>
+
 
           <dt>Repository:</dt>
-          <dd>The project is versionated on this public repository: <a href="https://github.com/williamverdolini/Umbraco-CustomMacros" target="_blank">https://github.com/williamverdolini/Umbraco-CustomMacros</a></dd>
+          <dd>The project is versionated on this public repository: <a href="https://github.com/williamverdolini/CQRS-ES-Todos" target="_blank">https://github.com/williamverdolini/CQRS-ES-Todos</a></dd>
+
 
           <dt>Technologies:</dt>
-          <dd>CMS: <a href="http://umbraco.com/" target="_blank">Umbraco</a> <a href="http://our.umbraco.org/contribute/releases/624" target="_blank">6.2.4</a><br/>
-		  Front-end: <a href="http://www.asp.net/mvc/mvc4" target="_blank">ASP.Net MVC 4</a><br/>		  
-		  Database: SQL Server 2008 R2 +<br/>		  
+          <dd>Front-end: <a href="http://angularjs.org/" target="_blank">Angular.js 1.2.21</a><br/>
+		  Back-end: <a href="http://www.asp.net/vnext/overview/aspnet-web-api" target="_blank">.NET Web Api 2.0</a> and <a href="http://msdn.microsoft.com/en-us/data/ee712907.aspx" target="_blank">Entity Framework 6</a><br/>
+		  Database: SQL Server 2008 R2 +<br/>
 		  Inversion of Control: <a href="http://docs.castleproject.org/Windsor.MainPage.ashx" target="_blank">Castle Windsor</a><br/>
+		  Event Store: <a href="http://neventstore.org/" target="_blank">NEventStore</a><br/>		  
 		  VCS: <a href="http://git-scm.com/" target="_blank">Git</a><br/></dd>
           </h5>      
 
@@ -191,33 +193,42 @@ And in these articles I wanted to highlight some principles concretely used duri
 
 </div>
 
-
 <div class="row">
   <div class="panel panel-default">
     <div class="panel-body">
       <div class="col-sm-12 col-md-4 col-lg-4">
-          <img src="{{ BASE_PATH }}/images/fastcatalog/fastcatalog_logo.png" class="img-rounded" style="width: 300px; margin-top: 50px;"/>
+        <a href="http://www.disciturweb.com/" target="_blank">
+          <img src="{{ BASE_PATH }}/images/discitur/Project-Logo.png" class="img-rounded" style="width: 300px; height: 200px;"/>
+        </a>
+        <h4><a href="http://www.disciturweb.com/" target="_blank">Production Environment (<i>Ambiente di Produzione</i>)</a></h4>      
+        <h5><a href="http://williamverdolini.github.io/discitur/" target="_blank">Ambiente di test</a></h5>      
       </div>
       <div class="col-sm-12 col-md-8 col-lg-8">
         <dl class="dl-horizontal">
           <h3 style="font-weight:normal;">
             <dt>Name:</dt>
-            <dd><a href="{{ BASE_PATH }}FastCatalog.html">Fast Catalog</a></dd>
+            <dd><a href="{{ BASE_PATH }}Discitur.html">Discitur</a></dd>
           </h3>      
           
           <h5 style="font-weight:normal;">
           <dt>Description:</dt>
-          <dd>Exploring solution for fast catalog search</dd>
+          <dd>Social Network of teachers for sharing good and bad teaching experiences. Main goal: improve teaching skills, learning from the day-to-day life.
+					(<i>portale per la condivisione e la valutazione delle esperienze didattiche dei docenti. Obiettivo: perfezionare e migliorare le competenze didattiche sulla base dell'esperienza diretta.</i>)</dd>
 
-          <dt>Project's Backstage</dt>
-          <dd>The articles share some thoughts about common functionality in e-commerce: multi-property catalog search. In NoSQL.</dd>
+          <dt>Period:</dt>
+          <dd>January 2014 - November 2014</dd>
+
+          <dt>Project's Backstage:</dt>
+          <dd>The history of the realization of the project is collected in a series of articles into the <a href="{{ BASE_PATH }}Discitur.html">Backstage</a>.<br/>
+					(<i>La storia della realizzazione del progetto è raccolta in una serie di articoli nel <a href="{{ BASE_PATH }}Discitur.html">Backstage</a></i>).</dd>
+
 
           <dt>Repository:</dt>
-          <dd>The project is versionated on this public repository: <a href="https://github.com/williamverdolini/FastCatalog" target="blank">Fast Catalog</a></dd>
+          <dd>The project is versionated on this public repository: <a href="https://github.com/williamverdolini/discitur-web" target="_blank">discitur-web</a> and <a href="https://github.com/williamverdolini/discitur-api" target="_blank">discitur-api</a>. Next to: <a href="https://github.com/williamverdolini/disciturCQRSES" target="_blank">disciturCQRSES</a></dd>
+
 
           <dt>Technologies:</dt>
-          <dd>Database: SQL Server 2008 R2 +,	<a href="https://www.mongodb.org/" target="_blank">MongoDB 3.0.3</a>,	<a href="https://www.elastic.co/" target="_blank">ElasticSearch 1.5</a><br/>
-		  VCS: <a href="http://git-scm.com/" target="_blank">Git</a><br/></dd>
+          <dd>Front-end: <a href="http://angularjs.org/" target="_blank">Angular.js 1.2.14</a><br/>Back-end: <a href="http://www.asp.net/vnext/overview/aspnet-web-api" target="_blank">.NET Web Api 2.0</a> and <a href="http://msdn.microsoft.com/en-us/data/ee712907.aspx" target="_blank">Entity Framework 6</a><br/>Database: SQL Server 2012<br/>VCS: <a href="http://git-scm.com/" target="_blank">Git</a><br/></dd>
           </h5>      
 
         </dl>

@@ -241,7 +241,7 @@ Il progetto è versionato su repository pubblico: <a href="https://github.com/wi
 -->
 
 ###About me
-The summary of my work history you can read it in <a href="http://www.linkedin.com/in/williamverdolini" target="_blank">my Linkedin profile</a>
+The summary of my work history you can read it in <a href="https://it.linkedin.com/pub/william-verdolini/1/712/121" target="_blank"><img src="https://static.licdn.com/scds/common/u/img/webpromo/btn_myprofile_160x33.png" width="160" height="33" border="0" alt="View William Verdolini's profile on LinkedIn"></a>
 <!--La sintesi della mia storia lavorativa la potete leggere nel <a href="http://www.linkedin.com/in/williamverdolini" target="_blank">mio profilo Linkedin</a>-->
 
 <a href="http://stackoverflow.com/users/3316654/wilver" target="_blank">

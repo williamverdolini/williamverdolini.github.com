@@ -35,8 +35,13 @@ tagline: Projects, stories, thoughts
           <dd>The project is versionated on this public repository: <a href="https://github.com/williamverdolini/FastCatalog" target="blank">Fast Catalog</a></dd>
 
           <dt>Technologies:</dt>
-          <dd>Database: SQL Server 2008 R2 +,	<a href="https://www.mongodb.org/" target="_blank">MongoDB 3.0.3</a>,	<a href="https://www.elastic.co/" target="_blank">ElasticSearch 1.5</a><br/>
-		  VCS: <a href="http://git-scm.com/" target="_blank">Git</a><br/></dd>
+          <dd>UI: <a href="https://material.angularjs.org/latest/#/" target="_blank">Angular Material 0.10.0</a><br/></dd>					
+          <dd>Front-end: <a href="https://angularjs.org/" target="_blank">Angular.js 1.3.15</a><br/></dd>					
+					<dd>Back-end: <a href="http://www.asp.net/vnext/overview/aspnet-web-api" target="_blank">.NET Web Api 2.0</a><br/></dd>
+          <dd>Database: SQL Server 2008 R2 +,	<a href="https://www.mongodb.org/" target="_blank">MongoDB 3.0.3</a>,	<a href="https://www.elastic.co/" target="_blank">ElasticSearch 1.5</a><br/></dd>
+					<dd>Inversion of Control: <a href="http://docs.castleproject.org/Windsor.MainPage.ashx" target="_blank">Castle Windsor</a><br/></dd>
+					<dd>VCS: <a href="http://git-scm.com/" target="_blank">Git</a><br/></dd>
+					
           </h5>      
 
         </dl>
@@ -175,7 +180,9 @@ And in these articles I wanted to highlight some principles concretely used duri
 
 
           <dt>Technologies:</dt>
-          <dd>Front-end: <a href="http://angularjs.org/" target="_blank">Angular.js 1.2.21</a><br/>
+          <dd>
+			UI: <a href="https://angular-ui.github.io/bootstrap/" target="_blank">UI Bootstrap</a><br/>
+			Front-end: <a href="http://angularjs.org/" target="_blank">Angular.js 1.2.21</a><br/>
 		  Back-end: <a href="http://www.asp.net/vnext/overview/aspnet-web-api" target="_blank">.NET Web Api 2.0</a> and <a href="http://msdn.microsoft.com/en-us/data/ee712907.aspx" target="_blank">Entity Framework 6</a><br/>
 		  Database: SQL Server 2008 R2 +<br/>
 		  Inversion of Control: <a href="http://docs.castleproject.org/Windsor.MainPage.ashx" target="_blank">Castle Windsor</a><br/>
@@ -228,7 +235,12 @@ And in these articles I wanted to highlight some principles concretely used duri
 
 
           <dt>Technologies:</dt>
-          <dd>Front-end: <a href="http://angularjs.org/" target="_blank">Angular.js 1.2.14</a><br/>Back-end: <a href="http://www.asp.net/vnext/overview/aspnet-web-api" target="_blank">.NET Web Api 2.0</a> and <a href="http://msdn.microsoft.com/en-us/data/ee712907.aspx" target="_blank">Entity Framework 6</a><br/>Database: SQL Server 2012<br/>VCS: <a href="http://git-scm.com/" target="_blank">Git</a><br/></dd>
+          <dd>
+					UI: <a href="https://angular-ui.github.io/bootstrap/" target="_blank">UI Bootstrap</a><br/>
+					Front-end: <a href="http://angularjs.org/" target="_blank">Angular.js 1.2.14</a><br/>
+					Back-end: <a href="http://www.asp.net/vnext/overview/aspnet-web-api" target="_blank">.NET Web Api 2.0</a> and <a href="http://msdn.microsoft.com/en-us/data/ee712907.aspx" target="_blank">Entity Framework 6</a><br/>
+					Database: SQL Server 2012<br/>
+					VCS: <a href="http://git-scm.com/" target="_blank">Git</a><br/></dd>
           </h5>      
 
         </dl>

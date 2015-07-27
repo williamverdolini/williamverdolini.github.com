@@ -70,9 +70,9 @@ Not bad!
 
 ###Queries
 
-Ok. After that the MongoDb was populated I began to try some queries for multi-property catalog and after a while I found this as best queries:
+Ok. After that the MongoDb was populated I began to try some queries for multi-attribute catalog and after a while I found this as best queries:
 
-#####Query for all properties (~2300ms)
+#####Query for all product attributes (~2300ms)
 <script type="syntaxhighlighter" class="brush: js">
 <![CDATA[
 db.Products.aggregate([
@@ -84,7 +84,7 @@ db.Products.aggregate([
 ]);
 ]]></script> 
 
-#####Query for properties filtered by some property values  (~170ms)
+#####Query for product attributes filtered by some attribute values  (~170ms)
 <script type="syntaxhighlighter" class="brush: js">
 <![CDATA[
 db.Products.aggregate([
@@ -104,7 +104,7 @@ db.Products.aggregate([
 ]);
 ]]></script> 
 
-#####Query for documents filtered by some property values (~ 26ms)
+#####Query for documents filtered by some attribute values (~ 26ms)
 <script type="syntaxhighlighter" class="brush: js">
 <![CDATA[
 db.Products.find({
@@ -122,7 +122,7 @@ db.Products.find({
 <h4>Pros</h4>
 <ul>
 <li>Clear. Readable. Maintainable</li>
-<li>the query results give the complete <b>structured json object</b>, with the nested couples of property's value/count. There's no need to manipulate furthermore the object in front-end code</li>
+<li>the query results give the complete <b>structured json object</b>, with the nested couples of attribute's value/count. There's no need to manipulate furthermore the object in front-end code</li>
 <li>Pretty fast, specially for filtered query</li>
 <li>Migration time is very good</li>
 </ul>
@@ -130,6 +130,6 @@ db.Products.find({
 <div class="col-md-6">
 <h4>Cons</h4>
 <ul>
-<li>Not so speed as I guess...specially for <b>Query for all properties</b>. MSSQL Stored procedures took roughly the same time (in same machine).This is the point to stress; I tried different indexes combinations, but I was not able to improve performance furthermore...maybe some suggestion?</li>
+<li>Not so speed as I guess...specially for <b>Query for all product attributes</b>. MSSQL Stored procedures took roughly the same time (in same machine).This is the point to stress; I tried different indexes combinations, but I was not able to improve performance furthermore...maybe some suggestion?</li>
 </ul>
 </div>

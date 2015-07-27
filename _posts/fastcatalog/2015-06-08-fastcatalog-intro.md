@@ -9,7 +9,7 @@ tags: [Technology,Prototyping,NoSQL]
 ---
 {% include JB/setup %}
 
-These few articles born to share some thoughts about common functionality in e-commerce: multi-property catalog search. Something like those:
+These few articles born to share some thoughts about common functionality in e-commerce: multi-attribute catalog search. Something like those:
 
 <img src="{{ BASE_PATH }}/images/fastcatalog/fastcatalog1.png"  class="img-rounded"  /><br/>
 <img src="{{ BASE_PATH }}/images/fastcatalog/fastcatalog2.png"  class="img-rounded"  /><br/><br/>
@@ -23,9 +23,9 @@ Our (traditional) approach was with relational database: MSSQL, in particular. A
 
 <img src="{{ BASE_PATH }}/images/fastcatalog/fastcatalog_tables.png"  class="img-rounded" /><br/><br/>
 
-- **Properties & PropertyValues**: are the dictionaries of all possible property/values
+- **Properties & PropertyValues**: are the dictionaries of all possible attribute/values
 - **Products**: (very simple) product entity table
-- **ProductProperties**: are the links between products and their property values
+- **ProductProperties**: are the links between products and their attribute values
 
 Note: names and structure of tables from public repository are not exactly the same (because of original “italian” DB).
 
@@ -50,8 +50,14 @@ group by IDProprieta,ProprietaDesc,IDValore,ValoreDesc
 order by IDProprieta,ProprietaDesc,IDValore,ValoreDesc
 ]]></script> 
 
-When the user makes some selection, things become more complex because we first have to populate a temp-table with the product Ids that match the selection criteria and, after that, we make grouping. That’s why we’ve used Store Procedures, because it’s hard to do that with a simple query and to improve general performance.
+When the user makes some selection, things become more complex because we first have to populate a temp-table with the product Ids 
+that match the selection criteria and, after that, we make grouping. 
+That’s why we’ve used Store Procedures, because it’s hard to do that with a simple query and to improve general performance.
 
-Starting from this, I tried to move this scenario into <a href="https://en.wikipedia.org/wiki/NoSQL" target="_blank">NoSQL</a> realm, prototyping simple migration procedures to move from SQL to <a href="https://www.mongodb.org/" target="_blank">MongoDB</a> and from SQL to <a href="https://www.elastic.co/" target="_blank">ElasticSearch</a> and tried to figure out pros and cons of different solutions, in order to scale out to high volumes.
+Starting from this, I tried to move this scenario into <a href="https://en.wikipedia.org/wiki/NoSQL" target="_blank">NoSQL</a> realm, 
+prototyping simple migration procedures to move from SQL to <a href="https://www.mongodb.org/" target="_blank">MongoDB</a> and from SQL 
+to <a href="https://www.elastic.co/" target="_blank">ElasticSearch</a> and tried to figure out pros and cons of different solutions, 
+in order to scale out to high volumes.
 
-Disclaimer: these are my first experimentations with MongoDB and ElasticSearch and, of course, there could be a better way to do what I did. I will thank anyone who wants to share his/her insights and let me grow. 
+Disclaimer: these are my first experimentations with MongoDB and ElasticSearch and, of course, there could be a better way to do what I did. 
+I will thank anyone who wants to share his/her insights and let me grow. 

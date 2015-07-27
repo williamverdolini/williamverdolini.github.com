@@ -85,9 +85,9 @@ as expected, but pretty good.
 
 ###Queries
 
-Let's see the queries and times with ElastiSearch for multi-property catalog:
+Let's see the queries and times with ElastiSearch for multi-attribute catalog:
 
-#####Query for all properties (~175ms)
+#####Query for all product attributes (~175ms)
 <script type="syntaxhighlighter" class="brush: js">
 <![CDATA[
 GET /catalog/products/_search?search_type=count
@@ -124,7 +124,7 @@ GET /catalog/products/_search?search_type=count
 }
 ]]></script> 
 
-#####Query for properties filtered by some property values  (~6ms)
+#####Query for product attributes filtered by some attribute values  (~6ms)
 <script type="syntaxhighlighter" class="brush: js">
 <![CDATA[
 GET /catalog/products/_search?search_type=count
@@ -228,14 +228,14 @@ GET /catalog/products/_search?search_type=count
 }
 ]]></script> 
 
-#####Query for documents filtered by some property values 
+#####Query for documents filtered by some attribute values 
 The same queries as before, but without the **search_type=count** querystring parameter. So you don't need to perform two different queries to get all the result to display. Very powerful!!! Very Fast!!!
 
 <div class="col-md-6">
 <h4>Pros</h4>
 <ul>
 <li>Fast...wow!</li>
-<li>Again, the query results give the complete <b>structured json object</b>, with the nested couples of property's value/count and, better than MongoDb, with Elastic'aggregates you can set the size of you aggregation and this fits very well with "see all values" feature in multi-properties catalog.</li>
+<li>Again, the query results give the complete <b>structured json object</b>, with the nested couples of attribute's value/count and, better than MongoDb, with Elastic'aggregates you can set the size of you aggregation and this fits very well with "see all values" feature in multi-attributes catalog.</li>
 <li>No need for separate find queries: the aggregate without <b>search_type=count</b> querystring parameter, returns the matched documents</li>
 </ul>
 </div>

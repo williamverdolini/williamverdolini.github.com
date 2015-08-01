@@ -15,7 +15,7 @@ These few articles born to share some thoughts about common functionality in e-c
 <img src="{{ BASE_PATH }}/images/fastcatalog/fastcatalog2.png"  class="img-rounded"  /><br/><br/>
 
 
-Generally speaking it’s quite easy to implement this feature, but there are some situation where the size of product catalog could be huge (in terms of numbers of product) and so the performance could be a very strategic and vital key point to analyze.
+Generally speaking it’s quite easy to implement this feature, but there are some situation where the size of product catalog could be huge (in terms of number of products) and so the performance could be a very strategic and vital key point to analyze.
 
 All began with an our customer who works on Electronic components market. This market is characterized by an enormous number of product, because a product often differs from the other just for little variations on tolerance or whatever. So under a single category, it could be hundreds of thousands or millions of different products…that a user should be able to search and filter by the product’s properties.
 

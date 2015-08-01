@@ -9,7 +9,7 @@ tags: [Technology,Prototyping,NoSQL]
 ---
 {% include JB/setup %}
 
-SQL Migration to NoSQL means move from table/rows to documents. There are several ways to hit the goal, e.g. using <a href="http://docs.mongodb.org/manual/reference/program/mongoimport/" target="_blank">mongoimport</a> to import some csv or JSON files previously exported from RDBMS in MongoDB, but I’ve found a particularly efficient and clear way for my scenario: using <a href="https://msdn.microsoft.com/en-us/library/bb522446(v=sql.110).aspx" target="_blank">XML Format Query</a> with SQL Server. In this way I can try different NoSQL target db, keeping the migration fast. The general <a href="https://it.wikipedia.org/wiki/Extract,_transform,_load" target="_blank">ETL</a> flow is depicted below:
+SQL Migration to NoSQL means move from table/rows to documents. There are several ways to hit the goal, e.g. using <a href="http://docs.mongodb.org/manual/reference/program/mongoimport/" target="_blank">mongoimport</a> to import some csv or JSON files previously exported from RDBMS in MongoDB, or using SQL Views to denormalize the original data, but I’ve found a particularly efficient and clear way for my scenario: using <a href="https://msdn.microsoft.com/en-us/library/bb522446(v=sql.110).aspx" target="_blank">XML Format Query</a> with SQL Server. In this way I can try different NoSQL target db, keeping the migration fast. The general <a href="https://it.wikipedia.org/wiki/Extract,_transform,_load" target="_blank">ETL</a> flow is depicted below:
 
 
 <img src="{{ BASE_PATH }}/images/fastcatalog/fastcatalog_migration_flow.png"  class="img-rounded"  /><br/><br/>
@@ -133,61 +133,61 @@ The generic migration logic is here:
 <![CDATA[
 namespace SQLMigration
 {
-    public class Migrator<T> where T : IDbClient, new()
-    {
-        private IDbClient dbClient;
-        private bool IsInitialized = false;
-        private int commitStep = 0;
+	public class Migrator<T> where T : IDbClient, new()
+	{
+		private IDbClient dbClient;
+		private bool IsInitialized = false;
+		private int commitStep = 0;
 
-        public Migrator<T> Initialize()
-        {
-            dbClient = (new T()).Initialize();
-            IsInitialized = true;
-            commitStep = int.Parse(Resources.CommitStep);
-            return this;
-        }
+		public Migrator<T> Initialize()
+		{
+			dbClient = (new T()).Initialize();
+			IsInitialized = true;
+			commitStep = int.Parse(Resources.CommitStep);
+			return this;
+		}
 
-        public Migrator<T> Execute()
-        {
-            if (IsInitialized)
-            {
-                Stopwatch sw = new Stopwatch();
-                sw.Start();
-                int counter = 0;
+		public Migrator<T> Execute()
+		{
+			if (IsInitialized)
+			{
+				Stopwatch sw = new Stopwatch();
+				sw.Start();
+				int counter = 0;
 
-                using (SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings[Resources.ConnectionStringKey].ConnectionString))
-                {
-                    conn.Open();
+				using (SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings[Resources.ConnectionStringKey].ConnectionString))
+				{
+					conn.Open();
 
-                    SqlCommand cmd = new SqlCommand(Resources.InitialPopulate, conn);
-                    using (SqlDataReader reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            SQLProduct dbProduct = reader[0].ToString().FromXmlTo<SQLProduct>();
-                            dbClient.Save(dbProduct);
-                            dbClient.FlushProducts(commitStep);
-                            Console.WriteLine("#{0} - code: {1}", (++counter), dbProduct.Data.Code);
-                        }
-                    }
-                    cmd.Dispose();
-                    dbClient.FlushProducts();
-                }
-                sw.Stop();
-                Console.WriteLine("Elapsed: {0}", sw.Elapsed);
-                Console.WriteLine("Total Records inserted: {0}", counter);
-                Console.WriteLine("Insert Rate: {0} rec/sec", (counter / (sw.ElapsedMilliseconds / 1000)));                                
-            }
-            return this;
-        }
+					SqlCommand cmd = new SqlCommand(Resources.InitialPopulate, conn);
+					using (SqlDataReader reader = cmd.ExecuteReader())
+					{
+						while (reader.Read())
+						{
+							SQLProduct dbProduct = reader[0].ToString().FromXmlTo<SQLProduct>();
+							dbClient.Save(dbProduct);
+							dbClient.FlushProducts(commitStep);
+							Console.WriteLine("#{0} - code: {1}", (++counter), dbProduct.Data.Code);
+						}
+					}
+					cmd.Dispose();
+					dbClient.FlushProducts();
+				}
+				sw.Stop();
+				Console.WriteLine("Elapsed: {0}", sw.Elapsed);
+				Console.WriteLine("Total Records inserted: {0}", counter);
+				Console.WriteLine("Insert Rate: {0} rec/sec", (counter / (sw.ElapsedMilliseconds / 1000)));                                
+			}
+			return this;
+		}
 
-        public void PostMigration()
-        {
-            Console.WriteLine("Start executing post-migration logic");
-            dbClient.PostMigration();
-            Console.WriteLine("Post-migration logic completed.");
-        }
-    }
+		public void PostMigration()
+		{
+			Console.WriteLine("Start executing post-migration logic");
+			dbClient.PostMigration();
+			Console.WriteLine("Post-migration logic completed.");
+		}
+	}
 }
 ]]></script> 
 
@@ -197,28 +197,28 @@ Here you can see the extension method FromXMLTo<T>, that performs the XML deseri
 <![CDATA[
 public static T FromXmlTo<T>(this String xml)
 {
-		T returnedXmlClass = default(T);
+	T returnedXmlClass = default(T);
 
-		try
+	try
+	{
+		using (TextReader reader = new StringReader(xml))
 		{
-				using (TextReader reader = new StringReader(xml))
-				{
-						try
-						{
-								returnedXmlClass = (T)new XmlSerializer(typeof(T)).Deserialize(reader);
-						}
-						catch (InvalidOperationException)
-						{
-								// String passed is not XML, simply return defaultXmlClass
-								throw;
-						}
-				}
-		}
-		catch (Exception)
-		{
+			try
+			{
+				returnedXmlClass = (T)new XmlSerializer(typeof(T)).Deserialize(reader);
+			}
+			catch (InvalidOperationException)
+			{
+				// String passed is not XML, simply return defaultXmlClass
 				throw;
+			}
 		}
-		return returnedXmlClass;
+	}
+	catch (Exception)
+	{
+		throw;
+	}
+	return returnedXmlClass;
 }
 ]]></script> 
 

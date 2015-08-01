@@ -15,32 +15,32 @@ I did the same thing described in the <a href="{{ BASE_PATH }}/2015/06/22/fastca
 <![CDATA[
 namespace SQL2Elastic.Models
 {    
-    [ElasticType]
-    public class ESProduct
-    {
-        [ElasticProperty(Index = FieldIndexOption.NotAnalyzed, Type = FieldType.String)]
-        public Guid Id { get; set; }
-        [ElasticProperty(Index = FieldIndexOption.NotAnalyzed)]
-        public string Code { get; set; }
-        public string Description { get; set; }
-        [ElasticProperty(Index = FieldIndexOption.NotAnalyzed)]
-        public double Price { get; set; }
-        [ElasticProperty(Index = FieldIndexOption.NotAnalyzed)]
-        public long IdCategory { get; set; }
-        [ElasticProperty(Index = FieldIndexOption.NotAnalyzed)]
-        public IList<string> Synonims { get; set; }
-        [ElasticProperty(Type = FieldType.Nested)]
-        public IList<ProductAttribute> Attributes { get; set; }
-    }
+	[ElasticType]
+	public class ESProduct
+	{
+		[ElasticProperty(Index = FieldIndexOption.NotAnalyzed, Type = FieldType.String)]
+		public Guid Id { get; set; }
+		[ElasticProperty(Index = FieldIndexOption.NotAnalyzed)]
+		public string Code { get; set; }
+		public string Description { get; set; }
+		[ElasticProperty(Index = FieldIndexOption.NotAnalyzed)]
+		public double Price { get; set; }
+		[ElasticProperty(Index = FieldIndexOption.NotAnalyzed)]
+		public long IdCategory { get; set; }
+		[ElasticProperty(Index = FieldIndexOption.NotAnalyzed)]
+		public IList<string> Synonims { get; set; }
+		[ElasticProperty(Type = FieldType.Nested)]
+		public IList<ProductAttribute> Attributes { get; set; }
+	}
 
-    [ElasticType]
-    public class ProductAttribute
-    {
-        [ElasticProperty(Index = FieldIndexOption.NotAnalyzed)]
-        public string Key { get; set; }
-        [ElasticProperty(Index = FieldIndexOption.NotAnalyzed)]
-        public string Value { get; set; }
-    }
+	[ElasticType]
+	public class ProductAttribute
+	{
+		[ElasticProperty(Index = FieldIndexOption.NotAnalyzed)]
+		public string Key { get; set; }
+		[ElasticProperty(Index = FieldIndexOption.NotAnalyzed)]
+		public string Value { get; set; }
+	}
 }
 ]]></script> 
 
@@ -59,18 +59,18 @@ The migration logic is inside its specific <a href="https://github.com/williamve
 <![CDATA[
 public void Save(SQLProduct dbProduct)
 {
-		Contract.Requires<ArgumentNullException>(dbProduct != null, "dbProduct");
-		var product = new ESProduct
-		{
-				Id = Guid.NewGuid(),
-				Code = dbProduct.Data.Code,
-				Description = dbProduct.Data.Description,
-				IdCategory = dbProduct.Data.IdCategory,
-				Price = Math.Round(10 + rnd.NextDouble() * (1000 - 10), 2),
-				Synonims = dbProduct.Synonims.ToStringList(),
-				Attributes = dbProduct.Attributes.ToProductAttributes()
-		};
-		products.Add(product);
+	Contract.Requires<ArgumentNullException>(dbProduct != null, "dbProduct");
+	var product = new ESProduct
+	{
+		Id = Guid.NewGuid(),
+		Code = dbProduct.Data.Code,
+		Description = dbProduct.Data.Description,
+		IdCategory = dbProduct.Data.IdCategory,
+		Price = Math.Round(10 + rnd.NextDouble() * (1000 - 10), 2),
+		Synonims = dbProduct.Synonims.ToStringList(),
+		Attributes = dbProduct.Attributes.ToProductAttributes()
+	};
+	products.Add(product);
 }
 ]]></script> 
 </li>

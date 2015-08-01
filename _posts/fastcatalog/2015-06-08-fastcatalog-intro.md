@@ -9,7 +9,7 @@ tags: [Technology,Prototyping,NoSQL]
 ---
 {% include JB/setup %}
 
-These few articles born to share some thoughts about common functionality in e-commerce: multi-attribute catalog search. Something like those:
+These few articles born to share some thoughts about common functionality in e-commerce: multi-attribute catalog search. Something like the followings:
 
 <img src="{{ BASE_PATH }}/images/fastcatalog/fastcatalog1.png"  class="img-rounded"  /><br/>
 <img src="{{ BASE_PATH }}/images/fastcatalog/fastcatalog2.png"  class="img-rounded"  /><br/><br/>
@@ -59,5 +59,5 @@ prototyping simple migration procedures to move from SQL to <a href="https://www
 to <a href="https://www.elastic.co/" target="_blank">ElasticSearch</a> and tried to figure out pros and cons of different solutions, 
 in order to scale out to high volumes.
 
-Disclaimer: these are my first experimentations with MongoDB and ElasticSearch and, of course, there could be a better way to do what I did. 
+**Disclaimer**: these are my first experimentations with MongoDB and ElasticSearch and, of course, there could be a better way to do what I did. 
 I will thank anyone who wants to share his/her insights and let me grow. 

@@ -15,22 +15,21 @@ In the <a href="{{ BASE_PATH }}/2015/06/14/fastcatalog-sql2nosql" target="_blank
 <![CDATA[
 namespace SQL2MongoDB.Models
 {
+	public class MongoProduct
+	{
+		public string Code { get; set; }
+		public string Description { get; set; }
+		public double Price { get; set; }
+		public long IdCategory { get; set; }
+		public IList<string> Synonims { get; set; }
+		public IList<ProductAttribute> Attributes { get; set; }
+	}
 
-    public class MongoProduct
-    {
-        public string Code { get; set; }
-        public string Description { get; set; }
-        public double Price { get; set; }
-        public long IdCategory { get; set; }
-        public IList<string> Synonims { get; set; }
-        public IList<ProductAttribute> Attributes { get; set; }
-    }
-
-    public class ProductAttribute
-    {
-        public string Key { get; set; }
-        public string Value { get; set; }
-    }
+	public class ProductAttribute
+	{
+		public string Key { get; set; }
+		public string Value { get; set; }
+	}
 }
 ]]></script> 
 
@@ -46,17 +45,17 @@ All the migration logic is inside the specific <a href="https://github.com/willi
 <![CDATA[
 public void Save(SQLProduct dbProduct)
 {
-		Contract.Requires<ArgumentNullException>(dbProduct != null, "dbProduct");
-		var product = new MongoProduct
-		{
-				Code = dbProduct.Data.Code,
-				Description = dbProduct.Data.Description,
-				IdCategory = dbProduct.Data.IdCategory,
-				Price = Math.Round(10 + rnd.NextDouble() * (1000 - 10),2),
-				Synonims = dbProduct.Synonims.ToStringList(),
-				Attributes = dbProduct.Attributes.ToProductAttributes()
-		};
-		products.Add(product.ToBsonDocument());
+	Contract.Requires<ArgumentNullException>(dbProduct != null, "dbProduct");
+	var product = new MongoProduct
+	{
+		Code = dbProduct.Data.Code,
+		Description = dbProduct.Data.Description,
+		IdCategory = dbProduct.Data.IdCategory,
+		Price = Math.Round(10 + rnd.NextDouble() * (1000 - 10),2),
+		Synonims = dbProduct.Synonims.ToStringList(),
+		Attributes = dbProduct.Attributes.ToProductAttributes()
+	};
+	products.Add(product.ToBsonDocument());
 }
 ]]></script> 
 </li>
@@ -108,12 +107,12 @@ db.Products.aggregate([
 <script type="syntaxhighlighter" class="brush: js">
 <![CDATA[
 db.Products.find({
-        $and: [
-                {"IdCategory":245710},
-                {"Price":{$gte: 200, $lt: 400}},
-                {$and: [{"Attributes.Key":"FORMATO"}, {"Attributes.Value":"0402 (1.0 x 0.5mm)"}]},
-                {$and: [{"Attributes.Key":"TOLLERANZA"}, {"Attributes.Value": {$in: ["± 0.01%","± 0.05%","± 0.1%"]}}]}
-            ]
+	$and: [
+				{"IdCategory":245710},
+				{"Price":{$gte: 200, $lt: 400}},
+				{$and: [{"Attributes.Key":"FORMATO"}, {"Attributes.Value":"0402 (1.0 x 0.5mm)"}]},
+				{$and: [{"Attributes.Key":"TOLLERANZA"}, {"Attributes.Value": {$in: ["± 0.01%","± 0.05%","± 0.1%"]}}]}
+			]
 })
 .limit(10)
 ]]></script> 

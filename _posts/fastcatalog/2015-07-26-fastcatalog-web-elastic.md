@@ -1,8 +1,8 @@
 ---
 layout: wvpost
 title: "Fast Catalog"
-tagline: Multi-attribute Search PoC with ElasticSearch
-header: Multi-attribute Search PoC with ElasticSearch
+tagline: Multi-attribute Search with ElasticSearch
+header: Multi-attribute Search with ElasticSearch
 description: ElasticSearch, Prototyping, Tech, NEST, Multi-attribute Search
 group: FastCatalog
 tags: [Technology,Prototyping,ElasticSearch,NEST,Multi-attribute Search]

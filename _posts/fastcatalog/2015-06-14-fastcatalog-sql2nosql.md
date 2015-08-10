@@ -191,7 +191,7 @@ namespace SQLMigration
 }
 ]]></script> 
 
-Here you can see the extension method FromXMLTo<T>, that performs the XML deserialization into generic POCO.
+Here you can see the extension method FromXMLTo<T>, that performs the XML deserialization into generic <a href="https://en.wikipedia.org/wiki/Plain_Old_CLR_Object" target="_blank">POCO</a>.
 
 <script type="syntaxhighlighter" class="brush: csharp">
 <![CDATA[

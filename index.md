@@ -26,7 +26,7 @@ tagline: Projects, stories, thoughts
           <dd>Exploring solution for fast catalog search</dd>
 
           <dt>Period:</dt>
-          <dd>June 2015</dd>
+          <dd>June 2015 - August 2015</dd>
 
           <dt>Project's Backstage</dt>
           <dd>The articles share some thoughts about common functionality in e-commerce: multi-attribute catalog search. In NoSQL.</dd>

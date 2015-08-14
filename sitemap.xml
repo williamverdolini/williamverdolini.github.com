@@ -22,6 +22,9 @@
   <loc>http://williamverdolini.github.io/Umbraco-CustomMacros.html</loc>
 </url>
 <url>
+  <loc>http://williamverdolini.github.io/FastCatalog.html</loc>
+</url>
+<url>
   <loc>http://williamverdolini.github.io/tags.html</loc>
 </url>
 <url>
@@ -260,6 +263,27 @@
 </url>
 <url>
   <loc>http://williamverdolini.github.io/2015/02/08/umbmacro-properties/</loc>
+</url>
+<url>
+  <loc>http://williamverdolini.github.io/2015/06/08/fastcatalog-intro/</loc>
+</url>
+<url>
+  <loc>http://williamverdolini.github.io/2015/06/14/fastcatalog-sql2nosql/</loc>
+</url>
+<url>
+  <loc>http://williamverdolini.github.io/2015/06/22/fastcatalog-sql2mongo/</loc>
+</url>
+<url>
+  <loc>http://williamverdolini.github.io/2015/06/24/fastcatalog-sql2elastic/</loc>
+</url>
+<url>
+  <loc>http://williamverdolini.github.io/2015/07/26/fastcatalog-web-elastic/</loc>
+</url>
+<url>
+  <loc>http://williamverdolini.github.io/2015/07/31/fastcatalog-web-mongodb/</loc>
+</url>
+<url>
+  <loc>http://williamverdolini.github.io/2015/08/01/fastcatalog-web-automapper/</loc>
 </url>
 <url>
   <loc>http://williamverdolini.github.io/archive.html</loc>

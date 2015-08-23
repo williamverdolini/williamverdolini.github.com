@@ -12,6 +12,46 @@ tagline: Projects, stories, thoughts
   <div class="panel panel-default">
     <div class="panel-body">
       <div class="col-sm-12 col-md-4 col-lg-4">
+          <img src="{{ BASE_PATH }}/images/cqrses/CQRS-ES-TODOS-Logo.png" class="img-rounded" style="width: 300px; height: 200px;"/>
+      </div>
+      <div class="col-sm-12 col-md-8 col-lg-8">
+        <dl class="dl-horizontal">
+          <h3 style="font-weight:normal;">
+            <dt>Name:</dt>
+            <dd><a href="{{ BASE_PATH }}Cqrs-es-todos.html">CQRS+ES Todo List - Phase 2</a></dd>
+          </h3>      
+          
+          <h5 style="font-weight:normal;">
+          <dt>Description:</dt>
+          <dd>The <a href="#CQRSES-1">CQRS+ES Training journey</a> goes on and faces some async matters.</dd>
+
+          <dt>Period:</dt>
+          <dd>August 2015</dd>
+
+          <dt>Repository:</dt>
+          <dd>The project is versionated on this public repository: <a href="https://github.com/williamverdolini/CQRS-ES-Todos" target="_blank">https://github.com/williamverdolini/CQRS-ES-Todos</a></dd>
+
+
+          <dt>Technologies:</dt>
+          <dd>See <a href="#CQRSES-1">below</a>, plus <a href="http://www.asp.net/signalr" target="_blank">SignalR</a></dd>
+          </h5>      
+
+        </dl>
+      </div>
+    
+    </div>
+
+  </div>
+
+
+</div>
+
+
+
+<div class="row">
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <div class="col-sm-12 col-md-4 col-lg-4">
           <img src="{{ BASE_PATH }}/images/fastcatalog/fastcatalog_logo.png" class="img-rounded" style="width: 300px; margin-top: 50px;"/>
       </div>
       <div class="col-sm-12 col-md-8 col-lg-8">
@@ -148,7 +188,7 @@ And in these articles I wanted to highlight some principles concretely used duri
 </div>
 
 <div class="row">
-  <div class="panel panel-default">
+  <div class="panel panel-default" id="CQRSES-1">
     <div class="panel-body">
       <div class="col-sm-12 col-md-4 col-lg-4">
         <!--<a href="http://www.disciturweb.com/" target="_blank">-->

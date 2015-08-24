@@ -109,7 +109,12 @@ public class EventNotifier : IEventNotifier
 }
 ]]></script> 
 
-And call the notifier's methods at the end of the read-model updates:
+As you can see, I use:
+
+- <a href="http://martinfowler.com/eaaCatalog/dataTransferObject.html" target="_blank">DTO pattern</a> to encapsulate and keep the serialization for SignalR channel out of the rest of the code.
+- <a href="http://automapper.org/" target="_blank">AutoMapper</a> to simplify object-to-object mapping and, in this case, <a href="https://github.com/williamverdolini/CQRS-ES-Todos/blob/master/Todo.QueryStack/Mappers/NotifierMapperProfile.cs" target="_blank">it's very easy</a>
+
+At the end, I call the notifier's methods at the end of the read-model updates:
 
 <script type="syntaxhighlighter" class="brush: csharp;highlight: [28]">
 <![CDATA[

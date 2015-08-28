@@ -60,7 +60,7 @@ This code is perfectly consistent, because the actions (send command, manage it,
 	
 Let’s go a step forward.
 
-Let’s imagine now that there is a **real asynchronism** between, let’s say, the storage of the events and the dispatching and the processing of the events. This is quite common in a real CQRS+ES application; very often also the commands are stored in queues and their processing is delegated to a subsequent async process.
+Let’s imagine now that there is a **real asynchronism** between, let’s say, the storage of the events and the dispatching and the processing of the events. This is quite common in a real CQRS+ES application; very often also the commands are stored in queues and their processing is delegated to a subsequent async process (in this case you could use solution like a <a href="http://blog.sapiensworks.com/post/2015/07/20/CQRS-Immediate-Feedback-Web-App/" target="_blank">polling mediator</a>).
 
 
 How can we notify the user about the changes introduced by his command in a common web application? It depends on the scenario obviously, some options are:

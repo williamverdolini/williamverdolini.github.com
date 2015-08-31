@@ -6,7 +6,7 @@ title : RSS Feed
 <?xml version="1.0" encoding="UTF-8" ?>
 <rss version="2.0">
 <channel>
-        <title>{{ site.title }}</title>
+        <title>{{ site.title }} - {{ site.tagline }}</title>
         <description>{{ site.title }} - {{ site.author.name }}</description>
         <link>{{ site.production_url }}{{ site.rss_path }}</link>
         <link>{{ site.production_url }}</link>
@@ -16,7 +16,7 @@ title : RSS Feed
 
 {% for post in site.posts %}
         <item>
-                <title>{{ post.title }}</title>
+                <title>{{ post.title }} {{ post.tagline }}</title>
                 <description>{{ post.content | xml_escape }}</description>
                 <link>{{ site.production_url }}{{ post.url }}</link>
                 <guid>{{ site.production_url }}{{ post.id }}</guid>

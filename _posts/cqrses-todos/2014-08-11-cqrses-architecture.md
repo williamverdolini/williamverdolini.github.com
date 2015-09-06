@@ -10,13 +10,13 @@ tags: [Technology,CQRS+ES]
 {% include JB/setup %}
 
 I’m one of those who cannot really understand a thing if he doesn’t represent it in a graphical way. For CQRS+ES it’s the same and probably it’s even more important. Why? Because CQRS+ES architecture is all but simple; it could be made of a lot of complex components…and I want/need to remember the details and what happened in this training journey between 6 or 12 months (_verba volant, scripta manent_).
-
+<br/> <br/> <br/> 
 An important premise: the following it’s NOT a tentative to depict CQRS+ES Architecture’s components and their relations, but it’s only the graphical representation of what _**I**_’ve understood after some months of studies. That’s not good for every CQRS+ES scenario, but I think that most of the components drawn are present in most of the cases. I’m continuously deepening these concepts, and I will have made some error for sure, so please, feel free to correct me (and let me grow). 
-
+<br/> <br/> 
 Thanks.
 
 
-<br/><br/>
+<br/><br/><br/><br/> 
 
 ###the scheme###
 

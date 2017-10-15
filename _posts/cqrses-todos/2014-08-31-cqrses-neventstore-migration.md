@@ -22,7 +22,7 @@ That’s:
 -	I need some Ids-map for mapping NEventStore GUID with existent ids
 
 
-###Migration Strategies###
+### Migration Strategies
 Despite all the variants that anyone could think, I can see two kind of approaches:
 
 1.	**Migration Domain Event**: probably this is the “NEventStore way” to approach this kind of migration. It means to create a line of “command-event” to initialize the AggregateRoot state reading all the data from legacy database; from the implementation point of view it’s exactly the same of creating new command-event for your AR; these events will begin the history of your ARs hereafter
@@ -31,7 +31,7 @@ Despite all the variants that anyone could think, I can see two kind of approach
 Let’s dive into the second option.
 
 
-####Fake-Snapshots####
+#### Fake-Snapshots
 This approach is realized by this logic:
 <ol>
 <li>Every entity not yet migrated is an entity (in the target database) without an Id-Mapping. So this kind of check could drive the whole migration flow, allowing us to parallelize the migration or quit-and-resume the migration.</li>
@@ -96,7 +96,7 @@ _db.IdMaps.Map<ToDoList>(list.Id, entityId);
 </ol>
 
 
-####Some consideration####
+#### Some consideration
 What I like in this approach is that I kept completely separated the domain from the migration logic. Nothing about the migration is present in the Domain or Command/Query stacks. That’s the point in my opinion: the migration is the beginning of all of your existent ARs, but it’s not relevant in terms of business-domain, it’s more like a technical step, so this kind of code should not pollute the business code (wait, I’m not saying that migrations do not involve some domain expert’s decisions, but these are decisions that generally do not impact on the normal life of the ARs after the migrations).
 
 Migration are very complex projects, often realized by specific teams, sometimes different from business dev teams. In my experience I worked in dev team on some very complex domains, while some different teams were working on a migration project on the same production environments (think about a multi-tenant environment with a roll-out plan for different “go-live”). I didn’t know their logic; they didn’t know mine; but the database structure and its rules were in common in the same time. Keep the code separated was a must.
@@ -109,7 +109,7 @@ All the code about migration is visible in this <a href="https://github.com/will
   
   
   
-####Update - 20/10/2014####
+#### Update - 20/10/2014
 Recently I've reviewed the last part of the migration strategy, cause I wanted to make some practices about <a href="/2014/10/21/cqrses-neventstore-event-upconversion" target="_blank">Events-Replaying</a>. Actually doing some experimentation about replaying the committed events (necessary for example to recreate a <a href="http://cqrs.wikidot.com/doc:projection" target="_blank">projection</a>) allowed me to figure out an important error in this strategy: **the migration event should be able to be listened (and rebuilt) by the read-model event-handlers**.
 
 That's why if we didn’t have an event-handler for that external events, the projection was not able to be correctly rebuilt, because it couldn't re-create the migrated entities and, afterwards, the next committed events could not be correctly handled. 
@@ -126,7 +126,7 @@ here the <a href="https://github.com/williamverdolini/CQRS-ES-Todos/blob/master/
   
   
   
-####Some final consideration####
+#### Some final consideration
 The last update introduced something that could be considered an "open point". The migration event should carry a complete state of the AggregateRoots from previous system. To do that I consider reasonable to use a Memento as the event's single property.
 This kind of event could be named to give a full meaning of the Migration process (i.e. MigratedToDoListeEvent) or with a more general name, that could be used also for maintenance purposes. For example to introduce some data-fix (cause bugs or whatever) in the events sequence.
 This is something like a "return to CRUD logic", using events without a specific domain meaning, but...it's convenient, and easy, and just for devops team.

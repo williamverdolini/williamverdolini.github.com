@@ -15,7 +15,7 @@ But why this question at this point? Because validation is strictly related to d
 
 An example of validation rule (and some consideration about it): _“the importance property of a Todo-Item must be a unique value in its own Todo-List”_
 
-###Solution #1: Separate AggregateRoots (AR)###
+### Solution #1: Separate AggregateRoots (AR)
 
 Having two distinct AR (ToDoList and ToDoItem) implies:
 
@@ -54,7 +54,7 @@ public class ChangeToDoItemImportanceCommandValidator : AbstractValidator<Change
 This version of code is present in public repository, in branch <a href="https://github.com/williamverdolini/CQRS-ES-Todos/tree/master" target="_blank">master</a>.
 
 
-###Solution #2: One AggregateRoot (AR) with composition###
+### Solution #2: One AggregateRoot (AR) with composition
 
 Having just an AR (ToDoList) with a list of TodoItem implies:
 

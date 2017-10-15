@@ -38,7 +38,7 @@ ogni label visualizzata; con lo stesso meccanismo si poteva gestire anche
 l’internazionalizzazione delle label. 
 
 
-###From Server to Client
+### From Server to Client
 
 Passare ad Angular significava passare dal server al client e questo
 approccio (molto utile) doveva essere rivisto. Rivisto, consapevole del fatto
@@ -51,7 +51,7 @@ state-less e quindi quelle che saranno oggetti di applicazione, sono oggetti
 ricreati su ogni client.
 
 
-###Angular Constants
+### Angular Constants
 In Angular un buon candidato per gestire queste costanti di applicazioni è
 un servizio, in particolare nella forma **value** che semplifica l’implementazione di oggetti literal instanziati una sola volta
 in tutta l’applicazione. Il mio servizio sarà quindi come segue:
@@ -219,7 +219,7 @@ angular.module('Lesson')
 **Meglio!**
 
 
-###_Controller Inheritance?_
+### _Controller Inheritance?_
 
 Rifletto su questo aspetto per il fatto che, sulla base del codice appena
 scritto, tutti i controller della mia applicazione avranno questi componenti e

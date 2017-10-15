@@ -37,11 +37,11 @@ This is my training journey into Command Query Responsibility Segregation (CQRS)
     <h2>Contenuti</h2>
     {% include themes/blog/disc-summary.html %}
     
-    {% assign myArray = finalSummary | split: "|" %}
+    {% assign myArray = finalSummary | split: "|"  | sort %}
     <ul style="list-style-type: none;">
-      {% for node in myArray sorted %}
-        {% assign summaryLine = node | split: "," %}
-        {% for prop in summaryLine sorted %}
+      {% for node in myArray %}
+        {% assign summaryLine = node | split: ","  | sort %}
+        {% for prop in summaryLine %}
           {% assign keyval = prop | split: ":" %}
           {% if keyval[0] == 'title' %}
             {% assign title = keyval[1] %}
@@ -66,11 +66,11 @@ This is my training journey into Command Query Responsibility Segregation (CQRS)
     <h2>Contents</h2>
     {% include themes/blog/cqrs-summary.html %}
     
-    {% assign myArray = finalSummary | split: "|" %}
+    {% assign myArray = finalSummary | split: "|"  | sort %}
     <ul style="list-style-type: none;">
-      {% for node in myArray sorted %}
-        {% assign summaryLine = node | split: "," %}
-        {% for prop in summaryLine sorted %}
+      {% for node in myArray %}
+        {% assign summaryLine = node | split: ","  | sort %}
+        {% for prop in summaryLine %}
           {% assign keyval = prop | split: ":" %}
           {% if keyval[0] == 'title' %}
             {% assign title = keyval[1] %}

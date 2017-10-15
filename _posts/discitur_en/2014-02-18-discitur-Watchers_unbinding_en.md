@@ -49,13 +49,13 @@ I tried two methods to achieve this goal:
 
  
 
-###custom method 
+### custom method 
 I have experienced the most for educational/architectural purposes that apply in the app, because the result is not very elegant. 
 Here is the code inserted in one of my controllers:
  
 
 
-
+{% raw %}
 <script type="syntaxhighlighter" class="brush: javascript">
 <![CDATA[
 var _watchers = false;
@@ -81,7 +81,7 @@ var _detachStaticWatchers = $scope.$watch(function () {
     console.log($scope.$$watchers);
 })
 ]]></script> 
-
+{% endraw %}
 
  
 

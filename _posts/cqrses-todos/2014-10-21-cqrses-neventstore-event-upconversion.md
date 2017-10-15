@@ -18,13 +18,13 @@ These committed events could be some months old, and during this period new prod
 Here it is where Event Upconverter comes to help!
 
 
-###Event Versioning Strategies###
+### Event Versioning Strategies
 Every time we need to modify an event class, we should always consider to create a new version of the event, keeping the old one still live, in order to re-hydrate the aggregate from the repository stream. So, it' important to define a versioning strategy for the events.
 
 There are different solutions explained by Damian Hickey in <a href="https://groups.google.com/forum/#!msg/neventstore/tscuQA1bZxQ/TE-u0_PpnyoJ" target="_blank">this post</a>. In the same post **David Rettenbacher** proposed a variant that I like, because it leaves the same event's full name in the last version of the event itself and so, the code seems to be more readable and maintainable: **_using Attributes_**.
 
 
-####Attribute Versioning setup####
+#### Attribute Versioning setup
 The strategy needs:
 <ol>
 <li>a <a href="https://github.com/williamverdolini/CQRS-ES-Todos/blob/master/Todo.Infrastructure/Events/Versioning/VersionedEventAttribute.cs" target="_blank">VersionedEvent attribute</a> to link the concrete event classes with an alias for the event name (usually the event class name itself) and to associate that concrete event implementation with a version number.</li>
@@ -34,7 +34,7 @@ The strategy needs:
 </ol>
 
 
-####Attribute Versioning usage####
+#### Attribute Versioning usage
 At this point to use this versioning strategy we need to:
 <ol>
 <li><a href="https://github.com/williamverdolini/CQRS-ES-Todos/blob/master/Todo.Domain/Messages/Events/ToDoEvents.cs#L37-L38" target="_blank">Rename the old version of Event Class</a> (i.e. className_V0) and mark the class with the VersionedEvent attribute's info</li>
@@ -44,9 +44,9 @@ At this point to use this versioning strategy we need to:
 
 that's all.
 
-###Some Consideration###
+### Some Consideration
 
-####Replaying Events####
+#### Replaying Events
 Replay all the events from the beginning could be useful in different scenarios: create a new projection, rebuild an existent one (for example during a product upgrade) and before do it, it's very important having the event upconversion strategy set up.
 The following one it's a simple event rebuilder that re-publish all the events previously committed.
 
@@ -83,7 +83,7 @@ public class EventsRebuilder : IEventsRebuilder
 ]]></script> 
 
 
-####Well begun is half done####
+#### Well begun is half done
 Thinking about Event Upconversion should be one of the first strategies to define when you adopt Event Sourcing. That's just because the events are the data saved and serialized from the beginning, during all the life of your application. So, defining at the very first moment how to serialize and deserialize the event data allow you to write more maintanable code, without having to adjust the target after. 
 But in this sample application I wanted to put me in the worst condition: that's, to add a event upconversion strategy after the application go-live.
 Using the VersionedEvent attribute as explained before allow me to add some more <a href="https://github.com/williamverdolini/CQRS-ES-Todos/blob/master/Todo.Infrastructure/Events/Versioning/VersionedEventSerializationBinder.cs#L18-L42" target="_blank">serialization/deserialization logic</a> in order to face this situation. 

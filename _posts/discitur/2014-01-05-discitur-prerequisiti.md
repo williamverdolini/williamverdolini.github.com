@@ -17,7 +17,7 @@ farò sia lievemente più che amatoriale (spesso anche meno).
 
  
 
-###Parlando di _tecnologie_ :
+### Parlando di _tecnologie_ :
  
 
 1.    <a href="http://en.wikipedia.org/wiki/Version_control_systems" target="_blank">VCS</a>: **Git**. Mai usato prima. Quasi sempre (come tutti) ho lavorato con strumenti di versionamento e quindi ho una cultura generalista sull’uso. Git mi affascina per la sua diffusione e per il concetto che ognuno ha una copia locale del repository che costituisce di fatto un branch, che, parliamoci chiaro, è quello che capita di fatto nella vita quotidiano di chi sviluppa software
@@ -56,7 +56,7 @@ sarebbe bello provarlo).
 
  
 
-###_Metodologia_ :
+### _Metodologia_ :
 
 1.    **Agile**. E’ da parecchi
 anni che mi interesso di metodologie lean ed “agile” (ma sempre da

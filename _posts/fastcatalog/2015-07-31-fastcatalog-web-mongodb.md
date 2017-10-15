@@ -13,7 +13,7 @@ tags: [Technology,Prototyping,MongoDb,Multi-attribute Search]
 
 Here are the key points during this part of development:
 
-###Filter Definition
+### Filter Definition
 A MongoDb query is expressed by a <a href="http://mongodb.github.io/mongo-csharp-driver/2.0/reference/driver/definitions/#filters" target="_blank">filter definition</a>.
 A filter could be expressed through both Type-safe or generic BsonDocument/String API. For example, the followings express the same filter:
 
@@ -36,7 +36,7 @@ var typeSafeFilter = Builders<MongoProduct>.Filter.And(
 
 surprisingly (for me) I prefer the first style, because it's easier to translate the JSON query to BsonDocument filter and it's easier to debug what query you're doing.
 
-###Aggregation Pipeline
+### Aggregation Pipeline
 One of the part of MongoDb that I like the most is the <a href="http://docs.mongodb.org/manual/core/aggregation-pipeline/" target="_blank">Aggregation pipeline</a>, that allows to create complex aggregation logic in a very natural way. As shown in <a href="{{ BASE_PATH }}/2015/06/22/fastcatalog-sql2mongo/#query-for-all-product-attributes-2300ms" target="_blank">a previous article</a>, the following is the aggregation pipeline used to aggregate the products data:
 
 <script type="syntaxhighlighter" class="brush: js">
@@ -118,7 +118,7 @@ As for the filters, I prefer to use the BSonDocument format also for aggregation
 
 
 
-###Aggregation + Find
+### Aggregation + Find
 The main difference in the <a href="https://github.com/williamverdolini/FastCatalog/blob/master/Catalog/Web/Areas/Mongo/Services/CatalogRepository.cs#L59-L69" target="_blank">Search service design</a> is that with MongoDb I had to do more than one single database request as <a href="https://github.com/williamverdolini/FastCatalog/blob/master/Catalog/Web/Areas/Elastic/Services/CatalogRepository.cs#L68" target="_blank">I was able to do with ElasticSearch</a>.
 
 A request for getting the aggregation data.

@@ -1,3 +1,4 @@
+plugins: ['jekyll-github-metadata']
 # This is the default format. 
 # For more see: http://jekyllrb.com/docs/permalinks/
 permalink: /:categories/:year/:month/:day/:title 
@@ -5,6 +6,11 @@ permalink: /:categories/:year/:month/:day/:title
 exclude: [".rvmrc", ".rbenv-version", "README.md", "Rakefile", "changelog.md"]
 #pygments: true
 highlighter: pygments
+#webrick:
+#  headers:
+#    Accept: application/json
+#    Accept: application/vnd.github+json
+
 
 encoding:
 
@@ -29,6 +35,8 @@ author :
 # Finally if you are pushing to a GitHub project page, include the project name at the end.
 #
 production_url : http://williamverdolini.github.io/
+url : http://williamverdolini.github.io/
+repository: williamverdolini/williamverdolini.github.com
 
 # All Jekyll-Bootstrap specific configurations are namespaced into this hash
 #

@@ -25,11 +25,11 @@ And in these articles I wanted to highlight some principles concretely used duri
     <h2>Contents</h2>
     {% include themes/blog/umbracoup-summary.html %}
     
-    {% assign myArray = finalSummary | split: "|" %}
+    {% assign myArray = finalSummary | split: "|"  | sort %}
     <ul style="list-style-type: none;">
-      {% for node in myArray sorted %}
-        {% assign summaryLine = node | split: "," %}
-        {% for prop in summaryLine sorted %}
+      {% for node in myArray %}
+        {% assign summaryLine = node | split: ","  | sort %}
+        {% for prop in summaryLine %}
           {% assign keyval = prop | split: ":" %}
           {% if keyval[0] == 'title' %}
             {% assign title = keyval[1] %}

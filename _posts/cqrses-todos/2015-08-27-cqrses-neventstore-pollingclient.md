@@ -97,7 +97,7 @@ public class LowLatencyPollingPipelineHook : PipelineHookBase
 </li>
 </ol>
 
-###In my opinion
+### In my opinion
 
 The NEventStore guys did an amazing work, but, as they have already anticipated, there's something to do about the PollingClient. What I dislike is the way which has been thought to work with checkpoint number. In my implementation I haven't figured how to do better: so the checkpoint number <a href="https://github.com/williamverdolini/CQRS-ES-Todos/blob/master/Todo.QueryStack/Logic/EventObserverSubscriptionFactory.cs#L34" target="_blank">is loaded and used by the PollingClient</a>, but it's <a href="https://github.com/williamverdolini/CQRS-ES-Todos/blob/master/Todo.QueryStack/Logic/ReadModelCommitObserver.cs#L36" target="_blank">updated outside of it</a> and, with the possibility to subscribe multiple _IObserver_ it's important to define which of the observer will update the last checkpoint number (at the end of all the PollingClients cycle). I'd like to have some checkpoint-number orchestration wrapping the PollingClient or something like that. 
 

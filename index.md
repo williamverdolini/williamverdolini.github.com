@@ -8,6 +8,47 @@ tagline: Projects, stories, thoughts
 
 ## Projects
 
+<!--
+<div class="row">
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <div class="col-sm-12 col-md-4 col-lg-4">
+          <img src="{{ BASE_PATH }}/images/swagger/swagger.png" class="img-rounded" style="width: 200px; height: 200px;"/>
+      </div>
+      <div class="col-sm-12 col-md-8 col-lg-8">
+        <dl class="dl-horizontal">
+          <h3 style="font-weight:normal;">
+            <dt>Name:</dt>
+            <dd><a href="{{ BASE_PATH }}Swagger.html">Swagger UI + Codegen</a></dd>
+          </h3>      
+          
+          <h5 style="font-weight:normal;">
+          <dt>Description:</dt>
+          <dd>What is Swagger and how it made our life easier!!</dd>
+          <dt>Period:</dt>
+          <dd>June 2016</dd>
+
+
+          <dt>Technologies:</dt>
+          <dd>
+          Back-end: <a href="http://www.asp.net/vnext/overview/aspnet-web-api" target="_blank">.NET Web Api 2.2</a><br/>
+          Task Automation: <a href="http://gruntjs.com/" target="_blank">Grunt</a><br/>
+					</dd>
+
+          </h5>      
+
+        </dl>
+      </div>
+    
+    </div>
+
+  </div>
+
+
+</div>
+-->
+
+
 <div class="row">
   <div class="panel panel-default">
     <div class="panel-body">
@@ -305,8 +346,8 @@ Il progetto è versionato su repository pubblico: <a href="https://github.com/wi
 
 -->
 
-###About me
-The summary of my work history you can read it in <a href="https://it.linkedin.com/pub/william-verdolini/1/712/121" target="_blank"><img src="https://static.licdn.com/scds/common/u/img/webpromo/btn_myprofile_160x33.png" width="160" height="33" border="0" alt="View William Verdolini's profile on LinkedIn"></a>
+### About me
+The summary of my professional history you can read it in... <a href="https://it.linkedin.com/pub/william-verdolini/1/712/121" target="_blank"><img src="https://static.licdn.com/scds/common/u/img/webpromo/btn_myprofile_160x33.png" width="160" height="33" border="0" alt="View William Verdolini's profile on LinkedIn"></a>
 <!--La sintesi della mia storia lavorativa la potete leggere nel <a href="http://www.linkedin.com/in/williamverdolini" target="_blank">mio profilo Linkedin</a>-->
 
 <a href="http://stackoverflow.com/users/3316654/wilver" target="_blank">

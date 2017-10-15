@@ -19,7 +19,7 @@ That's all, but it's enough!
 
 It can unload your code of all that boring, heavy, "often-business-less" code to map one object to another type of object. Never more without (or without something similar).
 
-###Configuration
+### Configuration
 
 Setting up Automapper using an <a href="https://en.wikipedia.org/wiki/Inversion_of_control" target="_blank">IoC container</a> as <a href="https://github.com/castleproject/Windsor/blob/master/docs/README.md" target="_blank">Castle.Windsor</a> is very simple. Here are the steps I followed:
 
@@ -73,7 +73,7 @@ public class MappersInstaller : IWindsorInstaller
 </li>
 </ol>
 
-###Usage
+### Usage
 After the above configuration, using Automapper is very straightforward. Mapping is a cross-cutting concern, so you could use both in Controllers or in Business Logic or in Repository as well.
 
 <script type="syntaxhighlighter" class="brush: csharp;highlight: [6,19]" >
@@ -107,7 +107,7 @@ public class CatalogController : ApiController
 }
 ]]></script> 
 
-###Profiles
+### Profiles
 Profiles are the classes where the mapping logic resides. They could be very simple if the property names of source and target classes are exactly the same (or <a href="https://github.com/AutoMapper/AutoMapper/wiki/Flattening" target="_blank">flattened</a>). This is very useful when you have to work with <a href="https://en.wikipedia.org/wiki/Data_transfer_object" target="_blank">DTO</a>.
 
 <script type="syntaxhighlighter" class="brush: csharp;highlight: [5,6]" >

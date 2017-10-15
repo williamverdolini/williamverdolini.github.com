@@ -18,7 +18,7 @@ Thanks.
 
 <br/><br/><br/><br/> 
 
-###the scheme###
+### the scheme
 
 I tried to draw a super-set of components that could be used in a generic CQRS+ES architecture. Some of these components could be used or not to introduce different functionalities and behaviours, like queues for async flows.
 <img src="{{ BASE_PATH }}/images/cqrses/CQRS-ES-architecture.png" class="img-rounded" />
@@ -42,7 +42,7 @@ Anyway, describing what depicted in the write-model, here are the main steps:
 
 That’s (almost) all!
 
-###Event-Sourcing in Discitur project
+### Event-Sourcing in Discitur project
 
 Keep simple at first. My goal is to implement a very simple application that realizes the main components of a CQRS+ES architecture, in order to making practice, better understanding and exploiting its power in Discitur project. In fact, in that project’s product backlog there are some important stories that are involved with “event-driven behaviours” and so I wanted to explore if CQRS+ES architecture could fit with my needs.
 

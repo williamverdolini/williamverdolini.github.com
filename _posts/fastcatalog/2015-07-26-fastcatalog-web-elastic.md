@@ -12,7 +12,7 @@ tags: [Technology,Prototyping,ElasticSearch,NEST,Multi-attribute Search]
 So, ElastiSearch is very fast.<br/>
 I was very excited to develop the multi-attribute feature starting with ElasticSearch. Here are the key points during this development:
 
-###From JSON to NEST
+### From JSON to NEST
 <a href="http://nest.azurewebsites.net/" target="_blank">NEST</a> is one of the official .NET clients for ElasticSearch; 
 NEST is a high level client with a lot of functionalities, like a <a href="http://nest.azurewebsites.net/nest/writing-queries.html#query-dsl" target="_blank">strongly typed query DSL</a>. 
 In particular, in the NEST docs, you can read:
@@ -108,7 +108,7 @@ but usually I’ve only found the JSON queries, not queries in fluent syntax…
 I think that it’s common spend the most of your time writing fluent NEST queries when you work with ElasticSearch and NEST. 
 
 
-###Multi-value per attribute
+### Multi-value per attribute
 
 This is the capability to select more than one value for the same product attribute, e.g. if you want to search for all the TVs with 40-inch or 42-inch size. To hit the goal, when your user selects an attribute value, the application should update all other attributes values (and counters), keeping the values of the selected attribute unchanged, in order to allow the user to choose other values for the same  attribute.
 
@@ -153,13 +153,13 @@ public async Task<SearchResult> Search(SearchInput input)
 ]]></script> 
 
 
-###Search Service "Optimization"
+### Search Service "Optimization"
 **Disclaimer**: <a href="https://github.com/williamverdolini/FastCatalog" target="_blank">all the code published</a> is not ready for production, because a lot of aspects are missing (validation, pagination, logging, etc.), and, based on that, talking about optimization is quite naïve. 
 Anyway I want to share some thoughts and my point of view (if you have some other solution please share).
 
 Executing two aggregation queries in sequence could be a pain, so it's important to evaluate some optimization. Here the list from where I began.
 
-####Only Counts
+#### Only Counts
 ElasticSearch allow to execute aggregation queries and return only the counter values, without the first page of documents. This avoids executing the fetch phase of the search making the request more efficient.
 
 <script type="syntaxhighlighter" class="brush: csharp;highlight: [2]" >
@@ -171,7 +171,7 @@ var result = await client.SearchAsync<Product>(s => s
 	);
 ]]></script> 
 
-####Caching
+#### Caching
 ElasticSearch allow to cache your query.
 
 <script type="syntaxhighlighter" class="brush: csharp;highlight: [2]" >
@@ -192,7 +192,7 @@ and keep in mind that:
 > The whole JSON body is used as the cache key. This means that if the JSON changes — for instance if keys are output in a different order — then the cache key will not be recognised.
 
 
-####Exclude/Include results
+#### Exclude/Include results
 Controversial topic about optimization. ElasticSearch allow to filter the aggregation result using exclude/include regEx pattern, as shown in the code:
 
 <script type="syntaxhighlighter" class="brush: csharp;highlight: [27,28,29,30]" >
@@ -242,7 +242,7 @@ private async Task<SearchResult> SingleSearch(SearchInput input, bool onlyCount 
 
 It's a controversial point because probably it's the opposite of an optimization because these options force Elastic to do some extra controls/actions on the result applying regex on it. I've not done some comparisons and I've not found anything about it in the documentation to prove that, but I suppose so...anyway the whole search time is always fast and the service logic cleaner.
 
-###Some chat
+### Some chat
 During the last period I've had the opportunity to ask to some <a href="http://dev.marche.it/" target="_blank">DevMarche guys</a> their opinion about ElasticSearch. 
 Their enlightened opinion was that ElasticSearch 
 is a very good product, one of the best product of the last period and probably is the best choice if you need to develop some "aggregation-based" application.

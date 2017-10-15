@@ -145,7 +145,7 @@ UI --> TDD --> R --> UA --> BE --> TDD --> R --> DEMO
 
 Se consideriamo che UI e BE sono _Sviluppo_,
 UA e DEMO sono _Feedback_ e TDD e R
-sono _Refactoring _ è possibile
+sono _Refactoring_ è possibile
 tracciare la seguente rappresentazione
 
 <img src="/images/discitur/dev_cycle.png"/> 

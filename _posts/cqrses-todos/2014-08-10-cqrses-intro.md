@@ -28,7 +28,7 @@ A heartfelt thanks to all those who have the ability and willingness to share th
 What follows is the result of my studies and insights, and not everything that is written may be the correct interpretation of the different concepts. Anyone who wants to correct me or explain it better is welcome. 
 Thank you. 
 
-###It’s NOT DDD (yet)
+### It’s NOT DDD (yet)
 
 All the times I've heard, read and studied aspects of CQRS+ES there was a natural association to Domain-Driven Design (DDD) approach. 
 This is perfectly understandable due to the fact that if you are using a DDD approach (which does NOT gives implementative directions) 

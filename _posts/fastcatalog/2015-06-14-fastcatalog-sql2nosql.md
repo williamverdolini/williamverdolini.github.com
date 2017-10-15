@@ -16,7 +16,7 @@ SQL Migration to NoSQL means move from table/rows to documents. There are severa
 
 In the <a href="https://github.com/williamverdolini/FastCatalog" target="_blank">public repository</a> you can find all the code: I’ve structured the code in order to move to a generic NoSQL DB, so I can change the NoSQL target (MongoDB, ElasticSearch, Raven, etc.) without changing the migration Logic. 
 
-###XML Format Query
+### XML Format Query
 
 I’ve use XML format for query. From the <a href="https://msdn.microsoft.com/library/ms178107(v=sql.110).aspx" target="_blank">official SQL Server docs</a>:
 
@@ -109,7 +109,7 @@ This query produce a resultset of XML of the following format:
 ]]></script> 
 
 
-###Migration Logic
+### Migration Logic
 
 The generic ("fluent" and very simple) migration's logic is:
 

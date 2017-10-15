@@ -59,7 +59,7 @@ Ho provato due metodi per realizzare questo obiettivo:
 
  
 
-###Metodo custom
+### Metodo custom
 
 Ho sperimentato il metodo più per scopi didattici/architetturali che per
 applicarlo nell’app, anche perché il risultato non è molto elegante. Ecco il
@@ -68,7 +68,7 @@ codice inserito in uno dei miei controller:
  
 
 
-
+{% raw %}
 <script type="syntaxhighlighter" class="brush: javascript">
 <![CDATA[
 var _watchers = false;
@@ -94,7 +94,7 @@ var _detachStaticWatchers = $scope.$watch(function () {
     console.log($scope.$$watchers);
 })
 ]]></script> 
-
+{% endraw %}
 
  
 

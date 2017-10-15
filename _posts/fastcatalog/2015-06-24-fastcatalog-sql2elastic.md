@@ -83,11 +83,11 @@ Here is the console log for SQl to ElasticSearch migration:
 
 as expected, but pretty good.
 
-###Queries
+### Queries
 
 Let's see the queries and times with ElastiSearch for multi-attribute catalog:
 
-#####Query for all product attributes (~175ms)
+##### Query for all product attributes (~175ms)
 <script type="syntaxhighlighter" class="brush: js">
 <![CDATA[
 GET /catalog/products/_search?search_type=count
@@ -124,7 +124,7 @@ GET /catalog/products/_search?search_type=count
 }
 ]]></script> 
 
-#####Query for product attributes filtered by some attribute values  (~6ms)
+##### Query for product attributes filtered by some attribute values  (~6ms)
 <script type="syntaxhighlighter" class="brush: js">
 <![CDATA[
 GET /catalog/products/_search?search_type=count
@@ -228,7 +228,7 @@ GET /catalog/products/_search?search_type=count
 }
 ]]></script> 
 
-#####Query for documents filtered by some attribute values 
+##### Query for documents filtered by some attribute values 
 The same queries as before, but without the **search_type=count** querystring parameter. So you don't need to perform two different queries to get all the result to display. Very powerful!!! Very Fast!!!
 
 <div class="col-md-6">

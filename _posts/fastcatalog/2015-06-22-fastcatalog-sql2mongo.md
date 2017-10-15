@@ -67,11 +67,11 @@ But is the migration pretty fast? Here is the console log in my laptop
 <img src="{{ BASE_PATH }}/images/fastcatalog/fastcatalog_mongo_console.png"  class="img-rounded"  /><br/>
 Not bad!
 
-###Queries
+### Queries
 
 Ok. After that the MongoDb was populated I began to try some queries for multi-attribute catalog and after a while I found this as best queries:
 
-#####Query for all product attributes (~2300ms)
+##### Query for all product attributes (~2300ms)
 <script type="syntaxhighlighter" class="brush: js">
 <![CDATA[
 db.Products.aggregate([
@@ -83,7 +83,7 @@ db.Products.aggregate([
 ]);
 ]]></script> 
 
-#####Query for product attributes filtered by some attribute values  (~170ms)
+##### Query for product attributes filtered by some attribute values  (~170ms)
 <script type="syntaxhighlighter" class="brush: js">
 <![CDATA[
 db.Products.aggregate([
@@ -103,7 +103,7 @@ db.Products.aggregate([
 ]);
 ]]></script> 
 
-#####Query for documents filtered by some attribute values (~ 26ms)
+##### Query for documents filtered by some attribute values (~ 26ms)
 <script type="syntaxhighlighter" class="brush: js">
 <![CDATA[
 db.Products.find({

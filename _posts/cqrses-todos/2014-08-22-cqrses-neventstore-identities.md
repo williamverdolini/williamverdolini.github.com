@@ -1,14 +1,18 @@
 ---
-layout: wvpost
-title: "CQRS+ES Todo List"
-tagline: Identity Mapping
-header: Identity Mapping
+title: "Identity Mapping"
+excerpt: "CQRS+ES Todo List"
+header:
+    overlay_image: "https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?auto=format&fit=crop&w=1350&q=80"
+    caption: "Photo credit: [**Unsplash**](https://unsplash.com)"
+toc: false
+toc_label: "Contents"
+author_profile: false
+sidebar:
+  nav: cqrses
 description: Tech, CQRS+ES, NEventStore, Identity Mapping
 group: CQRS_ES_Todos
 tags: [Technology,CQRS+ES, NEventStore]
 ---
-{% include JB/setup %}
-
 NEventStore, great library for event sourcing indeed! 
 
 But a question connected with the possible scenarios arises: how does it work with legacy systems, how to “inject” NEventStore in a traditional architecture like <a href="/Discitur.html">Discitur</a> is, which kind of problems comes out?

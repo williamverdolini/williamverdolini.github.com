@@ -1,13 +1,18 @@
 ---
-layout: wvpost
-title: "CQRS+ES Todo List"
-tagline: Aggregate Snapshots
-header: Aggregate Snapshots
+title: "Aggregate Snapshots"
+excerpt: "CQRS+ES Todo List"
+header:
+    overlay_image: "https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?auto=format&fit=crop&w=1350&q=80"
+    caption: "Photo credit: [**Unsplash**](https://unsplash.com)"
+toc: false
+toc_label: "Contents"
+author_profile: false
+sidebar:
+  nav: cqrses
 description: Tech, CQRS+ES, NEventStore, Snapshots
 group: CQRS_ES_Todos
 tags: [Technology,CQRS+ES, NEventStore]
 ---
-{% include JB/setup %}
 
 What is a Snapshot and when is it useful?
 
@@ -15,18 +20,14 @@ What is a Snapshot and when is it useful?
 
 This is a training project, so I want to see the very basics for implementing some snapshooting policies. That’s what I’ve done in 5 moves:
 
-<ol>
-<li>Implement IMemento interface for my aggregates</li>
-
-<script type="syntaxhighlighter" class="brush: csharp">
-<![CDATA[
+1. Implement IMemento interface for my aggregates
+```csharp
 public class ToDoListMemento : IMemento
 {
 	public Guid Id { get; set; }
 	public int Version { get; set; }
 	public string Title { get; private set; }
 	public string Description { get; private set; }
-
 	public ToDoListMemento(Guid id, int version, string title, string description)
 	{
 		Id = id;
@@ -35,25 +36,22 @@ public class ToDoListMemento : IMemento
 		Description = description;
 	}
 }
-]]></script> 
+```
 
-<li>Create a factory method of these memento objects in my aggregates</li>
-<script type="syntaxhighlighter" class="brush: csharp">
-<![CDATA[
+2. Create a factory method of these memento objects in my aggregates
+```csharp
 public IMemento CreateMemento()
 {
 	return new ToDoListMemento(Id, Version, Title, Description);
 }
-]]></script> 
+```
 
-<li>Create a service that has the snapshooting policies. The snapshots are added to the NEventStore through its method. The following are very naïve code, but it’s ok for this exercise</li>
-<script type="syntaxhighlighter" class="brush: csharp">
-<![CDATA[
+3. Create a service that has the snapshooting policies. The snapshots are added to the NEventStore through its method. The following are very naïve code, but it’s ok for this exercise
+```csharp
 public abstract class SnapshotCreator<T> where T : AggregateBase
 {
 	private readonly IRepository _repo;
 	private readonly IStoreEvents _store;
-
 	public SnapshotCreator(IRepository repo, IStoreEvents store)
 	{
 		Contract.Requires<ArgumentNullException>(repo != null, "repo");
@@ -61,7 +59,6 @@ public abstract class SnapshotCreator<T> where T : AggregateBase
 		_repo = repo;
 		_store = store;
 	}
-
 	/// <summary>
 	/// Save new Aggregate Snapshot depending on specific Snapshoting policies.
 	/// NOTE: In real context, it should be an external thread save snapshots, without interfere with online process
@@ -76,11 +73,10 @@ public abstract class SnapshotCreator<T> where T : AggregateBase
 			_store.Advanced.AddSnapshot(new Snapshot(list.Id.ToString(), list.Version, ((IMementoCreator)list).CreateMemento()));
 	}
 }
-]]></script> 
+```
 
-<li>Add the snapshooting policy to the process (after events commit is done). That’s no code for production, but it helps to understand how a real snapshooting policy could be realized</li>
-<script type="syntaxhighlighter" class="brush: csharp">
-<![CDATA[
+4. Add the snapshooting policy to the process (after events commit is done). That’s no code for production, but it helps to understand how a real snapshooting policy could be realized
+```csharp
 #if DEBUG
 foreach (var handler in handlers)
 {
@@ -93,11 +89,10 @@ foreach (var handler in handlers)
 	}
 }
 #endif
-]]></script> 
+```
 
-<li>Finally, modify the AggregateFactory to create a new Aggregate instance from last snapshot retrieved by NEventStore</li>
-<script type="syntaxhighlighter" class="brush: csharp">
-<![CDATA[
+5. Finally, modify the AggregateFactory to create a new Aggregate instance from last snapshot retrieved by NEventStore
+```csharp
 public class AggregateFactory : IConstructAggregates
 {
 	public IAggregate Build(Type type, Guid id, IMemento snapshot)
@@ -108,10 +103,8 @@ public class AggregateFactory : IConstructAggregates
 			paramArray = new object[] { snapshot };
 		else
 			paramArray = new object[] { id };
-
 		ConstructorInfo constructor = type.GetConstructor(
 			BindingFlags.NonPublic | BindingFlags.Instance, null, new Type[] { typeParam }, null);
-
 		if (constructor == null)
 		{
 			throw new InvalidOperationException(
@@ -121,9 +114,8 @@ public class AggregateFactory : IConstructAggregates
 		return constructor.Invoke(paramArray) as IAggregate;
 	}
 }
-]]></script> 
+```
 
-</ol>
 
 All the code is published on <a href="https://github.com/williamverdolini/CQRS-ES-Todos/commit/d4e0435e0808e925ee7c0b543b992b980e512b8a" target="_blank">this commit</a>.
 

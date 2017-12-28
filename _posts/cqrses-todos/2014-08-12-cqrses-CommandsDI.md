@@ -1,13 +1,22 @@
 ---
-layout: wvpost
-title: "CQRS+ES Todo List"
-tagline: Command Handling via Dependency Injection
-header: Command Handling via Dependency Injection
+title: "Command Handling via Dependency Injection"
+excerpt: "CQRS+ES Todo List"
+header:
+    overlay_image: "https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?auto=format&fit=crop&w=1350&q=80"
+    caption: "Photo credit: [**Unsplash**](https://unsplash.com)"
+toc: false
+toc_label: "Contents"
+author_profile: false
+sidebar:
+  nav: cqrses
 description: CQRS, ES, Command Query Responsibility Segregation, Tech, Dependency Injection, Inversion of Control, IoC, Castle Windsor
 group: CQRS_ES_Todos
-tags: [Technology,Inversion of Control,Castle Windsor]
+categories: CQRS
+tags:
+  - gallery
+  - Post Formats
+  - tiled
 ---
-{% include JB/setup %}
 
 What is the purpose of the Dependency Injection? 
 

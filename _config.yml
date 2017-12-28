@@ -12,13 +12,14 @@ highlighter: rouge
 #    Accept: application/vnd.github+json
 
 
-encoding:
-
 # Themes are encouraged to use these universal variables 
 # so be sure to set them if your theme uses them.
 #
+locale : "en-EN"
 title : williamverdolini.blog
-tagline: Projects, stories, thoughts
+title_separator : "-"
+tagline: "Projects, stories, thoughts"
+search: true
 author :
   name : William Verdolini
   email : william.verdolini@gmail.com
@@ -142,3 +143,81 @@ JB :
 #encoding: ISO-8859-15
 encoding: UTF-8
 markdown: kramdown   
+theme: minimal-mistakes-jekyll
+minimal_mistakes_skin: "default" # "air", "aqua", "contrast", "dark", "dirt", "neon", "mint", "plum" "sunrise"
+# Collections
+collections:
+  cqrses:
+    output: true
+    permalink: /:collection/:path/
+# see: https://github.com/mmistakes/minimal-mistakes/blob/master/docs/_config.yml
+defaults:
+  # _posts
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: single
+      author_profile: true
+      read_time: true
+      comments: true
+      share: true
+      related: true
+  # _pages
+  - scope:
+      path: ""
+      type: pages
+    values:
+      layout: single
+      author_profile: true
+  # _cqrses
+  - scope:
+      path: ""
+      type: cqrses
+    values:
+      layout: single
+      author_profile: false
+      read_time: true
+      comments: true
+      share: true
+      related: true
+author:
+  name   : "William Verdolini"
+  avatar : "https://c.disquscdn.com/uploads/users/8604/3522/avatar92.jpg?1411936444"
+  bio    : "Developer dentro, fuori un po' di tutto"
+  location  : "Cupramontana (AN), Italy"
+  email : william.verdolini@gmail.com
+  uri    : "http://williamverdolini.github.io/"
+  home   : "http://williamverdolini.github.io/" # null (default), "absolute or relative url to link to author home"      
+  stackoverflow    : https://stackoverflow.com/users/3316654/wilver
+  linkedin         : https://www.linkedin.com/in/williamverdolini/
+  email : william.verdolini@gmail.com
+  github : williamverdolini  
+comments:
+  provider               : "disqus"
+  disqus:
+    shortname            : williamverdolini  
+# Reading Files
+include:
+   - .htaccess
+   - _pages
+   
+
+# Archives
+#  Type
+#  - GitHub Pages compatible archive pages built with Liquid ~> type: liquid (default)
+#  - Jekyll Archives plugin archive pages ~> type: jekyll-archives
+#  Path (examples)
+#  - Archive page should exist at path when using Liquid method or you can
+#    expect broken links (especially with breadcrumbs enabled)
+#  - <base_path>/tags/my-awesome-tag/index.html ~> path: /tags/
+#  - <base_path/categories/my-awesome-category/index.html ~> path: /categories/
+#  - <base_path/my-awesome-category/index.html ~> path: /
+category_archive:
+  type: liquid
+  path: /categories/
+tag_archive:
+  type: liquid
+  path: /tags/   
+
+search: true

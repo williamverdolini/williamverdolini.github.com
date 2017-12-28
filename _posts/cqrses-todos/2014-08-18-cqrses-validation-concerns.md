@@ -1,13 +1,18 @@
 ---
-layout: wvpost
-title: "CQRS+ES Todo List"
-tagline: Some concerns...
-header: Some concerns...
+title: "Some concerns..."
+excerpt: "CQRS+ES Todo List"
+header:
+    overlay_image: "https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?auto=format&fit=crop&w=1350&q=80"
+    caption: "Photo credit: [**Unsplash**](https://unsplash.com)"
+toc: false
+toc_label: "Contents"
+author_profile: false
+sidebar:
+  nav: cqrses
 description: Tech, CQRS+ES, Validation, Software Design
 group: CQRS_ES_Todos
 tags: [Technology,CQRS+ES, Validation, Software Design]
 ---
-{% include JB/setup %}
 
 **NOTE**: <a href="/2014/08/10/cqrses-intro/" target="_blank">remember</a>? I’m not interested now about DDD and I know that some DDD practioners could say that <a href="/2014/08/17/cqrses-validation-understood/" target="_blank">here</a> there is some invariant rule and should be modelled somehow differently. I know, but in this training journey I want to focus in technical components and their relations rather than in modeling the perfect to-do list application.
 But I can see from myself that there is a close link between the complete understanding of the domain and its implementation, closer than in tradional layered architecture. In my opinion that’s because the n-tier application allows us (software guys) to have a general understanding of the domain: if the user updates a form and the UI calls the “update-entity” service, this service is not aware of the real user’s intention, why update that data? We don’t care about it, the user knows. But with CQRS+ES the architecture splits this command in different commands with different semantic (if the business asks for it) and how the service handles this command depends on the AR model. This design is so complex also for this reason.

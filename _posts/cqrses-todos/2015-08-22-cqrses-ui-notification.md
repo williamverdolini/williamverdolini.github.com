@@ -1,18 +1,22 @@
 ---
-layout: wvpost
-title: "CQRS+ES Todo List"
-tagline: UI Notification with SignalR
-header: UI Notification with SignalR
+title: "UI Notification with SignalR"
+excerpt: "CQRS+ES Todo List"
+header:
+    overlay_image: "https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?auto=format&fit=crop&w=1350&q=80"
+    caption: "Photo credit: [**Unsplash**](https://unsplash.com)"
+toc: false
+toc_label: "Contents"
+author_profile: false
+sidebar:
+  nav: cqrses
 description: Tech, CQRS+ES, SignalR, OWIN, WebApi, Angular.js
 group: CQRS_ES_Todos
 tags: [Technology,CQRS+ES,SignalR,OWIN,WebApi,Angular.js]
 ---
-{% include JB/setup %}
 
 At the moment the project is a sort of "Lab <a href="https://it.wikipedia.org/wiki/Proof_of_concept" target="_blank">PoC</a>" for a CQRS+ES application and it’s have a lot of short-cuts (for the sake of simplicity) that in a real project should be reviewed. One of this is the "implicit synchronism" of the UI. Let’s see one of the front-end calls to the server.
 
-<script type="syntaxhighlighter" class="brush: javascript">
-<![CDATA[
+```csharp
 changeDescription: function (_item) {
     var _input = {
         id: _item.Id,
@@ -31,12 +35,11 @@ changeDescription: function (_item) {
             _item.Description = _item._Description
         });
 }
-]]></script> 
+```
 
 And the server API related:
 
-<script type="syntaxhighlighter" class="brush: csharp">
-<![CDATA[
+```csharp
 [Route("api/TodoItems/ChangeDescription")]
 [HttpPost]
 public IHttpActionResult ChangeDescription(ChangeToDoItemDescriptionModel model)
@@ -54,7 +57,7 @@ public IHttpActionResult ChangeDescription(ChangeToDoItemDescriptionModel model)
         return BadRequest(ex.Message);
     }
 }
-]]></script> 
+```
 
 This code is perfectly consistent, because the actions (send command, manage it, store events, dispatch events, update read model) are all in-process. This is true even if I don’t use anything from the result data in the success callback, but, again, it’s correct for the same reason: because in the CQRS we have separated Commands from Queries, so this command will not have any result (but the httpResult) and because, being all actions in-process, if we have an “Ok” as result, it means that the read model has been correctly updated with the data passed in front-end call.
 	
@@ -76,17 +79,15 @@ First Question: in which project is it preferable to put the SignalR hub? This h
 
 Keeping it simple at first, I call an event notifier (dependant on Hub) at the end of the denormalizer methods in the QueryStack project. But first I’ve to set-up SignlR Hub
 
-<script type="syntaxhighlighter" class="brush: csharp">
-<![CDATA[
+```csharp
 public class NotifierHub : Hub
 {
 }
-]]></script> 
+```
 
 As you see, very simple, because, in this scenario, SignalR has just to notify the clients of server-side events and there are no actions callable from UI. Now that we have the channel between server and clients, we need to define the notification logic:
 
-<script type="syntaxhighlighter" class="brush: csharp">
-<![CDATA[
+```csharp
 public class EventNotifier : IEventNotifier
 {
     private readonly IHubConnectionContext<dynamic> clients;
@@ -107,7 +108,7 @@ public class EventNotifier : IEventNotifier
 
     ...
 }
-]]></script> 
+```
 
 As you can see, I use:
 
@@ -116,8 +117,7 @@ As you can see, I use:
 
 At the end, I call the notifier's methods at the end of the read-model updates:
 
-<script type="syntaxhighlighter" class="brush: csharp;highlight: [28]">
-<![CDATA[
+```csharp
 public class ToDoEventHandlers : 
 	IEventHandler<ChangedToDoListDescriptionEvent>,
 	...
@@ -152,19 +152,17 @@ public class ToDoEventHandlers :
 
 	...
 }
-]]></script> 
+```
 
 In the front-end side we need the code to establish the connection with the hub 
 
-<script type="syntaxhighlighter" class="brush: javascript">
-<![CDATA[
+```csharp
 var notifierHubProxy = $.connection.notifierHub;
-]]></script> 
+```
 
 and to listen for server-side notifications. I did that using Angular.js global events that can be handled in every controller
 
-<script type="syntaxhighlighter" class="brush: javascript">
-<![CDATA[
+```csharp
 // setup of global notification events 
 notifierHubProxy.client.changedToDoListDescription = broadcastEvent('changedToDoListDescription');
 notifierHubProxy.client.createdToDoListEvent = broadcastEvent('createdToDoListEvent');
@@ -182,7 +180,7 @@ var broadcastEvent = function (eventName) {
         $rootScope.$broadcast(eventName, arguments.length==1 ? arguments[0] : arguments);
     }
 }
-]]></script> 
+```
 
 How and if manage these events could be an opportunity matter. Sometimes it's ok to give an explicit notification to the user that something is changed, sometimes it's ok to "trick" the user with the input data without waiting the notification.
 It's all about the domain requirements.

@@ -1,5 +1,4 @@
 ---
-layout: wvpost
 title: "Discitur Project"
 tagline: automatic Deploy - Grunt!
 header: automatic Deploy - Grunt
@@ -7,7 +6,7 @@ description: Discitur Project,Configuration Management,Deploy,Grunt
 group: Discitur_en
 tags: [Configuration Management,Deploy,Grunt]
 ---
-{% include JB/setup %}
+
 <!-- Markup JSON-LD generato da Assistente per il markup dei dati strutturati di Google. -->
 <script type="application/ld+json">
 {

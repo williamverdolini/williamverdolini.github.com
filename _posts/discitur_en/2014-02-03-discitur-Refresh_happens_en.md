@@ -1,5 +1,4 @@
 ---
-layout: wvpost
 title: "Discitur Project"
 tagline: Refresh Happens...(Angular.js Authentication)
 header: Refresh Happens
@@ -7,7 +6,7 @@ description: Discitur Project,Tech,Angular.js,Login,Authentication,token,localst
 group: Discitur_en
 tags: [Angular.js,Authentication]
 ---
-{% include JB/setup %}
+
 <!-- Markup JSON-LD generato da Assistente per il markup dei dati strutturati di Google. -->
 <script type="application/ld+json">
 {

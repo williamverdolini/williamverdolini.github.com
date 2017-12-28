@@ -1,5 +1,4 @@
 ---
-layout: wvpost
 title: "Il Progetto Discitur"
 tagline: Backlog
 header: Backlog
@@ -7,7 +6,6 @@ description: Progetto Discitur, Backlog, Metodologia, Scrum, Agile
 group: Discitur
 tags: [Agile]
 ---
-{% include JB/setup %}
 
 Il product <a href="http://en.wikipedia.org/wiki/Scrum_(software_development)#Product_backlog" target="_blank">Backlog</a>
 utilizzato ha diversi campi. Questi quelli che ritengo più utili (con un

@@ -1,5 +1,4 @@
 ---
-layout: wvpost
 title: "Umbraco Custom Macros"
 tagline: the Custom Macro's Anatomy
 header: the Custom Macro's Anatomy
@@ -7,7 +6,6 @@ description: Umbraco, Architecture, Macros, Tech
 group: Umbraco_CustomMacros
 tags: [Technology,Umbraco,Architecture]
 ---
-{% include JB/setup %}
 
 As said in the <a href="/2015/02/03/umbmacro-architecture/" target="_blank">introduction article</a>, one and the most important component of this basic architecture 
 is **MacroController** which is used as base class for all the Custom Macros. Before explore this component let's see how a final Custom Macro looks like.

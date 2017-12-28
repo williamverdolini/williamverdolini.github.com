@@ -1,5 +1,4 @@
 ---
-layout: wvpost
 title: "Discitur Project"
 tagline: Climbing Angular.js TDD
 header: Climbing Angular.js TDD
@@ -7,7 +6,7 @@ description: Progetto Discitur, Tech, Angular.js, TDD
 group: Discitur_en
 tags: [Angular.js,TDD]
 ---
-{% include JB/setup %}
+
 <!-- Markup JSON-LD generato da Assistente per il markup dei dati strutturati di Google. -->
 <script type="application/ld+json">
 {

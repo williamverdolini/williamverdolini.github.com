@@ -1,5 +1,4 @@
 ---
-layout: wvpost
 title: "Discitur Project"
 tagline: Prerequisites
 header: Prerequisites
@@ -7,7 +6,6 @@ description: Discitur Project, Prerequisites, Technology, Methodology, Agile
 group: Discitur_en
 tags: [Technology,Methodology,Agile]
 ---
-{% include JB/setup %}
 
 Hard to say, I think you understand along the way. surely no 
 advanced prerequisite on technologies: the majority of those I will use 

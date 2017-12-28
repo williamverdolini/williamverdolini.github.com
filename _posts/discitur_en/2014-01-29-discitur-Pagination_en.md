@@ -1,5 +1,4 @@
 ---
-layout: wvpost
 title: "Discitur Project"
 tagline: Routing, Pagination
 header: Routing, Pagination
@@ -7,7 +6,7 @@ description: Discitur Project,Tech,Angular.js,Pagination,UI-Router
 group: Discitur_en
 tags: [Angular.js,Routing]
 ---
-{% include JB/setup %}
+
 <!-- Markup JSON-LD generato da Assistente per il markup dei dati strutturati di Google. -->
 <script type="application/ld+json">
 {

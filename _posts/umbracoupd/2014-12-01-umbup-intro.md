@@ -1,5 +1,4 @@
 ---
-layout: wvpost
 title: "Umbraco Upgrade"
 tagline: Intro
 header: Intro
@@ -7,7 +6,6 @@ description: Umbraco, Prototyping, Tech
 group: Umbraco_Update
 tags: [Technology,Umbraco]
 ---
-{% include JB/setup %}
 
 We have a web app application that has developed upon <a href="http://umbraco.com/products/umbraco-cms" target="_blank">Umbraco CMS</a>. Umbraco is very a flexible and good CMS we have chosen some years ago because:
 

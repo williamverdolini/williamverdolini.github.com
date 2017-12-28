@@ -1,5 +1,4 @@
 ---
-layout: wvpost
 title: "Fast Catalog"
 tagline: Fast Catalog in MongoDb
 header: Fast Catalog in MongoDb
@@ -7,7 +6,6 @@ description: MongoDb, Prototyping, Tech
 group: FastCatalog
 tags: [Technology,Prototyping,MongoDb]
 ---
-{% include JB/setup %}
 
 In the <a href="{{ BASE_PATH }}/2015/06/14/fastcatalog-sql2nosql" target="_blank">previous article</a> I've explained the migration logic and here I'll see the implementation and some results using MongoDb as target db. I'm using <a href="http://docs.mongodb.org/ecosystem/drivers/csharp/" target="_blank">official Mongodb Driver for .NET (2.0)</a>. Here is all the document model:
 

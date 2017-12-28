@@ -1,5 +1,4 @@
 ---
-layout: wvpost
 title: "Il Progetto Discitur"
 tagline: Authorized Routing
 header: Authorized Routing
@@ -7,7 +6,7 @@ description: Progetto Discitur,Tech,Angular.js,Authentication,Routing
 group: Discitur
 tags: [Angular.js,Authentication,Routing]
 ---
-{% include JB/setup %}
+
 <!-- Markup JSON-LD generato da Assistente per il markup dei dati strutturati di Google. -->
 <script type="application/ld+json">
 {

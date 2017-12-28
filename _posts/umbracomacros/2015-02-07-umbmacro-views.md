@@ -1,5 +1,4 @@
 ---
-layout: wvpost
 title: "Umbraco Custom Macros"
 tagline: “Chinese boxes” Partial Views
 header: “Chinese boxes” Partial Views
@@ -7,7 +6,6 @@ description: Umbraco, Architecture, Macros, Tech
 group: Umbraco_CustomMacros
 tags: [Technology,Umbraco,Architecture]
 ---
-{% include JB/setup %}
 
 In a <a href="/2015/02/03/umbmacro-architecture/" target="_blank">previous article</a> I've explained that an Umbraco macro inserted in a RTE is rendered as a (child) Partial View.
 Now it's important to spend few words about the views involved in the process because it can better explain how this architecture can communicate with Umbraco.

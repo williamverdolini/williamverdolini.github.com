@@ -1,5 +1,4 @@
 ---
-layout: wvpost
 title: "Fast Catalog"
 tagline: Multi-attribute Search with MongoDb
 header: Multi-attribute Search with MongoDb
@@ -7,7 +6,6 @@ description: MongoDb, Prototyping, Tech, Multi-attribute Search
 group: FastCatalog
 tags: [Technology,Prototyping,MongoDb,Multi-attribute Search]
 ---
-{% include JB/setup %}
 
 <a href="{{ BASE_PATH }}/2015/07/26/fastcatalog-web-elastic/" target="_blank">Same story</a>, but with <a href="https://www.mongodb.org/" target="_blank">MongoDb</a>. After having implemented <a href="{{ BASE_PATH }}/2015/06/08/fastcatalog-intro/" target="_blank">the feature</a> with ElasticSearch, it was pretty straightforward to do the same thing with MongoDB (also because all the front-end code remained the same; that's one of the <a href="{{ BASE_PATH }}/2014/01/05/discitur-prerequisiti_en#" target="_blank">advantages of a SPA</a>).
 

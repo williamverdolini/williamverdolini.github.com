@@ -1,5 +1,4 @@
 ---
-layout: wvpost
 title: "Il Progetto Discitur"
 tagline: Release Discitur 0.1.0 (beta!) Retrospettiva 
 header: Release Discitur 0.1.0 (beta!) Retrospettiva
@@ -7,7 +6,7 @@ description: Progetto Discitur,Agile,Tech
 group: Discitur
 tags: [Agile,Tech]
 ---
-{% include JB/setup %}
+
 <!-- Markup JSON-LD generato da Assistente per il markup dei dati strutturati di Google. -->
 <script type="application/ld+json">
 {

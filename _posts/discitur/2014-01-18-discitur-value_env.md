@@ -1,5 +1,4 @@
 ---
-layout: wvpost
 title: "Il Progetto Discitur"
 tagline: Industrializzare il Valore
 header: Industrializzare il Valore
@@ -7,7 +6,6 @@ description: Progetto Discitur, Planning, Stime, Metodologia, Scrum, Agile
 group: Discitur
 tags: [Agile]
 ---
-{% include JB/setup %}
 
 Prima di entrare nel vivo delle attività progettuali, occorre spendere un
 po’ di tempo su questo aspetto. Ho dato due nomi allo stesso concetto per via

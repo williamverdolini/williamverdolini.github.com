@@ -1,5 +1,4 @@
 ---
-layout: wvpost
 title: "Umbraco Custom Macros"
 tagline: Properties Configurability
 header: Properties Configurability
@@ -7,7 +6,6 @@ description: Umbraco, Architecture, Macros, Tech
 group: Umbraco_CustomMacros
 tags: [Technology,Umbraco,Architecture]
 ---
-{% include JB/setup %}
 
 When you configure a macro in the Umbraco developer section, you can add some parameters to the macro, which the administrator can use to enable some specific behaviour (e.g. disply or not some data, or whatever you want).
 

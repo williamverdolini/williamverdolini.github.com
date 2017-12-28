@@ -1,5 +1,4 @@
 ---
-layout: wvpost
 title: "Il Progetto Discitur"
 tagline: App Initialization, Global Variables
 header: App Initialization
@@ -7,7 +6,6 @@ description: Progetto Discitur, Tech
 group: Discitur
 tags: [Angular.js,Constants,Services,Software Design]
 ---
-{% include JB/setup %}
 
 <script type="application/ld+json">
 {

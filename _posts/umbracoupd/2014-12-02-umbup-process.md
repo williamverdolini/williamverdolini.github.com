@@ -1,5 +1,4 @@
 ---
-layout: wvpost
 title: "Umbraco Upgrade"
 tagline: The Upgrade Process
 header: The Upgrade Process
@@ -7,7 +6,6 @@ description: Umbraco, Prototyping, Tech
 group: Umbraco_Update
 tags: [Technology,Umbraco,Prototyping]
 ---
-{% include JB/setup %}
 
 ###Before to start
 

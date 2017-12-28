@@ -1,5 +1,4 @@
 ---
-layout: wvpost
 title: "Il Progetto Discitur"
 tagline: Le Stime
 header: Le Stime
@@ -7,7 +6,6 @@ description: Progetto Discitur, Stime, Metodologia, Scrum, Agile
 group: Discitur
 tags: [Agile]
 ---
-{% include JB/setup %}
 
 Non mi addentro in tecniche di stima “agile”, dato che sono stime fatte da
 me in solitaria (in questo caso); ma qualche considerazione è però degna di

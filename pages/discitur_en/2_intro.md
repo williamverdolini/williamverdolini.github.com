@@ -1,12 +1,10 @@
 ---
-layout: wvpage
 title: "Discitur Project"
 tagline: Introduction
 header: Introduction
 description: Discitur Project, Introduction
 group: Discitur_en
 ---
-{% include JB/setup %}
 
 The Discitur project, arises from the much more ambitious Magister project. 
 So it is important to spend a few words about this project.

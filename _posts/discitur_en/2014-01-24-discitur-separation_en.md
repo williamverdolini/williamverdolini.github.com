@@ -1,5 +1,4 @@
 ---
-layout: wvpost
 title: "Discitur Project"
 tagline: Test, FE/BE separation…Static/Dynamic Content
 header: Test, FE/BE separation…Static/Dynamic Content
@@ -7,7 +6,6 @@ description: Discitur Project, Tech, Angular.js
 group: Discitur_en
 tags: [Angular.js,Software Design]
 ---
-{% include JB/setup %}
 
 In the title is everything (but really everything), but in fact that's the mental journey that I have done to arrive at the conclusions shown in this article. 
 The findings, from the technical point of view, they are not anything special, but I find it interesting to follow the process because I think it is quite common and, 

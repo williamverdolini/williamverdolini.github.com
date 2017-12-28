@@ -1,5 +1,4 @@
 ---
-layout: wvpost
 title: "Discitur Project"
 tagline: Angular.js TDD
 header: Angular.js TDD
@@ -7,7 +6,6 @@ description: Discitur Project, Tech, Angular.js, TDD
 group: Discitur_en
 tags: [Angular.js,TDD]
 ---
-{% include JB/setup %}
 
 As a first approach to TDD has not been a success. 
 I admit that my story and my experiences have made me misrepresent, confuse and put me in the wrong way several times. 

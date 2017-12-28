@@ -1,5 +1,4 @@
 ---
-layout: wvpost
 title: "Discitur Project"
 tagline: Angular.js Digest Cycle
 header: Angular.js Digest Cycle
@@ -7,7 +6,6 @@ description: Progetto Discitur,Tech,Angular.js,Digest Cycle,watchers
 group: Discitur_en
 tags: [Angular.js,Digest Cycle,watchers]
 ---
-{% include JB/setup %}
 <!-- Markup JSON-LD generato da Assistente per il markup dei dati strutturati di Google. -->
 <script type="application/ld+json">
 {

@@ -1,12 +1,10 @@
 ---
-layout: wvmonopage
 title: Fast Catalog
 tagline: Project Backstage
 header: Fast Catalog
 category: Fast Catalog
 group: navigation
 ---
-{% include JB/setup %}
 
 <div class="row">
   <div class="col-md-12">
@@ -21,7 +19,6 @@ group: navigation
 <div class="row">
   <div class="col-md-12">
     <h2>Contents</h2>
-    {% include themes/blog/fastcatalog-summary.html %}
     
     {% assign myArray = finalSummary | split: "|"  | sort %}
     <ul style="list-style-type: none;">
@@ -75,7 +72,6 @@ group: navigation
 {% comment %}
 <ul>
 {% assign pages_list = site.pages %}
-{% include JB/pages_list %}
 </ul>
 
 Fast Catalog<br>

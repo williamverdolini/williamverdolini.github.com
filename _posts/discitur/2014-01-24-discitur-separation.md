@@ -1,5 +1,4 @@
 ---
-layout: wvpost
 title: "Il Progetto Discitur"
 tagline: Test, FE/BE separation…Static/Dynamic Content
 header: Test, FE/BE separation…Static/Dynamic Content
@@ -7,7 +6,6 @@ description: Progetto Discitur, Tech, Angular.js
 group: Discitur
 tags: [Angular.js,Software Design]
 ---
-{% include JB/setup %}
 
 Nel titolo c’è tutto (ma veramente tutto!!), però di fatto è il percorso
 mentale che ho fatto per arrivare alle conclusioni mostrate in questo

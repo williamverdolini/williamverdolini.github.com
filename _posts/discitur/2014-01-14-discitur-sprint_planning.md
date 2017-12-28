@@ -1,5 +1,4 @@
 ---
-layout: wvpost
 title: "Il Progetto Discitur"
 tagline: Sprint Planning
 header: Sprint Planning
@@ -7,7 +6,6 @@ description: Progetto Discitur, Planning, Stime, Metodologia, Scrum, Agile
 group: Discitur
 tags: [Agile]
 ---
-{% include JB/setup %}
 
 Di seguito un elenco di aspetti da tenere in considerazione nel planning dei propri sprint.
 

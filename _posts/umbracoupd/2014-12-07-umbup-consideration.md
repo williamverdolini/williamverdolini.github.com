@@ -1,5 +1,4 @@
 ---
-layout: wvpost
 title: "Umbraco Upgrade"
 tagline: Some final consideration
 header: Some final consideration
@@ -7,7 +6,6 @@ description: Umbraco, Prototyping, Tech
 group: Umbraco_Update
 tags: [Technology,Umbraco,Prototyping]
 ---
-{% include JB/setup %}
 
 ###Final Prototype Retrospective
 I like the happy endings.

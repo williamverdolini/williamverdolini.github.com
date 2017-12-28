@@ -1,5 +1,4 @@
 ---
-layout: wvpost
 title: "Discitur Project"
 tagline: Angular.js Autocomplete
 header: Angular.js Autocomplete
@@ -7,7 +6,7 @@ description: Discitur Project,Tech,Angular.js,Auto Complete,Autocomplete
 group: Discitur_en
 tags: [Angular.js]
 ---
-{% include JB/setup %}
+
 <!-- Markup JSON-LD generato da Assistente per il markup dei dati strutturati di Google. -->
 <script type="application/ld+json">
 {

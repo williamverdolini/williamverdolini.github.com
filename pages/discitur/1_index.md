@@ -1,12 +1,10 @@
 ---
-layout: wvpage
 title: "Il Progetto Discitur"
 tagline: Premessa
 header: Premessa
 description: Progetto Discitur, Introduzione
 group: Discitur
 ---
-{% include JB/setup %}
 
 Il sito vuole essere un insieme di articoli che tracciano il diario di bordo dell’ideazione 
 e della realizzazione di un’applicazione web rivolta al mondo degli insegnanti. 

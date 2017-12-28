@@ -1,5 +1,4 @@
 ---
-layout: wvpost
 title: "Umbraco Upgrade"
 tagline: First prototype retrospective
 header: First prototype retrospective
@@ -7,7 +6,6 @@ description: Umbraco, Prototyping, Tech
 group: Umbraco_Update
 tags: [Technology,Umbraco,Prototyping]
 ---
-{% include JB/setup %}
 
 So...after several attempts and insights I have decided to abandon the prototype of Umbraco upgrade to version 7, although I had achieved the following results:
 

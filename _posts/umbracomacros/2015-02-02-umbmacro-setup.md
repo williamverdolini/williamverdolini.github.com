@@ -1,5 +1,4 @@
 ---
-layout: wvpost
 title: "Umbraco Custom Macros"
 tagline: Setup
 header: Setup
@@ -7,7 +6,6 @@ description: Umbraco, Prototyping, Tech
 group: Umbraco_CustomMacros
 tags: [Technology,Umbraco]
 ---
-{% include JB/setup %}
 
 I've already explained <a href="/2014/12/01/umbup-intro" target="_blank">why we choose Umbraco</a> as our core framework.
 Recently we have <a href="{{ BASE_PATH }}/Umbraco-Upgrade.html" target="_blank">migrated from 4.7.1 to 6.2.4</a> and we started also a migration from WebForms framework to MVC. Our main goals were Design (aka Quality) and Performance.

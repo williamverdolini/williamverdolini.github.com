@@ -1,5 +1,4 @@
 ---
-layout: wvpost
 title: "Umbraco Custom Macros"
 tagline: Properties Injection in MVC Filters
 header: Properties Injection in MVC Filters
@@ -7,7 +6,6 @@ description: Umbraco, Castle Windsor, Inversion of Control, MVC, Tech
 group: Umbraco_CustomMacros
 tags: [Umbraco,Castle Windsor,Inversion of Control,MVC,Technology]
 ---
-{% include JB/setup %}
 
 In the <a href="/2015/02/04/umbmacro-controllerfact/" target="_blank">previous article</a> we have seen how to set up DI in Controller. But what if we need dependencies injection in MVC filters with Castle Windsor?
 This is not so straightforward as before, but with some "forced injections", we can hit the goal.

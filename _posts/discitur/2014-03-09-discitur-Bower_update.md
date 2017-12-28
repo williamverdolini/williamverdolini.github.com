@@ -1,5 +1,4 @@
 ---
-layout: wvpost
 title: "Il Progetto Discitur"
 tagline: Bower Update
 header: Bower Update
@@ -7,7 +6,7 @@ description: Progetto Discitur,Tech,Bower,Configuration Management
 group: Discitur
 tags: [Bower,Configuration Management]
 ---
-{% include JB/setup %}
+
 <!-- Markup JSON-LD generato da Assistente per il markup dei dati strutturati di Google. -->
 <script type="application/ld+json">
 {

@@ -1,12 +1,10 @@
 ---
-layout: wvmonopage
 title: Umbraco Custom Macros
 tagline: Project Backstage
 header: Umbraco Custom Macros
 category: Umbraco Custom Macros
 group: navigation
 ---
-{% include JB/setup %}
 
 <div class="row">
   <div class="col-md-12">
@@ -22,7 +20,6 @@ but exploiting its capability to add custom Macros to base installation.
 <div class="row">
   <div class="col-md-12">
     <h2>Contents</h2>
-    {% include themes/blog/umbracomacros-summary.html %}
     
     {% assign myArray = finalSummary | split: "|"  | sort %}
     <ul style="list-style-type: none;">

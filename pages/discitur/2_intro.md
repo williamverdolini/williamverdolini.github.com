@@ -1,12 +1,10 @@
 ---
-layout: wvpage
 title: "Il Progetto Discitur"
 tagline: Introduzione
 header: Introduzione
 description: Progetto Discitur, Introduzione
 group: Discitur
 ---
-{% include JB/setup %}
 
 Il progetto Discitur, nasce dal ben più ambizioso progetto Magister. 
 Quindi due parole su questo progetto è importante spenderle.

@@ -1,5 +1,4 @@
 ---
-layout: wvpost
 title: "Il Progetto Discitur"
 tagline: Angular.js $chacheFactory
 header: Angular.js $chacheFactory
@@ -7,7 +6,7 @@ description: Progetto Discitur,Tech,Angular.js,$chacheFactory,Performance
 group: Discitur
 tags: [Angular.js,$chacheFactory,Performance]
 ---
-{% include JB/setup %}
+
 <!-- Markup JSON-LD generato da Assistente per il markup dei dati strutturati di Google. -->
 <script type="application/ld+json">
 {

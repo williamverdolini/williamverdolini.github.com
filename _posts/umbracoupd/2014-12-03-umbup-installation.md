@@ -1,5 +1,4 @@
 ---
-layout: wvpost
 title: "Umbraco Upgrade"
 tagline: Umbraco Installation
 header: Umbraco Installation
@@ -7,7 +6,6 @@ description: Umbraco, Prototyping, Tech
 group: Umbraco_Update
 tags: [Technology,Umbraco]
 ---
-{% include JB/setup %}
 
 I order to have a "to-be" database to compare with, I've made a basic Umbraco installation from scratch.
 here are the steps done:

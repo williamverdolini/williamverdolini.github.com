@@ -1,12 +1,10 @@
 ---
-layout: wvpage
 title: "Il Progetto Discitur"
 tagline: In Code We Live
 header: In Code We Live
 description: Progetto Discitur, Introduzione, Sprint Review
 group: Discitur
 ---
-{% include JB/setup %}
 
 Ecco la serie di piccoli e grandi aspetti tecnici che ho dovuto affrontare
 e risolvere durante il progetto. Non ha la pretesa di essere una serie di blog

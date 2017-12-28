@@ -1,5 +1,4 @@
 ---
-layout: wvpost
 title: "Il Progetto Discitur"
 tagline: Angular DTO
 header: Angular DTO
@@ -7,7 +6,6 @@ description: Progetto Discitur, Tech, Angular.js, DTO
 group: Discitur
 tags: [Angular.js,DTO,Software Design]
 ---
-{% include JB/setup %}
 
 <!-- Markup JSON-LD generato da Assistente per il markup dei dati strutturati di Google. -->
 <script type="application/ld+json">

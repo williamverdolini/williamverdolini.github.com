@@ -1,5 +1,4 @@
 ---
-layout: wvpost
 title: "Umbraco Custom Macros"
 tagline: Architecture
 header: Architecture
@@ -7,7 +6,6 @@ description: Umbraco, Architecture, Macros, Tech
 group: Umbraco_CustomMacros
 tags: [Technology,Umbraco,Architecture]
 ---
-{% include JB/setup %}
 
 ###The Umbraco's Idea###
 Umbraco is a <a href="http://en.wikipedia.org/wiki/Content_management_system" target="_blank">CMS</a> Product. Its mission is to allow users to easily write and publish their own web contents. I don't want to explain all the Umbraco functionalities 

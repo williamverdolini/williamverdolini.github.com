@@ -1,5 +1,4 @@
 ---
-layout: wvpost
 title: "Umbraco Upgrade"
 tagline: Upgrate to version 6.2.4
 header: Upgrate to version 6.2.4
@@ -7,7 +6,6 @@ description: Umbraco, Prototyping, Tech
 group: Umbraco_Update
 tags: [Technology,Umbraco,Prototyping]
 ---
-{% include JB/setup %}
 
 I did the same steps of <a href="/2014/12/04/umbup-718-manual-upgrade/" target="_blank">previous prototype</a>, now with Umbraco version 6.2.4. And the database schema and data comparison gave a simpler result (I've stroke out the differences):
 

@@ -1,5 +1,4 @@
 ---
-layout: wvpost
 title: "Fast Catalog"
 tagline: Automapper
 header: Automapper
@@ -7,7 +6,6 @@ description: Prototyping, Tech, Automapper, Castle Windsor
 group: FastCatalog
 tags: [Technology,Prototyping,Automapper,Castle Windsor]
 ---
-{% include JB/setup %}
 
 <a href="http://automapper.org/" target="_blank">Automapper</a> is a nice discovery because it's very easy to setup, it's very easy to use and the code generated is very neat. _Yeah!_
 

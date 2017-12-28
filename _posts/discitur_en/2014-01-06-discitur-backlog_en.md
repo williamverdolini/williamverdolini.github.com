@@ -1,5 +1,4 @@
 ---
-layout: wvpost
 title: "Discitur Project"
 tagline: Product Backlog
 header: Product Backlog
@@ -7,7 +6,6 @@ description: Discitur Project, Product Backlog, Metodology, Scrum, Agile
 group: Discitur_en
 tags: [Agile]
 ---
-{% include JB/setup %}
 
 The product <a href="http://en.wikipedia.org/wiki/Scrum_(software_development)#Product_backlog" target="_blank">Backlog</a>
 used has various fields. Those are the more useful:

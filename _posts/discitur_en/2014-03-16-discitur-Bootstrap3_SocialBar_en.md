@@ -1,5 +1,4 @@
 ---
-layout: wvpost
 title: "Discitur Project"
 tagline: Bootstrap 3 Social Buttons with Angular.js
 header: Bootstrap 3 Social Buttons with Angular.js
@@ -7,7 +6,7 @@ description: Discitur Project,Bootstrap,Social Network,Angular.js
 group: Discitur_en
 tags: [Bootstrap,Angular.js,Social Network]
 ---
-{% include JB/setup %}
+
 <!-- Markup JSON-LD generato da Assistente per il markup dei dati strutturati di Google. -->
 <script type="application/ld+json">
 {

@@ -1,5 +1,4 @@
 ---
-layout: wvpost
 title: "Discitur Project"
 tagline: CQRS+ES Version
 header: CQRS+ES Version
@@ -7,7 +6,7 @@ description: Discitur Project,CQRS+ES
 group: Discitur_en
 tags: [CQRS+ES,Software Design]
 ---
-{% include JB/setup %}
+
 <!-- Markup JSON-LD generato da Assistente per il markup dei dati strutturati di Google. -->
 <script type="application/ld+json">
 {

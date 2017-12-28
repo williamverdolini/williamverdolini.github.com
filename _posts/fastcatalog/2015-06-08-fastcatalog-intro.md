@@ -1,5 +1,4 @@
 ---
-layout: wvpost
 title: "Fast Catalog"
 tagline: Intro
 header: Intro
@@ -7,7 +6,6 @@ description: NoSQL, Prototyping, Tech
 group: FastCatalog
 tags: [Technology,Prototyping,NoSQL]
 ---
-{% include JB/setup %}
 
 These few articles born to share some thoughts about common functionality in e-commerce: multi-attribute catalog search. Something like the followings:
 

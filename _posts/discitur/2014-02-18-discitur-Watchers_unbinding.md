@@ -1,5 +1,4 @@
 ---
-layout: wvpost
 title: "Il Progetto Discitur"
 tagline: Watchers Unbinding (Performance)
 header: Watchers Unbinding
@@ -7,7 +6,6 @@ description: Progetto Discitur,Tech,Angular.js,Digest Cycle,watchers,Performance
 group: Discitur
 tags: [Angular.js,Digest Cycle,watchers,Performance]
 ---
-{% include JB/setup %}
 <!-- Markup JSON-LD generato da Assistente per il markup dei dati strutturati di Google. -->
 <script type="application/ld+json">
 {

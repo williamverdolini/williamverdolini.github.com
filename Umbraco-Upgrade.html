@@ -1,12 +1,10 @@
 ---
-layout: wvmonopage
 title: Umbraco Upgrade
 tagline: Project Backstage
 header: Umbraco Upgrade
 category: Umbraco Upgrade
 group: navigation
 ---
-{% include JB/setup %}
 
 <div class="row">
   <div class="col-md-12">
@@ -23,7 +21,6 @@ And in these articles I wanted to highlight some principles concretely used duri
 <div class="row">
   <div class="col-md-12">
     <h2>Contents</h2>
-    {% include themes/blog/umbracoup-summary.html %}
     
     {% assign myArray = finalSummary | split: "|"  | sort %}
     <ul style="list-style-type: none;">
@@ -74,7 +71,6 @@ And in these articles I wanted to highlight some principles concretely used duri
 {% comment %}
 <ul>
 {% assign pages_list = site.pages %}
-{% include JB/pages_list %}
 </ul>
 
 CQRS+ES Todo List<br>

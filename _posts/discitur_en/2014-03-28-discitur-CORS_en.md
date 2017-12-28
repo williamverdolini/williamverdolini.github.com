@@ -1,5 +1,4 @@
 ---
-layout: wvpost
 title: "Discitur Project"
 tagline: Cross-Origin Resource Sharing (CORS)
 header: Cross-Origin Resource Sharing (CORS)
@@ -7,7 +6,7 @@ description: Discitur Project,CORS,Cross-Origin Resource Sharing,WebApi
 group: Discitur_en
 tags: [CORS,WebApi]
 ---
-{% include JB/setup %}
+
 <!-- Markup JSON-LD generato da Assistente per il markup dei dati strutturati di Google. -->
 <script type="application/ld+json">
 {

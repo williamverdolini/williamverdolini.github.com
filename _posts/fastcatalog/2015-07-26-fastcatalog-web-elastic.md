@@ -1,5 +1,4 @@
 ---
-layout: wvpost
 title: "Fast Catalog"
 tagline: Multi-attribute Search with ElasticSearch
 header: Multi-attribute Search with ElasticSearch
@@ -7,7 +6,6 @@ description: ElasticSearch, Prototyping, Tech, NEST, Multi-attribute Search
 group: FastCatalog
 tags: [Technology,Prototyping,ElasticSearch,NEST,Multi-attribute Search]
 ---
-{% include JB/setup %}
 
 So, ElastiSearch is very fast.<br/>
 I was very excited to develop the multi-attribute feature starting with ElasticSearch. Here are the key points during this development:

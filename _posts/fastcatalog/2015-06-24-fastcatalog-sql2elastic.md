@@ -1,5 +1,4 @@
 ---
-layout: wvpost
 title: "Fast Catalog"
 tagline: Fast Catalog in ElasticSearch
 header: Fast Catalog in ElasticSearch
@@ -7,7 +6,6 @@ description: ElasticSearch, Prototyping, Tech
 group: FastCatalog
 tags: [Technology,Prototyping,ElasticSearch]
 ---
-{% include JB/setup %}
 
 I did the same thing described in the <a href="{{ BASE_PATH }}/2015/06/22/fastcatalog-sql2mongo/" target="_blank">previous article</a> using <a href="https://www.elastic.co/" target="_blank">ElasticSearch</a> as target db. I'm using <a href="http://nest.azurewebsites.net/" target="_blank">Nest</a> as .NET driver. Here is the document model:
 

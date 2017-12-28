@@ -1,5 +1,4 @@
 ---
-layout: wvpost
 title: "Il Progetto Discitur"
 tagline: Routing, Pagination
 header: Routing, Pagination
@@ -7,7 +6,7 @@ description: Progetto Discitur,Tech,Angular.js,Pagination,UI-Router
 group: Discitur
 tags: [Angular.js,Routing]
 ---
-{% include JB/setup %}
+
 
 Un altro aspetto legato alla gestione degli stati e del routing che ho
 dovuto gestire è quella legata alla gestione di ricerche paginate. Lo scenario

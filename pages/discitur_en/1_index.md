@@ -1,12 +1,10 @@
 ---
-layout: wvpage
 title: "Discitur Project"
 tagline: Premise
 header: Premise
 description: Discitur Project, Introduction
 group: Discitur_en
 ---
-{% include JB/setup %}
 
 The site aims to be a collection of articles that trace the logbook of ideation 
 and implementation of a web application aimed at the world of teachers. 

@@ -1,5 +1,4 @@
 ---
-layout: wvpost
 title: "Umbraco Custom Macros"
 tagline: MVC Controller Factory
 header: MVC Controller Factory
@@ -7,7 +6,6 @@ description: Umbraco, Castle Windsor, Inversion of Control, MVC, Tech
 group: Umbraco_CustomMacros
 tags: [Umbraco,Castle Windsor,Inversion of Control,MVC,Technology]
 ---
-{% include JB/setup %}
 
 ###MVC (4) solutions for DI###
 Dependency Injection is a must for a <a href="http://en.wikipedia.org/wiki/SOLID_%28object-oriented_design%29" target="_blank">S.O.L.I.D. code</a> and, for that, 

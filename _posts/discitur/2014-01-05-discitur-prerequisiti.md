@@ -1,5 +1,4 @@
 ---
-layout: wvpost
 title: "Il Progetto Discitur"
 tagline: Prerequisiti
 header: Prerequisiti
@@ -7,7 +6,6 @@ description: Progetto Discitur, Prerequisiti, Tecnologie, Metodologia, Agile
 group: Discitur
 tags: [Agile,Tecnologia]
 ---
-{% include JB/setup %}
 
 Difficile da dire, penso si capisca strada facendo. Sicuramente nessun
 prerequisito avanzato sulle tecnologie: la maggior parte di quelle che userò

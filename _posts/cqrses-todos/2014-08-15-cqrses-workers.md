@@ -1,13 +1,18 @@
 ---
-layout: wvpost
-title: "CQRS+ES Todo List"
-tagline: Workers
-header: Workers
+title: "Workers"
+excerpt: "CQRS+ES Todo List"
+header:
+    overlay_image: "https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?auto=format&fit=crop&w=1350&q=80"
+    caption: "Photo credit: [**Unsplash**](https://unsplash.com)"
+toc: false
+toc_label: "Contents"
+author_profile: false
+sidebar:
+  nav: cqrses
 description: Tech, Workers, Single Responsibility Principle
 group: CQRS_ES_Todos
 tags: [Technology,Single Responsibility Principle]
 ---
-{% include JB/setup %}
 
 One of the (so much) hints caught on CQRS+ES session presented by Andrea Saltarello is something that does not matters so much with CQRS, but more with Single Responsibility Principle. I’m talking about WorkerServices (Workers), whose purpose is to keep a loose coupling between implementation logic and domain logic.
 It’s a tipical topic for software designers, rather than domain experts…and I like it!
@@ -28,13 +33,11 @@ Going deeper into the implementation, a Worker has to deal with the two “chann
 
 The following is a sample
 
-<script type="syntaxhighlighter" class="brush: csharp">
-<![CDATA[
+```csharp
 public class ToDoWorker
 {
     private readonly IBus bus;
     private readonly IDatabase database;
-
     public ToDoWorker(IBus commandBus, IRepository repo, IDatabase db)
     {
         Contract.Requires<ArgumentNullException>(commandBus != null, "commandBus");
@@ -43,14 +46,12 @@ public class ToDoWorker
         bus = commandBus;
         database = db;
     }
-
     #region Command Responsibility
     public void CreateToDoList(CreateTodoListCommandModel model)
     {
         bus.Send<CreateToDoListCommand>(new CreateToDoListCommand(model.Id, model.Title, model.Description));
     }
     #endregion
-
     #region Query Responsibility
     public async Task<List<ToDoList>> GetLists()
     {
@@ -58,4 +59,4 @@ public class ToDoWorker
     }
     #endregion
 }
-]]></script> 
+```

@@ -1,13 +1,18 @@
 ---
-layout: wvpost
-title: "CQRS+ES Todo List"
-tagline: OWIN + SignalR + Castle.Windsor
-header: OWIN + SignalR + Castle.Windsor
+title: "OWIN + SignalR + Castle.Windsor"
+excerpt: "CQRS+ES Todo List"
+header:
+    overlay_image: "https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?auto=format&fit=crop&w=1350&q=80"
+    caption: "Photo credit: [**Unsplash**](https://unsplash.com)"
+toc: false
+toc_label: "Contents"
+author_profile: false
+sidebar:
+  nav: cqrses
 description: Tech, CQRS+ES, SignalR, OWIN, Castle Windsor
 group: CQRS_ES_Todos
 tags: [Technology,CQRS+ES,SignalR,OWIN,Castle Windsor]
 ---
-{% include JB/setup %}
 
 So far so good.
 
@@ -23,8 +28,7 @@ How if we need the Dependency Injection in SignalR?
 
 As explained in <a href="http://www.asp.net/signalr/overview/advanced/dependency-injection" target="_blank">this tutorial</a>, we'll use this kind of initial Hub configuration, that's configuring a dependency resolver specific of the container you are using:
 
-<script type="syntaxhighlighter" class="brush: csharp">
-<![CDATA[
+```csharp
 public class Startup
 {
 	public void Configuration(IAppBuilder app)
@@ -35,12 +39,11 @@ public class Startup
 		});
 	}
 }
-]]></script> 
+```
 
 With Castle.Windsor, the resolver looks like the following
 
-<script type="syntaxhighlighter" class="brush: csharp">
-<![CDATA[
+```csharp
 public class WindsorDependencyResolver : DefaultDependencyResolver
 {
 	private readonly IWindsorContainer _container;
@@ -63,7 +66,7 @@ public class WindsorDependencyResolver : DefaultDependencyResolver
 		return _container.Kernel.HasComponent(serviceType) ? _container.ResolveAll(serviceType).Cast<object>() : base.GetServices(serviceType);
 	}
 }
-]]></script> 
+```
 
 But where does the **container** come from in the Hub configuration?
 
@@ -73,5 +76,3 @@ That is the point. As explained above, the DI container needs to be disposed and
 2. Move all the initialization logic from Global.asax.Application_Start to Owin middleware configuration, forgetting about disposing (manually) the container
 
 Are there better ways?
-
-

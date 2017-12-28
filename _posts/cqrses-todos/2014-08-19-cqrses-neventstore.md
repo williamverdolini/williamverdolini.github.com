@@ -1,13 +1,18 @@
 ---
-layout: wvpost
-title: "CQRS+ES Todo List"
-tagline: NEventStore
-header: NEventStore
+title: "NEventStore"
+excerpt: "CQRS+ES Todo List"
+header:
+    overlay_image: "https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?auto=format&fit=crop&w=1350&q=80"
+    caption: "Photo credit: [**Unsplash**](https://unsplash.com)"
+toc: false
+toc_label: "Contents"
+author_profile: false
+sidebar:
+  nav: cqrses
 description: Tech, CQRS+ES, NEventStore, Software Design
 group: CQRS_ES_Todos
 tags: [Technology,CQRS+ES, NEventStore, Software Design]
 ---
-{% include JB/setup %}
 
 <a href="http://neventstore.org/" target="_blank">NEventStore</a> is a very powerful library that works very well in ES context. That’s its definition: 
 <blockquote>NEventStore is a persistence library used to abstract different storage implementations when using event sourcing as storage mechanism. This library is developed with a specific focus on DDD/CQRS applications</blockquote>

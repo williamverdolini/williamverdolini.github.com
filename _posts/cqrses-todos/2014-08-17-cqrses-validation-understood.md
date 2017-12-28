@@ -1,21 +1,25 @@
 ---
-layout: wvpost
-title: "CQRS+ES Todo List"
-tagline: Have I really understood and well implemented my domain?
-header: Have I really understood and well implemented my domain?
+title: "Have I really understood and well implemented my domain?"
+excerpt: "CQRS+ES Todo List"
+header:
+    overlay_image: "https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?auto=format&fit=crop&w=1350&q=80"
+    caption: "Photo credit: [**Unsplash**](https://unsplash.com)"
+toc: true
+toc_label: "Contents"
+author_profile: false
+sidebar:
+  nav: cqrses
 description: Tech, CQRS+ES, Validation, Software Design
 group: CQRS_ES_Todos
 tags: [Technology,CQRS+ES, Validation, Software Design]
 ---
-{% include JB/setup %}
-
 That’s THE problem of every analyst and programmer in the world. That’s Domain, for sure.
 
 But why this question at this point? Because validation is strictly related to domain rules and the validation logic can determine which is the best Domain model. So it’s always better to spend some time to deepen the validation rules in the different contexts.
 
 An example of validation rule (and some consideration about it): _“the importance property of a Todo-Item must be a unique value in its own Todo-List”_
 
-### Solution #1: Separate AggregateRoots (AR)
+## Solution #1: Separate AggregateRoots (AR)
 
 Having two distinct AR (ToDoList and ToDoItem) implies:
 
@@ -25,8 +29,7 @@ Having two distinct AR (ToDoList and ToDoItem) implies:
 
 The following is the code for (eventual consistent) validation rule:
 
-<script type="syntaxhighlighter" class="brush: csharp">
-<![CDATA[
+```csharp
 public class ChangeToDoItemImportanceCommandValidator : AbstractValidator<ChangeToDoItemImportanceCommand>
 {
 	private readonly IDatabase database;
@@ -49,12 +52,12 @@ public class ChangeToDoItemImportanceCommandValidator : AbstractValidator<Change
 							   select todo).Count() == 0;		
 	}
 }
-]]></script> 
+```
 
 This version of code is present in public repository, in branch <a href="https://github.com/williamverdolini/CQRS-ES-Todos/tree/master" target="_blank">master</a>.
 
 
-### Solution #2: One AggregateRoot (AR) with composition
+## Solution #2: One AggregateRoot (AR) with composition
 
 Having just an AR (ToDoList) with a list of TodoItem implies:
 
@@ -65,8 +68,7 @@ Having just an AR (ToDoList) with a list of TodoItem implies:
 
 The following is the code for (consistent) validation rule:
 
-<script type="syntaxhighlighter" class="brush: csharp">
-<![CDATA[
+```csharp
 public class ChangeToDoItemImportanceCommandValidator : AbstractValidator<ChangeToDoItemImportanceCommand>
 {
 	private readonly IRepository repository;
@@ -88,8 +90,7 @@ public class ChangeToDoItemImportanceCommandValidator : AbstractValidator<Change
 		return !list.Items.Any<ToDoItem>(todo => todo.Importance.Equals(importance));
 	}
 }
-]]></script> 
-
+```
 
 So, a validation based on repository (consistent write model) rather than database (eventual consistent read-model). But not always a consistent validation is consistent indeed: think if I've used MSMQ for my bus; in that case it could be possible that some previous command, put in the bus but not yet processed, could change the repository state. So? We come back to the need of having some compensation logic...anyhow...
 

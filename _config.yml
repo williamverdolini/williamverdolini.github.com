@@ -1,4 +1,4 @@
-plugins: ['jekyll-github-metadata']
+plugins: ['jekyll-github-metadata','minimal-mistakes-jekyll']
 # This is the default format. 
 # For more see: http://jekyllrb.com/docs/permalinks/
 permalink: /:categories/:year/:month/:day/:title 

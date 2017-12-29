@@ -35,8 +35,8 @@ author :
 # Else if you are pushing to username.github.io, replace with your username.
 # Finally if you are pushing to a GitHub project page, include the project name at the end.
 #
-production_url : http://williamverdolini.github.io/
-url : http://williamverdolini.github.io/
+production_url : http://williamverdolini.github.io
+url : http://williamverdolini.github.io
 repository: williamverdolini/williamverdolini.github.com
   
 #markdown: redcarpet
@@ -87,14 +87,14 @@ author:
   bio    : "Developer dentro, fuori un po' di tutto"
   location  : "Cupramontana (AN), Italy"
   email : william.verdolini@gmail.com
-  uri    : "http://williamverdolini.github.io/"
-  home   : "http://williamverdolini.github.io/" # null (default), "absolute or relative url to link to author home"      
+  uri    : "http://williamverdolini.github.io"
+  home   : "http://williamverdolini.github.io" # null (default), "absolute or relative url to link to author home"      
   stackoverflow    : https://stackoverflow.com/users/3316654/wilver
   linkedin         : https://www.linkedin.com/in/williamverdolini/
   email : william.verdolini@gmail.com
   github : williamverdolini  
 comments:
-  provider               : "disqus"
+  provider               : disqus
   disqus:
     shortname            : williamverdolini  
 # Reading Files

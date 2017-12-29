@@ -1,7 +1,14 @@
 ---
-title: "Fast Catalog"
-tagline: Automapper
-header: Automapper
+title: "Automapper"
+excerpt: "Fast Catalog"
+header:
+    overlay_image: "https://images.unsplash.com/photo-1503449377594-32dd9ac4467c?auto=format&fit=crop&w=1351&q=80"
+    caption: "Photo credit: [**Unsplash**](https://unsplash.com)"
+toc: true
+toc_label: "Contents"
+author_profile: false
+sidebar:
+  nav: fastcatalog
 description: Prototyping, Tech, Automapper, Castle Windsor
 group: FastCatalog
 tags: [Technology,Prototyping,Automapper,Castle Windsor]
@@ -17,31 +24,25 @@ That's all, but it's enough!
 
 It can unload your code of all that boring, heavy, "often-business-less" code to map one object to another type of object. Never more without (or without something similar).
 
-### Configuration
+## Configuration
 
 Setting up Automapper using an <a href="https://en.wikipedia.org/wiki/Inversion_of_control" target="_blank">IoC container</a> as <a href="https://github.com/castleproject/Windsor/blob/master/docs/README.md" target="_blank">Castle.Windsor</a> is very simple. Here are the steps I followed:
 
-<ol>
-<li>Configure the mapper searching and adding all the <a href="https://github.com/AutoMapper/AutoMapper/wiki/Configuration" target="_blank">Automapper profiles</a>.
-
-<script type="syntaxhighlighter" class="brush: csharp;highlight: [14]" >
-<![CDATA[
+1. Configure the mapper searching and adding all the <a href="https://github.com/AutoMapper/AutoMapper/wiki/Configuration" target="_blank">Automapper profiles</a>.
+```csharp
 // In Global.asax or during App Initialization
 protected void Application_Start()
 {
 	...
-
 	// Configure all AutoMapper Profiles
 	AutoMapperConfig.Configure();
 }
-
 public static class AutoMapperConfig
 {
 	public static void Configure()
 	{
 		Mapper.Initialize(x => GetConfiguration(Mapper.Configuration));
 	}
-
 	private static void GetConfiguration(IConfiguration configuration)
 	{
 		var profiles = typeof(SearchInputMapperProfile).Assembly.GetTypes().Where(x => typeof(Profile).IsAssignableFrom(x));
@@ -51,14 +52,10 @@ public static class AutoMapperConfig
 		}
 	}
 }
-]]></script> 
+```
 
-
-</li>
-<li>Configure the DI container in order to use a factory method to instantiate the mapper engine everywhere you need it. 
-
-<script type="syntaxhighlighter" class="brush: csharp;highlight: [5]" >
-<![CDATA[
+2. Configure the DI container in order to use a factory method to instantiate the mapper engine everywhere you need it. 
+```csharp
 public class MappersInstaller : IWindsorInstaller
 {
 	public void Install(Castle.Windsor.IWindsorContainer container, Castle.MicroKernel.SubSystems.Configuration.IConfigurationStore store)
@@ -66,16 +63,13 @@ public class MappersInstaller : IWindsorInstaller
 		container.Register(Component.For<IMappingEngine>().UsingFactoryMethod(() => Mapper.Engine));
 	}
 }
-]]></script> 
+```
 
-</li>
-</ol>
 
-### Usage
+## Usage
 After the above configuration, using Automapper is very straightforward. Mapping is a cross-cutting concern, so you could use both in Controllers or in Business Logic or in Repository as well.
 
-<script type="syntaxhighlighter" class="brush: csharp;highlight: [6,19]" >
-<![CDATA[
+```csharp
 public class CatalogController : ApiController
 {
 	private readonly ICatalogWorker worker;
@@ -103,13 +97,12 @@ public class CatalogController : ApiController
 		}
 	}
 }
-]]></script> 
+```
 
-### Profiles
+## Profiles
 Profiles are the classes where the mapping logic resides. They could be very simple if the property names of source and target classes are exactly the same (or <a href="https://github.com/AutoMapper/AutoMapper/wiki/Flattening" target="_blank">flattened</a>). This is very useful when you have to work with <a href="https://en.wikipedia.org/wiki/Data_transfer_object" target="_blank">DTO</a>.
 
-<script type="syntaxhighlighter" class="brush: csharp;highlight: [5,6]" >
-<![CDATA[
+```csharp
 public class SearchInputMapperProfile : Profile
 {
 	protected override void Configure()
@@ -118,13 +111,12 @@ public class SearchInputMapperProfile : Profile
 		CreateMap<FilteredProductAttributeViewModel, FilteredProductAttribute>();
 	}
 }
-]]></script> 
+```
 
 But it's very flexible and allow you to define your own mapping logic, e.g. using <a href="https://github.com/AutoMapper/AutoMapper/wiki/Custom-value-resolvers" target="_blank">custom value Resolver</a>.
 
 
-<script type="syntaxhighlighter" class="brush: csharp;highlight: [6]" >
-<![CDATA[
+```csharp
 public class OrderedSearchInputMapperProfile : Profile
 {
 	protected override void Configure()
@@ -149,12 +141,11 @@ public class AttributesResolver : ValueResolver<OrderedSearchInput, IList<Filter
 		return attributes;
 	}
 }
-]]></script> 
+```
 
 or using a complete custom mapping like this:
 
-<script type="syntaxhighlighter" class="brush: csharp;highlight: [6]" >
-<![CDATA[
+```csharp
 public class SearchResponseMapperProfile : Profile
 {
 	protected override void Configure()
@@ -190,4 +181,4 @@ public class SearchResponseMapperProfile : Profile
 		return aggs;
 	};
 }
-]]></script> 
+```

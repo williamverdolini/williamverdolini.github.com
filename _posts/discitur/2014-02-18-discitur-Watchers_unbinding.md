@@ -1,7 +1,14 @@
 ---
-title: "Il Progetto Discitur"
-tagline: Watchers Unbinding (Performance)
-header: Watchers Unbinding
+title: "Watchers Unbinding (Performance)"
+excerpt: "Il Progetto Discitur"
+header:
+    overlay_image: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1404&q=80"
+    caption: "Photo credit: [**Unsplash**](https://unsplash.com)"
+toc: true
+toc_label: "Contents"
+author_profile: false
+sidebar:
+  nav: discitur_it
 description: Progetto Discitur,Tech,Angular.js,Digest Cycle,watchers,Performance
 group: Discitur
 tags: [Angular.js,Digest Cycle,watchers,Performance]
@@ -36,8 +43,6 @@ recepire.
 
 Un buon articolo che approfondisce il tema è il seguente: <a href="http://blog.bguiz.com/post/57373805814/accessors-vs-dirty-checking-in-javascript-frameworks" target="_blank">http://blog.bguiz.com/post/57373805814/accessors-vs-dirty-checking-in-javascript-frameworks</a>
 
- 
-
 Su applicazioni di grandi dimensioni (o destinate a diventarlo) questo
 check potrebbe creare problemi di performance. Per migliorare le performance si
 può eliminare dai watchers quelli che non contengono contenuto veramente dinamico.
@@ -51,8 +56,6 @@ primo binding sulla View, non servirebbe più fare ulteriori controlli e
 potrebbero essere staccate dal dirty-checking eliminando/annullando il watcher
 associato.
 
- 
-
 Ho provato due metodi per realizzare questo obiettivo:
 
  
@@ -63,12 +66,8 @@ Ho sperimentato il metodo più per scopi didattici/architetturali che per
 applicarlo nell’app, anche perché il risultato non è molto elegante. Ecco il
 codice inserito in uno dei miei controller:
 
- 
 
-
-{% raw %}
-<script type="syntaxhighlighter" class="brush: javascript">
-<![CDATA[
+```js
 var _watchers = false;
 var _detachStaticWatchers = $scope.$watch(function () {
     // first digest cycle: do nothing to populate view
@@ -77,7 +76,7 @@ var _detachStaticWatchers = $scope.$watch(function () {
     }
     // second digest cycle: remove static watchers
     else {
-        var _reLabels = /^{{labels\..*}}/
+        var _reLabels = /^{\{labels\..*}\}/
         for (var i = $scope.$$watchers.length - 1; i >= 0; i--) {
             if ($scope.$$watchers[i].exp &&
                 $scope.$$watchers[i].exp.exp &&
@@ -91,10 +90,7 @@ var _detachStaticWatchers = $scope.$watch(function () {
     console.log($scope.$$watchers.length);
     console.log($scope.$$watchers);
 })
-]]></script> 
-{% endraw %}
-
- 
+```
 
 gli aspetti teorici utilizzati sono:
 
@@ -137,9 +133,6 @@ riportato è il seguente:
 
 Brutto, ma invisibile e
 performante.
-
- 
-
  
 
 ###<a href="https://github.com/Pasvaz/bindonce" target="_blank">Bindonce</a>
@@ -149,7 +142,6 @@ maniera decisamente più elegante e standard, ovvero utilizzando delle
 direttive. si appoggia all’evento jQlite $destroy e quindi si occupa di
 staccare i binding marcati opportunamente.
 
- 
 
 Bello, ma non è esattamente quello che cerco, perché vorrei tenere quanto
 più "pulita" la view di aspetti meramente tecnici.
@@ -169,21 +161,15 @@ Resta il fatto che <a href="http://slid.es/pasqualevazzana/angularjs-binding" ta
 Inoltre ho avuto modo di conoscere l'<a href="https://twitter.com/PasqualeVazzana" target="_blank">autore della libreria</a> e di vedere all'opera le performance di una applicazione che utilizzava Bindonce.
 Risultato? Lo userò presto nel progetto. 
 
- 
-
- 
-
 ###Altre riflessioni:
 
 Avevo provato anche una cosa del genere nel controller:
 
-
-<script type="syntaxhighlighter" class="brush: javascript">
-<![CDATA[
+```js
 $scope.$on('$viewContentLoaded', function () {
     $scope.$$watchers.splice(1,1); //uno a caso per fare una prova...
 });
-]]></script> 
+```
 
 ma non funziona perché l’evento è lanciato prima della risoluzione dello
 stato e quindi prima di renderizzare i watcher…peccato… 

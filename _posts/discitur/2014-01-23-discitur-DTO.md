@@ -1,7 +1,14 @@
 ---
-title: "Il Progetto Discitur"
-tagline: Angular DTO
-header: Angular DTO
+title: "Angular DTO"
+excerpt: "Il Progetto Discitur"
+header:
+    overlay_image: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1404&q=80"
+    caption: "Photo credit: [**Unsplash**](https://unsplash.com)"
+toc: true
+toc_label: "Contents"
+author_profile: false
+sidebar:
+  nav: discitur_it
 description: Progetto Discitur, Tech, Angular.js, DTO
 group: Discitur
 tags: [Angular.js,DTO,Software Design]
@@ -93,8 +100,7 @@ documentazione ufficiale) :
 Ecco il codice.
 
 
-<script type="syntaxhighlighter" class="brush: javascript">
-<![CDATA[
+```js
 angular.module('Lesson')
     .factory('LessonDTO', function () {
         function LessonDTO() {
@@ -161,13 +167,11 @@ angular.module('Lesson')
             }
         };
     });
-]]></script> 
+```
 
 Il controller a questo punto resta semplice
 
-<script type="syntaxhighlighter" class="brush: javascript">
-<![CDATA[
-
+```js
 angular.module('Lesson')
     .controller('LessonCtrl', [
         '$scope',
@@ -179,15 +183,11 @@ angular.module('Lesson')
             $scope.lesson = lessonData;
         }
     ]);
-
-
-]]></script> 
+```
 
 ed il suo template lavora su un Object Model disaccoppiato dal servizio di BE. 
 
-<script type="syntaxhighlighter" class="brush: javascript">
-<![CDATA[
-
+```html
     <div id="LessonSummary" class="row">
         <div id="lessonGoods" class="col-md-6" ng-switch="lesson.goods && lesson.goods.length>0">
             <h3>{{labels.lessonGoods}}</h3>
@@ -204,9 +204,7 @@ ed il suo template lavora su un Object Model disaccoppiato dal servizio di BE. 
             <div ng-switch-when="false">{{labels.noLessonBads}}</div>
         </div>
     </div>
-
-
-]]></script> 
+```
 
 Questo design ha il vantaggio di limitare al solo LessonService il rework dovuto a variazioni del servizio di backend che non richiedono modifiche all’interfaccia utente.
 

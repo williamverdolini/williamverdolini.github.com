@@ -1,26 +1,18 @@
 ---
-title: "Il Progetto Discitur"
-tagline: App Initialization, Global Variables
-header: App Initialization
+title: "App Initialization, Global Variables"
+excerpt: "Il Progetto Discitur"
+header:
+    overlay_image: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1404&q=80"
+    caption: "Photo credit: [**Unsplash**](https://unsplash.com)"
+toc: true
+toc_label: "Contents"
+author_profile: false
+sidebar:
+  nav: discitur_it
 description: Progetto Discitur, Tech
 group: Discitur
 tags: [Angular.js,Constants,Services,Software Design]
 ---
-
-<script type="application/ld+json">
-{
-  "@context" : "http://schema.org",
-  "@type" : "Article",
-  "name" : "App Initialization, Global Variables",
-  "author" : {
-    "@type" : "Person",
-    "name" : "william verdolini"
-  },
-  "datePublished" : "2014-01-20",
-  "articleSection" : [ "Passare ad Angular significava passare dal server al client e questo approccio (molto utile) doveva essere rivisto. Rivisto, consapevole del fatto che NON poteva essere riottenuto lo stesso identico risultato, per il fatto che nelle applicazioni web tradizionali le variabili in Application Memory erano inserite una sola volta ed erano accessibili a tutte le sessioni http che l'applicazione riceveva; mentre in SPA con framework di templating js come Angular l'applicazione risiede tutta sul client ed il backend è in genere state-less e quindi quelle che saranno oggetti di applicazione, sono oggetti ricreati su ogni client.", "Angular.js", "Constants", "Services", "Software Design" ],
-  "url" : "http://williamverdolini.github.io/2014/01/20/discitur-appinit/"
-}
-</script>
 
 Prima di passare ad Angular, ero abituato a lavorare su tipici progetti
 web, nei quali l’applicazione aveva il suo core server-side, con la generazione
@@ -36,7 +28,7 @@ ogni label visualizzata; con lo stesso meccanismo si poteva gestire anche
 l’internazionalizzazione delle label. 
 
 
-### From Server to Client
+## From Server to Client
 
 Passare ad Angular significava passare dal server al client e questo
 approccio (molto utile) doveva essere rivisto. Rivisto, consapevole del fatto
@@ -49,18 +41,13 @@ state-less e quindi quelle che saranno oggetti di applicazione, sono oggetti
 ricreati su ogni client.
 
 
-### Angular Constants
+## Angular Constants
 In Angular un buon candidato per gestire queste costanti di applicazioni è
 un servizio, in particolare nella forma **value** che semplifica l’implementazione di oggetti literal instanziati una sola volta
 in tutta l’applicazione. Il mio servizio sarà quindi come segue:
 
 
-
- 
-  
-
-<script type="syntaxhighlighter" class="brush: javascript">
-<![CDATA[
+```csharp
 angular.module('Common')
 .value('dictionary',
     {
@@ -73,7 +60,7 @@ angular.module('Common')
         ...
     }
 )
-]]></script> 
+```
 
 
 Questo servizio dovrà essere utilizzato da ogni controller per popolare le
@@ -81,8 +68,7 @@ label visualizzate. Quindi, sfruttando la Dependency Injection di Angular, un
 controller potrebbe avere questa struttura:
 
  
-<script type="syntaxhighlighter" class="brush: javascript">
-<![CDATA[
+```csharp
 angular.module('Lesson')
     .controller('LessonCtrl', [
         '$scope',
@@ -99,7 +85,7 @@ angular.module('Lesson')
                 classroom: dictionary.classroom,
                 author: dictionary.author
             };
-]]></script> 
+```
 
 Ammetto che questa soluzione non mi piace al 100% perché richiede di
 inserire una step di deploy “esterno” (per leggere da DB le labels e creare il
@@ -117,8 +103,7 @@ un buona idea. Meglio quella di predisporre un file di costanti globali con le
 sole etichette personalizzate per lo specifico controller:
 
  
-<script type="syntaxhighlighter" class="brush: javascript">
-<![CDATA[
+```csharp
 angular.module('Common')
 .value('overrides',
     {
@@ -127,7 +112,7 @@ angular.module('Common')
         }
     }
 )
-]]></script> 
+```
 
 Anche questo file potrebbe essere generato automaticamente a partire da
 dati salvati a DB.
@@ -138,8 +123,7 @@ servizio che data l’etichetta verifica l’esistenza di un eventuale override 
 controller. 
 
  
-<script type="syntaxhighlighter" class="brush: javascript">
-<![CDATA[
+```
 angular.module('Common')
         .factory('LabelService', function (dictionary,  overrides) {
             return {
@@ -154,13 +138,12 @@ angular.module('Common')
                 }
             };
         });
-]]></script> 
+```
 
 Ed il controller diventa:
 
  
-<script type="syntaxhighlighter" class="brush: javascript">
-<![CDATA[
+```
 angular.module('Lesson')
     .controller('LessonCtrl', [
         '$scope',
@@ -176,7 +159,7 @@ angular.module('Lesson')
                 school: LabelService.get('LessonCtrl','school'),
                 ...
             };
-]]></script> 
+```
 
 Ok.
 
@@ -190,8 +173,7 @@ copia/incolla e fare bug-fixing può essere una cosa snervante.
 La prima soluzione è semplice:
 
  
-<script type="syntaxhighlighter" class="brush: javascript">
-<![CDATA[
+```csharp
 angular.module('Lesson')
     .controller('LessonCtrl', [
         '$scope',
@@ -211,13 +193,13 @@ angular.module('Lesson')
                 school: getLabel('school'),
                 ...
             };
-]]></script> 
+```
 
  
 **Meglio!**
 
 
-### _Controller Inheritance?_
+## _Controller Inheritance?_
 
 Rifletto su questo aspetto per il fatto che, sulla base del codice appena
 scritto, tutti i controller della mia applicazione avranno questi componenti e
@@ -233,8 +215,7 @@ Per far questo la soluzione che alla fine trovo più pulita è questa: <a href="
 che si basa sulla creazione di una classe che realizza il controller “padre”
 che può essere ereditato dai singoli controller:
  
-<script type="syntaxhighlighter" class="brush: javascript">
-<![CDATA[
+```csharp
 angular.module("Discitur")
     .factory('DisciturBaseCtrl', function () {
         function DisciturBaseCtrl($scope, LabelService) {
@@ -245,7 +226,7 @@ angular.module("Discitur")
         }
         return (DisciturBaseCtrl);
     });
-]]></script> 
+```
  
  
 riflessioni:
@@ -261,10 +242,7 @@ riflessioni:
 A questo punto il mio controller potrebbe essere reingegnerizzato come di
 seguito:
 
-<script type="syntaxhighlighter" class="brush: javascript">
-<![CDATA[
-  
-  
+```csharp
 angular.module('Lesson')
     .controller('LessonCtrl', [
         '$scope',
@@ -281,10 +259,7 @@ angular.module('Lesson')
                 school: $scope.getLabel('school'),
                 classroom: $scope.getLabel('classroom')
             };
-    
-  
-    
-]]></script> 
+```
 
 
 Da un punto di vista del codice scritto, in questo specifico caso, non c’è
@@ -302,7 +277,3 @@ di affrontare la questione.
 
 
 Qualche opinione a riguardo?
-
-  
-  
-  

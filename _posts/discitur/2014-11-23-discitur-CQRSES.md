@@ -1,7 +1,14 @@
 ---
-title: "Il Progetto Discitur"
-tagline: CQRS+ES Version
-header: CQRS+ES Version
+title: "CQRS+ES Version"
+excerpt: "Il Progetto Discitur"
+header:
+    overlay_image: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1404&q=80"
+    caption: "Photo credit: [**Unsplash**](https://unsplash.com)"
+toc: true
+toc_label: "Contents"
+author_profile: false
+sidebar:
+  nav: discitur_it
 description: Discitur Project,CQRS+ES
 group: Discitur
 tags: [CQRS+ES,Software Design]
@@ -31,7 +38,7 @@ Cos è la reputazione? Si tratta di un punteggio, che l'utente ha guadagnato fac
 _che sciocco_...
 
 
-### Quando utilizzare CQRS+ES è un errore
+## Quando utilizzare CQRS+ES è un errore
 
 Come ho detto prima, lo studio di CQRS+ES mi sta rendendo un miglior sviluppatore, analista e project mangager. Di seguito, la mia lista dei punti chiave
 
@@ -44,7 +51,7 @@ A volte (la maggior parte delle volte) non ho tempo ed energie (che è quello ch
 In ogni caso, Discitur è il mio "progetto palestra" e sto spendendo il mio tempo e le mie energie per comprendere a pieno CQRS + ES
 
 
-### Perché praticare CQRS+ES è importante
+## Perché praticare CQRS+ES è importante
 
 CQRS+ES ha cambiato il mio punto di vista su come realizzare software perché questo pattern mi ha costretto a passare dalla "confort-zone dello sviluppatore" alla (scomoda) "zona di dominio". Comprendere il dominio, sia dal punto di vista del business sia da quello tecnico, ti permette di fare le cose di cui si ha realmente bisogno, e, probabilmente, nel modo più conveniente.
 
@@ -65,5 +72,5 @@ più consapevole di tutti i miei difetti, e ora posso lavorare su di loro.
 Sono pieno di speranza e di gioia oggi!
 
 
-#### Still Working...
+### Still Working...
 Sto sempre studiando e provando nuove soluzioni e so che un giorno rilascerò la nuova release di Discitur in CQRS+ES. Questa è la mia direzione, oggi.

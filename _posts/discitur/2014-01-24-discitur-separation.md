@@ -1,7 +1,14 @@
 ---
-title: "Il Progetto Discitur"
-tagline: Test, FE/BE separation…Static/Dynamic Content
-header: Test, FE/BE separation…Static/Dynamic Content
+title: "Test, FE/BE separation…Static/Dynamic Content"
+excerpt: "Il Progetto Discitur"
+header:
+    overlay_image: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1404&q=80"
+    caption: "Photo credit: [**Unsplash**](https://unsplash.com)"
+toc: true
+toc_label: "Contents"
+author_profile: false
+sidebar:
+  nav: discitur_it
 description: Progetto Discitur, Tech, Angular.js
 group: Discitur
 tags: [Angular.js,Software Design]
@@ -68,25 +75,18 @@ dell’applicazione Angular per memorizzare apiURL da utilizzare su tutte le
 chiamate tramite $http e $resource. Questo il codice (ripulito delle parti non
 necessarie):
 
-
-<script type="syntaxhighlighter" class="brush: javascript">
-<![CDATA[
-
+```js
 angular.module("Discitur", [])
     .constant('DisciturSettings', {
         apiUrl: 'http://localhost:59739/api/'
     });
-
-]]></script> 
+```
 
 e sul singolo servizio:
 
-<script type="syntaxhighlighter" class="brush: javascript">
-<![CDATA[
-
+```js
 $http.get(DisciturSettings.apiUrl + 'lesson/' + inputParams.id)
-
-]]></script> 
+```
 
 Veramente due mosse, ma penso che il risultato sia molto flessibile. Cosa configurare sull’ambiente di produzione è a questo punto una scelta che può essere fatta valutando non l’aspetto software, ma solo quello sistemistico o di Configuration Management.
 Ah, dimenticavo…per il mio scopo (test su Grunt Connect e BE su IIS), funziona alla grande!

@@ -1,7 +1,14 @@
 ---
-title: "Il Progetto Discitur"
-tagline: Angular.js Digest Cycle
-header: Angular.js Digest Cycle
+title: "Angular.js Digest Cycle"
+excerpt: "Il Progetto Discitur"
+header:
+    overlay_image: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1404&q=80"
+    caption: "Photo credit: [**Unsplash**](https://unsplash.com)"
+toc: true
+toc_label: "Contents"
+author_profile: false
+sidebar:
+  nav: discitur_it
 description: Progetto Discitur,Tech,Angular.js,Digest Cycle,watchers
 group: Discitur
 tags: [Angular.js,Digest Cycle,watchers]
@@ -40,14 +47,10 @@ differenti:
 3. dalla sezione “Valutazioni” per inserire la propria
      valutazione
 
- 
-
 Nel corso dei prossimi sprint ci saranno sicuramente altri punti che prevedranno
 un accesso autenticato. Quindi quello che vorrei evitare è di “inquinare” i
 vari controlli (che hanno bisogno dell’autenticazione) con codice per l’apertura
 della finestra modale, che renderebbero i controller highly-coupled tra loro.
-
- 
 
 Per far questo, mi appoggio alla gestione degli eventi Angular, in
 particolare <a href="https://github.com/williamverdolini/discitur-web/blob/sprint3/app/modules/lesson/LessonCommentDrv.js#L60" target="_blank">lanciando dal $rootScope un broadcast dell’evento di login</a>. Una velocissima
@@ -57,14 +60,10 @@ il semplice $scope del controller di partenza, ed il controller non fosse uno
 scope padre di quello che voglio raggiungere, rischierei di lanciare nel vuoto
 l’evento
 
- 
-
 Quindi, se da un mio generico controller ho bisogno della login utente,
 predispongo un metodo che mi lancia il mio evento:
 
-
-<script type="syntaxhighlighter" class="brush: javascript">
-<![CDATA[
+```js
 scope.actions = {
    // call Sign Modal Dialog to login
    openSignIn: function () {
@@ -72,7 +71,7 @@ scope.actions = {
    },
    ...
 }
-]]></script> 
+```
 
 A questo punto, da qualche parte, l’evento sarà gestito e la finestra di
 Login aperta. In questo articolo, più che su aspetti di UI o di interazione con
@@ -93,27 +92,20 @@ per punti, questi sono i passaggi seguiti:
      di conoscere lo stato di autenticazione dell’utente, si realizza un <a href="https://github.com/williamverdolini/discitur-web/blob/sprint3/app/modules/lesson/LessonCommentDrv.js#L134" target="_blank">watcher</a>
      delle proprietà di user interessate, in particolare user.isLogged
 
- 
-
 Personalmente trovo questo approccio funzionale, ma non proprio elegante,
 in particolare avrei preferito non scrivere un watcher dello stesso tipo in
 ogni controller; viceversa avrei voluto iniettare il mio servizio di
 autenticazione e controllare le proprietà dell’oggetto user, per capire se
 l’autenticazione è avvenuta o meno.
 
- 
-
 Facendo un confronto tra quello che ho fatto e quello che
 mi sarebbe piaciuto fare:
 
 <h4>Quello che ho fatto</h4>
 
-
 <b><i>Controller</i></b>:
 
-
-<script type="syntaxhighlighter" class="brush: javascript">
-<![CDATA[
+```js
 scope.local = {
   isLogged: AuthService.user.isLogged,
   sameUser: (scope.comment.author.username == AuthService.user.username)
@@ -128,47 +120,33 @@ function () {
   scope.local.sameUser = (scope.comment.author.username == AuthService.user.username);
                         }
                     );
-
-]]></script> 
+```
 
 <b><i>Template</i></b>:
 
-<script type="syntaxhighlighter" class="brush: xml">
-<![CDATA[
+```html
 <div class="col-xs-12" ng-show="!local.isLogged || !local.sameUser">
 <h5><small>
 <a ng-click="actions.openUserComment()">{{labels.commentAnswer}}</a>
 </small>
 </h5>
 </div>
+```
 
-]]></script> 
-
-
-
-
-
-  
-  
-   
-   
    
 <h4>Quello che avrei voluto fare</h4>
 
 
 <b><i>Template</i></b>:
 
-<script type="syntaxhighlighter" class="brush: xml">
-<![CDATA[
+```html
 <div class="col-xs-12" 
      ng-show="! AuthService.user.isLogged || ! AuthService.user.username==comment.author.username ">
   <h5>
     <small><a ng-click="actions.openUserComment()">{{labels.commentAnswer}}</a></small>
   </h5>
 </div>
-]]></script> 
-
-
+```
 
 Quello che ho fatto è conseguenza del ciclo di digest e delle logiche che
 utilizza Angular per il controllo dei cambiamenti. Angular esegue un “dirty
@@ -179,7 +157,6 @@ autonomia da angular e quindi sono richiesti i watcher che altro non sono che
 funzioni che il ciclo di digest periodico di angular richiama per aggiornare i
 vari scope. Il giro mi è chiaro e alla fine è ok, ma mi sarebbe piaciuto se il
 ciclo di digest avesse spazzolato anche i servizi iniettati dai vari scope.
-
  
 
 **_Revisione_**
@@ -193,28 +170,23 @@ confronto utilizzato: <a href="http://docs.angularjs.org/api/angular.equals" tar
 
 <b><i>Controller</i></b>:
 
-<script type="syntaxhighlighter" class="brush: javascript">
-<![CDATA[
+```js
 scope.local = {
   user: AuthService.user
 }
-]]></script> 
+```
 
 
 <b><i>Template</i></b>:
 
-<script type="syntaxhighlighter" class="brush: xml">
-<![CDATA[
+```html
 <div class="col-xs-12" 
      ng-show="!scope.local.user.isLogged || ! AuthService.user.username==comment.author.username ">
   <h5>
     <small><a ng-click="actions.openUserComment()">{{labels.commentAnswer}}</a></small>
   </h5>
 </div>
-]]></script> 
-
-
- 
+```
 
 Con il codice precedente, Angular definisce un $watch sull’oggetto “scope.local.user.isLogged” per farlo individua la poprietà dello scope “scope.local.user” che, per riferimento è settata con l’oggetto user del servizio. Quindi
 con il seguente codice:
@@ -222,48 +194,37 @@ con il seguente codice:
 
 <b><i>Controller</i></b>:
 
-<script type="syntaxhighlighter" class="brush: javascript">
-<![CDATA[
+```js
 scope.local = {
   user: AuthService.user
 }
-]]></script> 
-
+```
 
 <b><i>Template</i></b>:
 
-<script type="syntaxhighlighter" class="brush: xml">
-<![CDATA[
+```html
 ng-show="!scope.local.user.isLogged">
-]]></script> 
-
-
+```
 
 Angular, imposta un watcher del seguente tipo:
 
-
-<script type="syntaxhighlighter" class="brush: javascript">
-<![CDATA[
+```js
 scope.$watch(
     function () { return scope.local.user.isLogged }, // where scope.local.user === AuthService.user
     function () {
         // do binding…
     }
 );
-]]></script> 
+```
 
 In questa maniera si è riuscito a mettere in binding le proprietà di un
 servizio, senza dover ricorrere ad un watcher esplicito nel controller.
-
- 
 
 _prima riflessione_:
 
 Il codice che volevo scrivere inizialmente era sbagliato per il semplice
 fatto che i watcher non si attaccano direttamente ai servizi (magari un giorno
 lo faranno), ma guardano all’interno del loro scope.
-
- 
 
 _seconda riflessione_:
 
@@ -272,8 +233,6 @@ una lettura che ha confermato tutti i miei approfondimenti è stata questa: <a h
 Se solo l’avessi trovata prima…
 
 In ogni caso, è sicuro che d’ora in avanti scriverò codice più consapevole!
-
- 
 
 _terza riflessione_:
 

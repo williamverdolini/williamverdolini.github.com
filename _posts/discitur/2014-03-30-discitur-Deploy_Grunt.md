@@ -1,7 +1,14 @@
 ---
-title: "Il Progetto Discitur"
-tagline: Deploy automatico - Grunt!
-header: Deploy automatico - Grunt
+title: "Deploy automatico - Grunt"
+excerpt: "Il Progetto Discitur"
+header:
+    overlay_image: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1404&q=80"
+    caption: "Photo credit: [**Unsplash**](https://unsplash.com)"
+toc: true
+toc_label: "Contents"
+author_profile: false
+sidebar:
+  nav: discitur_it
 description: Progetto Discitur,Configuration Management,Deploy,Grunt
 group: Discitur
 tags: [Configuration Management,Deploy,Grunt]
@@ -23,8 +30,6 @@ tags: [Configuration Management,Deploy,Grunt]
 }
 </script>
 
- 
-
 Una volta chiusa la prima beta-version, l’aspetto deploy diventa un tema
 interessante. In uno scenario enterprise il deploy di un’applicazione è un
 aspetto decisamente importante. In molti progetti in cui ho lavorato il
@@ -39,8 +44,6 @@ alla fine più mi premono sono:
      rilascio del software (time-to-market!!)
 - automatizzarlo (ho visto troppi ftp manuali
      sbagliati in vita mia…)
-
- 
 
 Al quarto deploy su github-pages per l’ambiente di test, ero già
 stanco…quindi mi son detto che era ora di sfruttare le potenzialità appena
@@ -64,15 +67,11 @@ momento il mio processo di deploy prevede questi step:
      per forzare l’aggiornamento sui client (per evitare il caching delle
      precedenti versioni dei file)
 
- 
-
 Una versione funzionante si trova sul repository: <a href="https://github.com/williamverdolini/discitur-web/blob/master/Gruntfile.js" target="_blank">https://github.com/williamverdolini/discitur-web/blob/master/Gruntfile.js</a>
 
 Fatto. Duplicare il set di task per il deploy in produzione è altrettanto
 semplice ed ora con un clik è possibile eseguire in maniera automatizzata il
 deploy dell’applicazioni in test o in produzione senza troppo sforzo.
-
- 
 
 Ovviamente questi task si possono aggiungere e complicare a piacere; ad es.
 mi piacerebbe (in un prossimo futuro) gestire in automatico il clone da una

@@ -1,7 +1,15 @@
 ---
-title: "Il Progetto Discitur"
-tagline: Angular.js TDD, QB (Quanto Basta)
-header: Angular.js TDD, QB (Quanto Basta)
+title: "Angular.js TDD, QB (Quanto Basta)"
+excerpt: "Il Progetto Discitur"
+header:
+    overlay_image: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1404&q=80"
+    caption: "Photo credit: [**Unsplash**](https://unsplash.com)"
+toc: true
+toc_label: "Contents"
+author_profile: false
+pagination: false
+sidebar:
+  nav: discitur_it
 description: Progetto Discitur, Tech, Angular.js, TDD
 group: Discitur
 tags: [Angular.js,TDD]
@@ -32,19 +40,17 @@ C’ho dormito sopra più notti e lavorato ancora un po’. Mi sono imbattuto in
 _il test: _
 
 
-<script type="syntaxhighlighter" class="brush: javascript">
-<![CDATA[
+```js
 it("Should the ControllerX controller exists", function () {
     var _ctrl = _$controller('ControllerX', { $scope: _scope }); // <-- _scope = {}
     expect(_ctrl).toBeDefined();
 });
-]]></script> 
+```
 
 
 _il codice: _
 
-<script type="syntaxhighlighter" class="brush: javascript">
-<![CDATA[
+```js
 angular.module('App')
     .controller('ControllerX', [
         '$scope',
@@ -53,7 +59,7 @@ angular.module('App')
             ) {
         }
     ]);
-]]></script> 
+```
 
 
 Simple.
@@ -63,21 +69,19 @@ Simple.
 _il test: _
 
 
-<script type="syntaxhighlighter" class="brush: javascript">
-<![CDATA[
+```js
 it("Should ControllerX have propertyY in its $scope", function () {
     var _ctrl = _$controller('ControllerX', { $scope: _scope }); // <-- _scope = {}
     expect(_scope.propertyY).toBeDefined();
 });
-]]></script> 
+```
 
 
 
 _il codice: _
 
 
-<script type="syntaxhighlighter" class="brush: javascript">
-<![CDATA[
+```js
 angular.module('App')
     .controller('ControllerX', [
         '$scope',
@@ -87,7 +91,7 @@ angular.module('App')
             $scope.propertyY = {};
         }
     ]);
-]]></script> 
+```
 
 
 
@@ -98,23 +102,21 @@ bene.
 _il test: _
 
 
-<script type="syntaxhighlighter" class="brush: javascript">
-<![CDATA[
+```js
 it("Should ControllerX.propertyY be populated with propertyYData in input", function () {
     _ctrl = _$controller('LessonNewsCtrl', { $scope: _scope, propertyYData: {} });
 
     expect(_scope.propertyY).toEqual({})
 
 });
-]]></script> 
+```
 
 
 
 _il codice: _
 
 
-<script type="syntaxhighlighter" class="brush: javascript">
-<![CDATA[
+```js
 angular.module('App')
     .controller('ControllerX', [
         '$scope',
@@ -126,7 +128,7 @@ angular.module('App')
             $scope = propertyYData;
         }
     ]);
-]]></script> 
+```
 
 
 
@@ -146,41 +148,32 @@ Nello scrivere il test dopo poco sono arrivato all’esigenza di realizzare l’
 nella mia testa DDD ( _Development-Driven Development_ ) suonava così:
 
 
-
-
-<script type="syntaxhighlighter" class="brush: javascript">
-<![CDATA[
+```js
 .factory('LessonService', [
         …,
         function ($resource, $http, $q) {
             …
             search: function (inputParams) {…}
         }]);
-]]></script> 
-
+```
 
 
 dove
 
-
-
-
-<script type="syntaxhighlighter" class="brush: javascript">
-<![CDATA[
+```js
 inputParams = {
     discipline: '...',
     school: '...',
     ...
 }
-]]></script> 
+```
 
 
 Dopo diversi approfondimenti e ragionate (non tutti immediati come mi sarei aspettato), 
 arrivo alla scrittura del seguente set di test (nella solita prassi Red-Dev-Green). 
 Scorreteli tutti perché penso siano significativi:
 
-<script type="syntaxhighlighter" class="brush: javascript">
-<![CDATA[
+```js
       describe('LessonService [signature-parameters]', function () {
           it('Should LessonService.search() accept no strings, throw exception otherwise', function () {
               var invalidParamEx;
@@ -191,15 +184,12 @@ Scorreteli tutti perché penso siano significativi:
               catch (ex) {
                   invalidParamEx = ex;
               }
-
               expect(invalidParamEx).toBeDefined();
               expect(invalidParamEx.code).toBeDefined();
               expect(invalidParamEx.code).toEqual(20001);
           })
-
           it('Should LessonService.search() accept no Array, throw exception otherwise', function () {
               var invalidParamEx;
-
               //make the call.
               try {
                   var returnedPromise = _LessonService.search([]);
@@ -211,7 +201,6 @@ Scorreteli tutti perché penso siano significativi:
               expect(invalidParamEx.code).toBeDefined();
               expect(invalidParamEx.code).toEqual(20001);
           })
-
           it('Should LessonService.search() accept no Function, throw exception otherwise', function () {
               var invalidParamEx;
 
@@ -226,7 +215,6 @@ Scorreteli tutti perché penso siano significativi:
               expect(invalidParamEx.code).toBeDefined();
               expect(invalidParamEx.code).toEqual(20001);
           })
-
           it('Should LessonService.search() accept Object instance', function () {
               var invalidParamEx;
 
@@ -239,15 +227,12 @@ Scorreteli tutti perché penso siano significativi:
               }
               expect(invalidParamEx).not.toBeDefined();
           })
-
           it('Should LessonService.search() not accept Object with uncorrect parameters, and throws exception', function () {
               var invalidParamEx;
               var inputParams = {
                   color : 'blue'
               }
-
               var invalidParamEx;
-
               //make the call.
               try {
                   var returnedPromise = _LessonService.search(inputParams);
@@ -259,17 +244,13 @@ Scorreteli tutti perché penso siano significativi:
               expect(invalidParamEx.code).toBeDefined();
               expect(invalidParamEx.code).toEqual(20002);
           })
-
-
       })
-]]></script> 
+```
 
 Ricordiamoci che la mia intenzione era definire come input del mio servizio un oggetto le cui proprietà potessero essere  usate come parametro del servizio REST.
 Il codice che ne è venuto fuori è stato il seguente:
 
-
-<script type="syntaxhighlighter" class="brush: javascript">
-<![CDATA[
+```js
 .factory('LessonService', [
         …,
         function ($resource, $http, $q) {
@@ -289,14 +270,13 @@ Il codice che ne è venuto fuori è stato il seguente:
                 …
 
         }]);
-]]></script> 
+```
 
 
 poi rifattorizzato in:
 
 
-<script type="syntaxhighlighter" class="brush: javascript">
-<![CDATA[
+```js
 .factory('LessonService', [
         DiscUtil,
         …,
@@ -311,7 +291,7 @@ poi rifattorizzato in:
                   …
 
         }]);
-]]></script> 
+```
 
 
 Con la creazione di un servizio di Utility da riutilizzare nel resto dei servizi. 

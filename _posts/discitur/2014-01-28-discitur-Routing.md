@@ -1,7 +1,14 @@
 ---
-title: "Il Progetto Discitur"
-tagline: Angular.js Routing (UI-Router)
-header: Angular.js Routing (UI-Router)
+title: "Angular.js Routing (UI-Router)"
+excerpt: "Il Progetto Discitur"
+header:
+    overlay_image: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1404&q=80"
+    caption: "Photo credit: [**Unsplash**](https://unsplash.com)"
+toc: true
+toc_label: "Contents"
+author_profile: false
+sidebar:
+  nav: discitur_it
 description: Progetto Discitur,Tech,Angular.js,Routing,UI-Router,Pagination
 group: Discitur
 tags: [Angular.js,Routing]
@@ -82,33 +89,32 @@ senza altre configurazioni per l’implementazione. Ecco la parte interessante
 del codice:
 
 
-<script type="syntaxhighlighter" class="brush: javascript">
-<![CDATA[
-    .config(function ($stateProvider, $urlRouterProvider) {
+```js
+.config(function ($stateProvider, $urlRouterProvider) {
 
-        $stateProvider
-            //MasterPages (Abstract States)
-            .state('master', {
-                url: '',
-                abstract: true,
-                templateUrl: 'masterpages/master.html'
-            })
-            // One Column Layout (Abstract States)
-            .state('master.1cl', {
-                url: '/project',
-                abstract: true,
-                parent: 'master',
-                templateUrl: 'masterpages/1cl.html'
-            })
-            // Two Columns Layout (Abstract States)
-            .state('master.2cl', {
-                url: '',
-                abstract: true,
-                parent: 'master',
-                templateUrl: 'masterpages/2cl.html'
-            })
-    })
-]]></script> 
+    $stateProvider
+        //MasterPages (Abstract States)
+        .state('master', {
+            url: '',
+            abstract: true,
+            templateUrl: 'masterpages/master.html'
+        })
+        // One Column Layout (Abstract States)
+        .state('master.1cl', {
+            url: '/project',
+            abstract: true,
+            parent: 'master',
+            templateUrl: 'masterpages/1cl.html'
+        })
+        // Two Columns Layout (Abstract States)
+        .state('master.2cl', {
+            url: '',
+            abstract: true,
+            parent: 'master',
+            templateUrl: 'masterpages/2cl.html'
+        })
+})
+```
 
 
 **2° Livello: Content-Pages (Stati “fisici”)**
@@ -124,27 +130,26 @@ Ad es. per il sito “statico”, ho
 definito il modulo main, la cui configurazione è:
 
 
-<script type="syntaxhighlighter" class="brush: javascript">
-<![CDATA[
-    .config(function ($stateProvider, $urlRouterProvider) {
-        // For any unmatched url, redirect to HomePage
-        $urlRouterProvider.otherwise('/project/home');
+```js
+.config(function ($stateProvider, $urlRouterProvider) {
+    // For any unmatched url, redirect to HomePage
+    $urlRouterProvider.otherwise('/project/home');
 
-        $stateProvider
-            // Web Site (Content States)
-            .state('master.1cl.home', {
-                url: '/home',
-                parent: 'master.1cl',
-                templateUrl: 'modules/main/site/HomePage.html'
-            })
-            .state('master.1cl.mission', {
-                url: '/mission',
-                parent: 'master.1cl',
-                templateUrl: 'modules/main/site/Project.html'
-            })
+    $stateProvider
+        // Web Site (Content States)
+        .state('master.1cl.home', {
+            url: '/home',
+            parent: 'master.1cl',
+            templateUrl: 'modules/main/site/HomePage.html'
+        })
+        .state('master.1cl.mission', {
+            url: '/mission',
+            parent: 'master.1cl',
+            templateUrl: 'modules/main/site/Project.html'
+        })
 
-    })
-]]></script> 
+})
+```
 
 Come si può vedere il parent usato è (per scelta) sempre 'master.1cl' ad indicare che le pagine statiche
 dell’applicazion sono sempre mono-colonna.
@@ -152,50 +157,49 @@ dell’applicazion sono sempre mono-colonna.
 Mentre per il modulo Lesson, alcuni stati sono i seguenti:
 
 
-<script type="syntaxhighlighter" class="brush: javascript">
-<![CDATA[
-    .config(function ($stateProvider, $urlRouterProvider) {
+```js
+.config(function ($stateProvider, $urlRouterProvider) {
 
-        $stateProvider
-            .state('lessonSearch', {
-                url: '/lesson?keyword',
-                parent: 'master.2cl',
-                onEnter: function () {
-                    console.log("Entering Lesson Search");
+    $stateProvider
+        .state('lessonSearch', {
+            url: '/lesson?keyword',
+            parent: 'master.2cl',
+            onEnter: function () {
+                console.log("Entering Lesson Search");
+            },
+            views: {
+                'sidebar': {
+                    templateUrl: 'modules/lesson/sidebar.html'
                 },
-                views: {
-                    'sidebar': {
-                        templateUrl: 'modules/lesson/sidebar.html'
-                    },
-                    'main': {
-                        templateUrl: 'modules/lesson/LessonNews.html',
-                        controller: 'LessonNewsCtrl',
-                        resolve: {
-                            lessonNewsData: function (LessonService, $stateParams) {
-                                return LessonService.search($stateParams);
-                            }
+                'main': {
+                    templateUrl: 'modules/lesson/LessonNews.html',
+                    controller: 'LessonNewsCtrl',
+                    resolve: {
+                        lessonNewsData: function (LessonService, $stateParams) {
+                            return LessonService.search($stateParams);
+                        }
 
-                        }
                     }
                 }
-            })
-            .state('404lesson', {
-                url: '/404lesson',
-                parent: 'master.2cl',
-                views: {
-                    'sidebar': {
-                        templateUrl: 'modules/lesson/sidebar.html'
-                    },
-                    'main':{
-                        controller: 'Lesson404Ctrl',
-                        templateUrl: 'modules/lesson/Lesson404.html',
-                        onEnter: function () {
-                            console.log("master.2cl.404lesson");
-                        }
+            }
+        })
+        .state('404lesson', {
+            url: '/404lesson',
+            parent: 'master.2cl',
+            views: {
+                'sidebar': {
+                    templateUrl: 'modules/lesson/sidebar.html'
+                },
+                'main':{
+                    controller: 'Lesson404Ctrl',
+                    templateUrl: 'modules/lesson/Lesson404.html',
+                    onEnter: function () {
+                        console.log("master.2cl.404lesson");
                     }
                 }
-            });
-]]></script> 
+            }
+        });
+```
 
 Con un Layout a 2 colonne (parent: 'master.2cl'). Il singolo modulo interno (ad es. il 'LessonNewsCtrl',che probabilmente assumerà un nome diverso al
 prossimo refactoring) è stato sviluppato senza minimamente tenere a mente alcun

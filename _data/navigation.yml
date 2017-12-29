@@ -52,3 +52,62 @@ cqrses:
     - title: "NEventStore PollingClient"
       url: /2015/08/27/cqrses-neventstore-pollingclient/
     
+discitur_it:
+  - title: "Intro"
+    children:
+    - title: "Prerequisiti"
+      url: /2014/01/05/discitur-prerequisiti/
+    - title: "Backlog"
+      url: /2014/01/06/discitur-backlog/
+    - title: "Stime"
+      url: /2014/01/10/discitur-stime/
+    - title: "Sprint Planning"
+      url: /2014/01/14/discitur-sprint_planning/
+    - title: "Industrializzare il Valore"
+      url: /2014/01/18/discitur-value_env/
+  - title: "Develop"
+    children:
+    - title: "App Initialization, Global Variables"
+      url: /2014/01/20/discitur-appinit/
+    - title: "Routing (Deep-Linking)"
+      url: /2014/01/21/discitur-routing/
+    - title: "Angular.js TDD"
+      url: /2014/01/22/discitur-TDD1/
+    - title: "Angular DTO"
+      url: /2014/01/23/discitur-DTO/
+    - title: "Test, FE/BE separation"
+      url: /2014/01/24/discitur-separation/
+    - title: "Climbing Angular.js TDD"
+      url: /2014/01/26/discitur-Climbing_TDD/
+    - title: "Angular.js TDD, QB (Quanto Basta)"
+      url: /2014/01/27/discitur-TDD_JE/
+    - title: "Angular.js Routing (UI-Router)"
+      url: /2014/01/28/discitur-Routing/
+    - title: "Routing, Pagination"
+      url: /2014/01/29/discitur-Pagination/
+    - title: "Angular.js Autocomplete"
+      url: /2014/01/30/discitur-Autocomplete/
+    - title: "Refresh Happens"
+      url: /2014/02/03/discitur-Refresh_happens/
+    - title: "Angular.js Digest Cycle"
+      url: /2014/02/10/discitur-Digest/
+    - title: "Watchers Unbinding"
+      url: /2014/02/18/discitur-Watchers_unbinding/
+    - title: "Angular.js $chacheFactory"
+      url: /2014/02/22/discitur-Angular_chacheFactory/
+    - title: "Authorized Routing"
+      url: /2014/02/28/discitur-Authorized_Routing/
+    - title: "Bower Update"
+      url: /2014/03/09/discitur-Bower_update/
+    - title: "Bootstrap 3 Social Buttons"
+      url: /2014/03/16/discitur-Bootstrap3_SocialBar/
+    - title: "CORS"
+      url: /2014/03/28/discitur-CORS/
+    - title: "Deploy automatico, Grunt"
+      url: /2014/03/30/discitur-Deploy_Grunt/
+  - title: "Review"
+    children:
+    - title: "Retrospettiva"
+      url: /2014/04/10/discitur-beta_retrospective/
+    - title: "CQRS+ES Version"
+      url: /2014/11/23/discitur-CQRSES/

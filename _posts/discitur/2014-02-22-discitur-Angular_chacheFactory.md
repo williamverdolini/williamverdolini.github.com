@@ -1,7 +1,14 @@
 ---
-title: "Il Progetto Discitur"
-tagline: Angular.js $chacheFactory
-header: Angular.js $chacheFactory
+title: "Angular.js $chacheFactory"
+excerpt: "Il Progetto Discitur"
+header:
+    overlay_image: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1404&q=80"
+    caption: "Photo credit: [**Unsplash**](https://unsplash.com)"
+toc: true
+toc_label: "Contents"
+author_profile: false
+sidebar:
+  nav: discitur_it
 description: Progetto Discitur,Tech,Angular.js,$chacheFactory,Performance
 group: Discitur
 tags: [Angular.js,$chacheFactory,Performance]
@@ -29,19 +36,13 @@ cache, quello presente sul client dell’utente.
 Grazie all’uso del servizio $http, è possibile gestire questo livello di
 caching in maniera molto semplice.
 
- 
-
 Ad es., poiché la singola lezione ha politiche di aggiornamento molto poco
 frequenti, è un buon candidato per essere inserita in cache. Il codice per
 poterlo fare è più che intuitivo:
 
-
-
-<script type="syntaxhighlighter" class="brush: javascript">
-<![CDATA[
+```js
 $http.get(DisciturSettings.apiUrl + 'lesson/' + inputParams.id, {cache: true})
-
-]]></script> 
+```
 
 in questa modalità si utilizza il cacheFactory di default, secondo quanto
 riportato dalla <a href="http://docs.angularjs.org/api/ng/service/$http" target="_blank">documentazione ufficiale</a>.
@@ -52,15 +53,12 @@ un’invocazione lato server, ma verrà risolta dal cache manager di Angular, ch
 restituirà i dati relativi alla prima invocazione. Questo consente di
 ottimizzare notevolmente le performance dell’applicazione
 
- 
-
 Ogni volta che l’utente esegue operazioni sui dati che richiedono che la
 cache sia rinfrescata è possibile svuotare la cache della specifica chiave, in
 modo che il servizio $http esegua nuovamente una richiesta al server alla
 successiva chiamata del servizio
 
-<script type="syntaxhighlighter" class="brush: javascript;highlight: [7]">
-<![CDATA[
+```js
 // Retrieve Async data for lesson id in input        
 $http({ method: 'PUT', url: DisciturSettings.apiUrl + 'lesson/' + _lesson.LessonId, data: _lesson })
   .success(
@@ -75,10 +73,7 @@ $http({ method: 'PUT', url: DisciturSettings.apiUrl + 'lesson/' + _lesson.Lesson
     function (data) {
       deferred.reject("Error updating lesson id:" + _lesson.lessonId + " -> " + data);
   });
-  
-]]></script> 
+```
 
 Un buon articolo che dettaglia le possibilità di caching e che presenta un
-modulo per definire politiche di refresh della cache angular è il seguente: <a href="https://coderwall.com/p/40axlq" target="_blank">https://coderwall.com/p/40axlq</a>.
-
- 
+modulo per definire politiche di refresh della cache angular è il seguente: <a href="https://coderwall.com/p/40axlq" target="_blank">https://coderwall.com/p/40axlq</a>. 

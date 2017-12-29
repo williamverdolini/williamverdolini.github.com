@@ -6,7 +6,7 @@ header:
   overlay_filter: 0.3
   overlay_image: https://images.unsplash.com/photo-1508138221679-760a23a2285b?auto=format&fit=crop&w=800&q=50
   caption: "Photo credit: [**Unsplash**](https://unsplash.com)"
-excerpt: "<br/><br/><br/><br/>A volte guardo gli alberi, a volte la foresta.<br/>Giù, da vicino, per i dettagli.<br/>Su, in alto, per la visione.<br/><br/>Non è una cosa facile.<br/>Ma è divertente. A volte.<br/>{::nomarkdown}{:/nomarkdown}"
+excerpt: "<br/><br/><br/><br/>A volte guardo gli alberi, a volte la foresta.<br/>Da vicino, per i dettagli.<br/>Dall'alto, per la visione d'insieme.<br/><br/>E c'è sempre qualcosa da imparare.<br/>{::nomarkdown}{:/nomarkdown}"
 feature_row:
   - image_path: https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?auto=format&fit=crop&w=1350&q=80
     alt: "CQRS + ES Todo List"
@@ -26,7 +26,7 @@ feature_row:
     alt: "Discitur"
     title: "Discitur"
     excerpt: "Discitur è un'applicazione web rivolta ai docenti con l'obiettivo di essere una piattaforma di condivisione delle buone e cattive pratiche di insegnamento, analizzandone i pro ed i contro, in modo da poterle riutilizzare e perfezionare con l’applicazione da parte di molti docenti. Oltre a questo, è una palestra di apprendimento per la realizzazione di Single Page Application con Angular.js e di tecniche Agili di sviluppo software."
-    url: "/2015/06/08/fastcatalog-intro"
+    url: "/2014/01/05/discitur-prerequisiti"
     btn_class: "btn--primary"
     btn_label: "Learn More"
 github:

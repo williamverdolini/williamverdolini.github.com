@@ -1,26 +1,18 @@
 ---
-title: "Il Progetto Discitur"
-tagline: Routing (Deep-Linking)
-header: Routing (Deep-Linking)
+title: "Routing (Deep-Linking)"
+excerpt: "Il Progetto Discitur"
+header:
+    overlay_image: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1404&q=80"
+    caption: "Photo credit: [**Unsplash**](https://unsplash.com)"
+toc: true
+toc_label: "Contents"
+author_profile: false
+sidebar:
+  nav: discitur_it
 description: Progetto Discitur, Tech, Angular.js, routing
 group: Discitur
 tags: [Angular.js,routing]
 ---
-
-<!-- Markup JSON-LD generato da Assistente per il markup dei dati strutturati di Google. -->
-<script type="application/ld+json">
-{
-  "@context" : "http://schema.org",
-  "@type" : "Article",
-  "name" : "Routing (Deep-Linking)",
-  "author" : {
-    "@type" : "Person",
-    "name" : "william verdolini"
-  },
-  "datePublished" : "2014-01-21",
-  "articleSection" : [ "Angular.js", "routing" ]
-}
-</script>
 
 Questo è un argomento spinoso in Angular. Onestamente da una “macchina da
 guerra” come Angular mi aspettavo qualcosa di meglio per questo

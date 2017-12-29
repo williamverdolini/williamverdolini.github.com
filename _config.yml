@@ -88,9 +88,9 @@ author:
   location  : "Cupramontana (AN), Italy"
   email : william.verdolini@gmail.com
   uri    : "http://williamverdolini.github.io"
-  home   : "http://williamverdolini.github.io" # null (default), "absolute or relative url to link to author home"      
-  stackoverflow    : https://stackoverflow.com/users/3316654/wilver
-  linkedin         : https://www.linkedin.com/in/williamverdolini/
+  home   : "http://williamverdolini.github.io"     
+  stackoverflow    : "3316654/wilver"
+  linkedin         : "williamverdolini/"
   email : william.verdolini@gmail.com
   github : williamverdolini  
 comments:

@@ -1,7 +1,14 @@
 ---
-title: "Il Progetto Discitur"
-tagline: Angular.js Autocomplete
-header: Angular.js Autocomplete
+title: "Angular.js Autocomplete"
+excerpt: "Il Progetto Discitur"
+header:
+    overlay_image: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1404&q=80"
+    caption: "Photo credit: [**Unsplash**](https://unsplash.com)"
+toc: true
+toc_label: "Contents"
+author_profile: false
+sidebar:
+  nav: discitur_it
 description: Progetto Discitur,Tech,Angular.js,Auto Complete,Autocomplete
 group: Discitur
 tags: [Angular.js]
@@ -70,9 +77,7 @@ Il componente consente di essere configurato per bindare un promises,
 quindi il risultato di servizi di backend (i classici $http o $resource). Ecco un
 esempio:
 
-
-<script type="syntaxhighlighter" class="brush: javascript">
-<![CDATA[
+```js
 <input class="form-control input-sm" type="text"
        name="school"
        ng-model="local.school"
@@ -80,16 +85,13 @@ esempio:
        typeahead="k for k in getSchools($viewValue) | filter:$viewValue"
        typeahead-on-select="select('school')"
        typeahead-editable='false'>
-
-]]></script> 
+```
 
 
 Il controller contiene i campi per il model collegato ed i metodi per la
 gestione delle chiamate server:
 
-<script type="syntaxhighlighter" class="brush: javascript">
-<![CDATA[
-
+```js
 $scope.local = {
     school: null,
 };
@@ -97,7 +99,7 @@ $scope.local = {
 $scope.getSchools = function (q) {
     return LessonService.getDistinctValues('school', { schoolQ: q });
 }
-]]></script> 
+```
 
 
 **2) Utilizzo di Angular Service standard per le chiamate server-side**
@@ -105,9 +107,7 @@ $scope.getSchools = function (q) {
 Nulla di nuovo. Ripulendo il codice dal “rumore di fondo”:
 
 
-<script type="syntaxhighlighter" class="brush: javascript">
-<![CDATA[
-
+```js
 .factory('LessonService', [
 '$resource',
 '$http',
@@ -144,14 +144,13 @@ function ($resource, $http, $q, LessonDTO, DisciturSettings, DiscUtil) {
     }
   };
 }]);
-]]></script> 
+```
 
 **2) WebApi 2 + Entity Framework 6**
 
 La realizzazione di questo servizio è stato…semplice:
 
-<script type="syntaxhighlighter" class="brush: csharp">
-<![CDATA[
+```csharp
  [HttpGet]
 public async Task<List<string>> FindSchool(string schoolQ)
 {
@@ -161,8 +160,7 @@ public async Task<List<string>> FindSchool(string schoolQ)
 
    return await schools.ToListAsync();
 }
-
-]]></script>
+```
 
 **4) Bootstrap Theming per completare**
 
@@ -177,7 +175,6 @@ Sicuramente il ruolo più importante ce l’ha Angular Bootstrap che nella
 direttiva messa a disposizione fa il grosso del lavoro. Chi sviluppa da un po’
 (nemmeno tanto) sa che è meglio provare a cercare se quello che ci serve
 qualcun altro l’ha già fatto (meglio) prima di noi.
-
 
 
 _<a href="http://www.codinghorror.com/blog/2009/02/dont-reinvent-the-wheel-unless-you-plan-on-learning-more-about-wheels.html" target="_blank">Don’t reinvent the wheel</a>_ dicono gli americani. 

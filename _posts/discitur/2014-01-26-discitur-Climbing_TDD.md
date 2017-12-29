@@ -1,7 +1,15 @@
 ---
-title: "Il Progetto Discitur"
-tagline: Climbing Angular.js TDD
-header: Climbing Angular.js TDD
+title: "Climbing Angular.js TDD"
+excerpt: "Il Progetto Discitur"
+header:
+    overlay_image: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1404&q=80"
+    caption: "Photo credit: [**Unsplash**](https://unsplash.com)"
+toc: true
+toc_label: "Contents"
+author_profile: false
+pagination: false
+sidebar:
+  nav: discitur_it
 description: Progetto Discitur, Tech, Angular.js, TDD
 group: Discitur
 tags: [Angular.js,TDD]
@@ -110,10 +118,7 @@ Mock contiene le impostazioni di mock (al momento un solo file .js) ed è in
 comune ai due ambienti. Ovviamente resterà nell’ambiente dell’applicazione solo
 nella fase di sviluppo. Ecco cosa c’è in questo momento nel file di mock.js
 
-<script type="syntaxhighlighter" class="brush: javascript">
-<![CDATA[
-
-
+```js
 angular.module('Lesson')
     .config(function ($provide) {
         $provide.decorator('$httpBackend', angular.mock.e2e.$httpBackendDecorator);
@@ -137,9 +142,7 @@ angular.module('Lesson')
         $httpBackend.whenGET(/^\w+.*/).passThrough();
         $httpBackend.whenPOST(/^\w+.*/).passThrough();
     });
-
-
-]]></script> 
+```
 
 
 mostro il codice di due cicli per mostrare i risultati.
@@ -149,10 +152,7 @@ mostro il codice di due cicli per mostrare i risultati.
 
 test
 
-<script type="syntaxhighlighter" class="brush: javascript">
-<![CDATA[
-
-
+```js
   describe("LessonService [invoke]", function () {
     var _MockedData,
         _httpBackend,
@@ -210,17 +210,12 @@ test
       //check your spy to see if it's been called with the returned value.  
       expect(_test.successCB).toHaveBeenCalledWith(_MockedData.lessons);
     });
-
-
-]]></script> 
+```
 
   
 sviluppo
 
-
-<script type="syntaxhighlighter" class="brush: javascript">
-<![CDATA[
-
+```js
 angular.module('Lesson')
     .factory('LessonDTO', function () {
         function LessonDTO() {
@@ -322,8 +317,7 @@ angular.module('Lesson')
               }
           };
       }]);
-
-]]></script> 
+```
 
   
 **CICLO 2**
@@ -332,9 +326,7 @@ angular.module('Lesson')
 
 test
 
-<script type="syntaxhighlighter" class="brush: javascript">
-<![CDATA[
-
+```js
     it('Should the LessonService.search() return all the lessons in DT Object Model', function () {
       // Create a test client to explore returned data
       // DO NOT USE Spy (It prevents to callback in promise chain)
@@ -373,17 +365,12 @@ test
     });
 
   })
-
-
-]]></script> 
-
+```
 
 sviluppo
 
 
-<script type="syntaxhighlighter" class="brush: javascript">
-<![CDATA[
-
+```js
 angular.module('Lesson')
     /*-------------------------------------------------------------------------------
     Vantaggi del DTO:
@@ -496,8 +483,7 @@ angular.module('Lesson')
               }
           };
       }]);
-
-]]></script> 
+```
 
 
 Sviluppare il codice è stato semplice e mi sembra evidente l’operazione di

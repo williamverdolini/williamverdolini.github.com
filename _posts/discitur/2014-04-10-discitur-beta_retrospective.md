@@ -1,7 +1,14 @@
 ---
-title: "Il Progetto Discitur"
-tagline: Release Discitur 0.1.0 (beta!) Retrospettiva 
-header: Release Discitur 0.1.0 (beta!) Retrospettiva
+title: "Release Discitur 0.1.0 (beta!) Retrospettiva"
+excerpt: "Il Progetto Discitur"
+header:
+    overlay_image: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1404&q=80"
+    caption: "Photo credit: [**Unsplash**](https://unsplash.com)"
+toc: true
+toc_label: "Contents"
+author_profile: false
+sidebar:
+  nav: discitur_it
 description: Progetto Discitur,Agile,Tech
 group: Discitur
 tags: [Agile,Tech]
@@ -34,7 +41,7 @@ Ok, finito il momento autocelebrativo.
 E’ il momento per analizzare un po’ questa esperienza e definirne i
 pro-contro.
 
-### Partiamo dai numeri
+## Partiamo dai numeri
 
 prima i dati oggettivi.
 
@@ -60,16 +67,12 @@ prima i dati oggettivi.
      sp la velocity** assestata sul
      finale
 
- 
-
 Non male, considerando in più le seguenti caratteristiche del progetto:
 
 - tecnologie nuove e curva d’apprendimento da
      scalare
 - metodologia nuova e, per quanto riguarda il
      TDD, impegnativa
-
- 
 
 Sono particolarmente convinto, però, che proprio la metodologia Agile è
 stata una delle chiavi di velocità ed efficienza del progetto; infatti
@@ -86,9 +89,7 @@ permetta di accertare in generale la bontà del metodo perché:
 
 ma i tratti migliorativi credo di averli colti a pieno.
 
- 
-
-### Una valutazione sulle tecnologie
+## Una valutazione sulle tecnologie
 
 **_Front-end_**
 
@@ -108,8 +109,6 @@ Google sta lavorando molto e che, dal mio punto di vista, ha anche lo scopo di
 migliorare la sicurezza, testabilità, robustezza, velocità nello sviluppo di
 SPA. E siccome la famiglia è sempre la stessa (Google) le competenze fatte su
 Angular, spero si possano riutilizzare a pieno nella libreria <a href="https://angulardart.org/" target="_blank">AngularDart</a>! (ho già l’acquolina in bocca :))
-
- 
 
 **_Back-End (Web Services)_**
 
@@ -184,7 +183,7 @@ risposto in diverse occasioni nel giro di mezz’ora. WOW.
 Se devo proprio trovare una nota spiacevole è stato leggere <a href="http://techcrunch.com/2014/03/15/julie-ann-horvath-describes-sexism-and-intimidation-behind-her-github-exit//" target="_blank">questo articolo</a>: molto spiacevole leggere queste cose…
  
 
-### Una valutazione sulla metodologia Agile
+## Una valutazione sulla metodologia Agile
 
 Non nego che gli aspetti metodologici sono stati quelli più duri da
 abbracciare, perché richiedono (per quelli come me che hanno un po’ di “storia”

@@ -1,7 +1,14 @@
 ---
-title: "Il Progetto Discitur"
-tagline: Bower Update
-header: Bower Update
+title: "Bower Update"
+excerpt: "Il Progetto Discitur"
+header:
+    overlay_image: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1404&q=80"
+    caption: "Photo credit: [**Unsplash**](https://unsplash.com)"
+toc: true
+toc_label: "Contents"
+author_profile: false
+sidebar:
+  nav: discitur_it
 description: Progetto Discitur,Tech,Bower,Configuration Management
 group: Discitur
 tags: [Bower,Configuration Management]
@@ -31,15 +38,13 @@ Management, quindi, siccome sbagliando (ma nel mio caso posso tranquillamente
 dire, perseverando) si impara, ecco cosa è successo.
  
 
-###bower update (bad practice #1)
+### bower update (bad practice #1)
 
 Questo il comando lanciato con molto candore alle due di notte di un
 venerdì qualunque…cosa è successo? Bower ha fatto “semplicemente” quello che
 gli ho chiesto, cioè ha aggiornato le mie dipendenze secondo le regole
 specificate. L’effetto? Ho avuto una regressione nella visualizzazione di tutte
 le mie view Angular!!! AAAAARRGGHHHHH…..
-
- 
 
 _Lesson learned_:
 
@@ -48,9 +53,7 @@ di cosa avverrà. Nel dubbio aggiornare un componente alla volta e lanciare i
 propri smoke tests (o per lo meno fare dei test di non regressione) per
 verificare che tutto sia ok.
 
- 
-
-###packages versioning (bad practice #2)
+### packages versioning (bad practice #2)
 
 Nel versionamento del progetto, ho fatto la scelta di versionare il file
 delle regole di dipendenza (bower.json), ma NON versionare i packages
@@ -58,10 +61,7 @@ scaricati. Ritenevo inutile fare un versionamento di componenti che possono
 essere ricreati con un click ogni volta…peccato che il mio file di versionamento
 sia una cosa del genere:
 
- 
-
-<script type="syntaxhighlighter" class="brush: javascript">
-<![CDATA[
+```js
 {
   "name": "mag14",
   "version": "0.0.0",
@@ -86,10 +86,8 @@ sia una cosa del genere:
     "angular-scenario": "~1.2.0"
   }
 }
+```
 
-]]></script>  
-
- 
 
 Cosa che c’è che non va? Niente, a parte il fatto che le seguenti sintassi
 vanno esaminate con attenzione:
@@ -106,9 +104,7 @@ versionare anche i packages o, in alternativa, definire in maniera statica
 le dipendenze (ovvero senza latest, tilde, ecc..), in modo da essere sicuri di
 poter ripristinare velocemente situazioni…complicate…
 
- 
-
-###breaking changes (bad practice #3)
+### breaking changes (bad practice #3)
 
 Dopo diversi tentativi di ripristinare i packages allo stato originale ed
 aggiornando uno alla volta i package ho scoperto che il problema l’avevo sul
@@ -122,20 +118,14 @@ In realtà, leggendo le <a href="https://github.com/angular-ui/ui-router/release
 e <a href="https://github.com/angular-ui/ui-router/issues/787" target="_blank">qualche post di disgraziati come me</a>…ho capito come fixare l’applicazione mantenendo
 l’ultimo aggiornamento del package.
 
- 
-
 Secondo me, non è corretto come il team di angular-ui-router ha taggato la
 release, poiché, se non si mantiene una backward compatibility, almeno la minor
 release dovrebbe cambiare…anche se le regole del <a href="http://semver.org/" target="_blank">Semantic Versioning</a> sono anche più rigide:
-
- 
 
 1. MAJOR version when you make incompatible API changes,
 2. MINOR version when you add functionality in a
      backwards-compatible manner, and
 3. PATCH version when you make backwards-compatible bug fixes.
-
- 
 
 _Lesson learned_:
 
@@ -143,6 +133,3 @@ Non ci affidiamo cecamente al fatto che, in generale, codice di terze parti
 sia sempre fatto alla perfezione, ma invece prendiamo le precauzioni del caso
 (ad es. quelle descritte ai punti precedenti) per evitare di perdere troppo
 tempo in cose inutili.
-
- 
-  

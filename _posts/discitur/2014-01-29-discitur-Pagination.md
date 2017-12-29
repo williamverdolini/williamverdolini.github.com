@@ -1,12 +1,18 @@
 ---
-title: "Il Progetto Discitur"
-tagline: Routing, Pagination
-header: Routing, Pagination
+title: "Routing, Pagination"
+excerpt: "Il Progetto Discitur"
+header:
+    overlay_image: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1404&q=80"
+    caption: "Photo credit: [**Unsplash**](https://unsplash.com)"
+toc: true
+toc_label: "Contents"
+author_profile: false
+sidebar:
+  nav: discitur_it
 description: Progetto Discitur,Tech,Angular.js,Pagination,UI-Router
 group: Discitur
 tags: [Angular.js,Routing]
 ---
-
 
 Un altro aspetto legato alla gestione degli stati e del routing che ho
 dovuto gestire è quella legata alla gestione di ricerche paginate. Lo scenario
@@ -39,8 +45,7 @@ Quindi, cercando di ricostruire i passi logici che ho seguito:
 
   
 
-<script type="syntaxhighlighter" class="brush: javascript">
-<![CDATA[
+```js
 { 
  keyword: "example",
  startRow: 0,
@@ -48,7 +53,7 @@ Quindi, cercando di ricostruire i passi logici che ho seguito:
  orderBy: "PublishDate",
  orderDir: "DESC"
 }
-]]></script> 
+```
 
 
 - 2) Ogni ricerca differente deve ricaricare una
@@ -60,8 +65,7 @@ Quindi, cercando di ricostruire i passi logici che ho seguito:
 
 
 
-<script type="syntaxhighlighter" class="brush: javascript;highlight: [2]">
-<![CDATA[
+```js
 .state('lessonSearch', {
     url: '/lesson?keyword?startRow?pageSize?orderBy?orderDir',
     parent: 'master.2cl',
@@ -81,7 +85,7 @@ Quindi, cercando di ricostruire i passi logici che ho seguito:
         }
     }
 })
-]]></script> 
+```
 
 
 
@@ -96,14 +100,13 @@ Quindi, cercando di ricostruire i passi logici che ho seguito:
 
 
 
-<script type="syntaxhighlighter" class="brush: javascript">
-<![CDATA[
+```js
 // Invoke search service for paging through state transition to preserve paging history
 // the state transition is forced cause the same params could be used in previous navigations
 $scope.getPage = function (pager) {
     $state.go('lessonSearch', LessonService.getPage(pager), { reload: true })               
 }
-]]></script> 
+```
 
 Questo è il “core” della gestione degli stati. Ovviamente c’è dell’altro
 legato strettamente al servizio di ricerca, come il preservare sul singleton
@@ -114,5 +117,3 @@ Un aspetto che esteticamente non mi piace è il vedere in query string tutti
 quei parametri di ricerca. E’ inestetico secondo me, ma non ho approfondito se
 si riesca a mantenere questa gestione degli stati, lasciando come URL
 visualizzato qualcosa di più elegante. Qualcuno c’ha provato?
-
- 

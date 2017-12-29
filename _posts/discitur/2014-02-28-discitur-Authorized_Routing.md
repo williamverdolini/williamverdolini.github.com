@@ -1,7 +1,14 @@
 ---
-title: "Il Progetto Discitur"
-tagline: Authorized Routing
-header: Authorized Routing
+title: "Authorized Routing"
+excerpt: "Il Progetto Discitur"
+header:
+    overlay_image: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1404&q=80"
+    caption: "Photo credit: [**Unsplash**](https://unsplash.com)"
+toc: true
+toc_label: "Contents"
+author_profile: false
+sidebar:
+  nav: discitur_it
 description: Progetto Discitur,Tech,Angular.js,Authentication,Routing
 group: Discitur
 tags: [Angular.js,Authentication,Routing]
@@ -32,7 +39,7 @@ valutato sono due:
 2. In caso di accesso non autenticato a pagine
      con autorizzazione si reindereizza verso una route custom
      
-###Redirect verso Login Page
+## Redirect verso Login Page
 
 Il primo caso rappresenta uno scenario semplice, ma abbastanza comune e
 quindi ho fatto delle prove di implementazione. Il risultato è abbastanza
@@ -43,16 +50,11 @@ pulito e consiste di pochi passi:
      in caso contrario si esegue un **redirect**
      allo stato di default
 
- 
-
 di seguito il codice:
 
- 
+### Proprietà custom
 
-####Proprietà custom
-
-<script type="syntaxhighlighter" class="brush: javascript;highlight: [5]">
-<![CDATA[
+```js
 $stateProvider
     .state('userProfile', {
         url: 'userProfile',
@@ -64,13 +66,11 @@ $stateProvider
             user: function (AuthService) { return AuthService.user; }
         }
     })
+```
 
-]]></script>  
+### Redirect
 
-####Redirect
-
-<script type="syntaxhighlighter" class="brush: javascript;highlight: [3]">
-<![CDATA[
+```js
 $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
     // Default behaviour for authorized states: redirect to login page (in this app to the lesson list page)
     if (toState.authorized && !AuthService.user.isLogged) {
@@ -78,12 +78,10 @@ $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromStat
         $state.go('lessonSearch');
     }
 });
-
-]]></script> 
-
+```
  
 
-###Redirect con logiche Custom
+## Redirect con logiche Custom
 
 Questa casistica è stata quella richiesta in questo sprint nella gestione
 della modifica dei dati di una lezione. Il requisito era che solo l’utente
@@ -102,8 +100,7 @@ Per realizzare questa logica custom (differente dal comportamento di
 default presentato prima), ho sfruttato l’evento **onEnter** dello $state. Ecco come:
 
 
-<script type="syntaxhighlighter" class="brush: javascript;highlight: [4,5,6,7,8,9]">
-<![CDATA[
+```js
 .state('lessonEdit', {
     url: 'edit/lesson/:lessonId',
     parent: 'master.1cl',
@@ -120,17 +117,15 @@ default presentato prima), ho sfruttato l’evento **onEnter** dello $state. Ecc
        lessonData: function (...) {...}
       }
   }
-  
-]]></script> 
+```
 
- 
 
 Nell’evento onEnter è possibile accedere agli oggetti di resolve dello
 stato e quindi implementare logiche come quella descritta.
 
  
 
-###Gestione avanzata del routing autenticato
+## Gestione avanzata del routing autenticato
 
 Le due soluzioni descritte sopra funzionano, ma non sono complete perché
 non tengono conto del caso in cui qualcuno digiti l’url direttamente (o perché
@@ -146,9 +141,7 @@ effetto di essere reinderizzati anche quando non sarebbe necessario.
 Per far fronte a questa casistica ho riscritto il codice nella seguente
 maniera:
 
-
-<script type="syntaxhighlighter" class="brush: javascript">
-<![CDATA[
+```js
 // dynamic callback for change start event
 var changeStartCallbacks = [
   // 1. Initialize Authentication Data e delete itself
@@ -177,8 +170,8 @@ $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromStat
   //console.log("$stateChangeStart")
   changeStartCallbacks[0](event, toState, toParams, fromState, fromParams);
 });
-  
-]]></script>
+```
+
 Ovvero, scorrendolo punto per punto:
 
 1. viene definito un array di “callback
@@ -195,6 +188,4 @@ Ovvero, scorrendolo punto per punto:
       particolare l’evento _finally_
       che viene richiamato a prescindere dall’esito della promise.
     - la seconda è la callback effettivamente
-      richiamata da questo momento in poi ed è quella descritta precedentemente
-
-  
+      richiamata da questo momento in poi ed è quella descritta precedentemente  

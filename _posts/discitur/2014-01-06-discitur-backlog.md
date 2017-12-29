@@ -1,7 +1,14 @@
 ---
-title: "Il Progetto Discitur"
-tagline: Backlog
-header: Backlog
+title: "Backlog"
+excerpt: "Il Progetto Discitur"
+header:
+    overlay_image: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1404&q=80"
+    caption: "Photo credit: [**Unsplash**](https://unsplash.com)"
+toc: true
+toc_label: "Contents"
+author_profile: false
+sidebar:
+  nav: discitur_it
 description: Progetto Discitur, Backlog, Metodologia, Scrum, Agile
 group: Discitur
 tags: [Agile]

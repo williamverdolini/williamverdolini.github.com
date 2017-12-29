@@ -1,7 +1,14 @@
 ---
-title: "Fast Catalog"
-tagline: Fast Catalog in ElasticSearch
-header: Fast Catalog in ElasticSearch
+title: "Fast Catalog in ElasticSearch"
+excerpt: "Fast Catalog"
+header:
+    overlay_image: "https://images.unsplash.com/photo-1503449377594-32dd9ac4467c?auto=format&fit=crop&w=1351&q=80"
+    caption: "Photo credit: [**Unsplash**](https://unsplash.com)"
+toc: true
+toc_label: "Contents"
+author_profile: false
+sidebar:
+  nav: fastcatalog
 description: ElasticSearch, Prototyping, Tech
 group: FastCatalog
 tags: [Technology,Prototyping,ElasticSearch]
@@ -9,8 +16,7 @@ tags: [Technology,Prototyping,ElasticSearch]
 
 I did the same thing described in the <a href="{{ BASE_PATH }}/2015/06/22/fastcatalog-sql2mongo/" target="_blank">previous article</a> using <a href="https://www.elastic.co/" target="_blank">ElasticSearch</a> as target db. I'm using <a href="http://nest.azurewebsites.net/" target="_blank">Nest</a> as .NET driver. Here is the document model:
 
-<script type="syntaxhighlighter" class="brush: csharp">
-<![CDATA[
+```csharp
 namespace SQL2Elastic.Models
 {    
 	[ElasticType]
@@ -40,7 +46,7 @@ namespace SQL2Elastic.Models
 		public string Value { get; set; }
 	}
 }
-]]></script> 
+```
 
 There are different ways to perform mapping with NEST: inference/dynamically generated, code based, attribute-based. I choosed **Attributed-based**, because I like the idea to link the document types to their mappings, it seems to me a natural way to see this thing. But, as you can see, <a href="https://www.elastic.co/guide/en/elasticsearch/guide/current/mapping-analysis.html" target="_blank">mapping comes with analysing</a>. <br/>
 A step back: ElastiSearch was born to simplify text search in huge db. Full-text search is not particularly efficient in traditional RDBMS like MSSQL, while is very fast with ElasticSearch. Accordingly to that, ElasticSearch implicitly analyses all fields (because it wants to simplify the programmer's job), and text fields with full-text analysis, unless you say to NOT to do that, as I did in most of my document type fields.
@@ -49,12 +55,9 @@ Indeed the catalog I’m working with does not need the full-text search feature
 
 The migration logic is inside its specific <a href="https://github.com/williamverdolini/FastCatalog/blob/master/Catalog/SQL2Elastic/Logic/ElasticSearchClient.cs" target="_blank">ElasticSearchClient</a>. Again, I want to highlight three aspects about that:
 
-<ol>
-<li>In the initialization logic there is the mapping logic taken from the document type's attributes</li>
-<li>XML-to-JSON mapping is natural too
-
-<script type="syntaxhighlighter" class="brush: csharp">
-<![CDATA[
+1. In the initialization logic there is the mapping logic taken from the document type's attributes
+2. XML-to-JSON mapping is natural too
+```csharp
 public void Save(SQLProduct dbProduct)
 {
 	Contract.Requires<ArgumentNullException>(dbProduct != null, "dbProduct");
@@ -70,10 +73,9 @@ public void Save(SQLProduct dbProduct)
 	};
 	products.Add(product);
 }
-]]></script> 
-</li>
-<li>No post-migration logic is necessary, because, by now, all the analysis settings put on initialization step are good enough. I'm waiting, at this point, to have migration time greater than with MongoDb, because when ElasticSearch indexes a document, it populates some other fields and index data...let's see.</li>
-</ol>
+```
+
+3. No post-migration logic is necessary, because, by now, all the analysis settings put on initialization step are good enough. I'm waiting, at this point, to have migration time greater than with MongoDb, because when ElasticSearch indexes a document, it populates some other fields and index data...let's see.
 
 Here is the console log for SQl to ElasticSearch migration:
 
@@ -81,13 +83,13 @@ Here is the console log for SQl to ElasticSearch migration:
 
 as expected, but pretty good.
 
-### Queries
+## Queries
 
 Let's see the queries and times with ElastiSearch for multi-attribute catalog:
 
-##### Query for all product attributes (~175ms)
-<script type="syntaxhighlighter" class="brush: js">
-<![CDATA[
+### Query for all product attributes (~175ms)
+
+```js
 GET /catalog/products/_search?search_type=count
 {
   "aggs": {
@@ -120,11 +122,11 @@ GET /catalog/products/_search?search_type=count
     }
   }
 }
-]]></script> 
+```
 
-##### Query for product attributes filtered by some attribute values  (~6ms)
-<script type="syntaxhighlighter" class="brush: js">
-<![CDATA[
+### Query for product attributes filtered by some attribute values  (~6ms)
+
+```js
 GET /catalog/products/_search?search_type=count
 {
   "aggs": {
@@ -224,9 +226,9 @@ GET /catalog/products/_search?search_type=count
     }
   }
 }
-]]></script> 
+```
 
-##### Query for documents filtered by some attribute values 
+### Query for documents filtered by some attribute values 
 The same queries as before, but without the **search_type=count** querystring parameter. So you don't need to perform two different queries to get all the result to display. Very powerful!!! Very Fast!!!
 
 <div class="col-md-6">

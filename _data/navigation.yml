@@ -111,3 +111,21 @@ discitur_it:
       url: /2014/04/10/discitur-beta_retrospective/
     - title: "CQRS+ES Version"
       url: /2014/11/23/discitur-CQRSES/
+
+fastcatalog:
+  - title: "Fast Catalog"
+    children:
+    - title: "Intro"
+      url: /2015/06/08/fastcatalog-intro/
+    - title: "SQL Migration to NoSQL"
+      url: /2015/06/14/fastcatalog-sql2nosql/
+    - title: "Fast Catalog in MongoDb"
+      url: /2015/06/22/fastcatalog-sql2mongo/
+    - title: "Fast Catalog in ElasticSearch"
+      url: /2015/06/24/fastcatalog-sql2elastic/
+    - title: "Multi-attribute Search in ES"
+      url: /2015/07/26/fastcatalog-web-elastic/
+    - title: "Multi-attribute Search in MongoDb"
+      url: /2015/07/31/fastcatalog-web-mongodb/
+    - title: "Automapper"
+      url: /2015/08/01/fastcatalog-web-automapper/

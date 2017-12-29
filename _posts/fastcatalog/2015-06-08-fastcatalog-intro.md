@@ -1,7 +1,14 @@
 ---
-title: "Fast Catalog"
-tagline: Intro
-header: Intro
+title: "Intro"
+excerpt: "Fast Catalog"
+header:
+    overlay_image: "https://images.unsplash.com/photo-1503449377594-32dd9ac4467c?auto=format&fit=crop&w=1351&q=80"
+    caption: "Photo credit: [**Unsplash**](https://unsplash.com)"
+toc: false
+toc_label: "Contents"
+author_profile: false
+sidebar:
+  nav: fastcatalog
 description: NoSQL, Prototyping, Tech
 group: FastCatalog
 tags: [Technology,Prototyping,NoSQL]
@@ -29,8 +36,7 @@ Note: names and structure of tables from public repository are not exactly the s
 
 We actually use T-SQL Stored Procedure to improve performance (using temp tables and caching), but the basic query performs the following logic to get all the properties.
 
-<script type="syntaxhighlighter" class="brush: sql">
-<![CDATA[
+```sql
 select IDProperty, ProprietyDesc, IDValue, ValueDesc, COUNT(*) as COUNT
 from (
 	select P.IDProperty,
@@ -46,7 +52,7 @@ from (
 )  T
 group by IDProprieta,ProprietaDesc,IDValore,ValoreDesc
 order by IDProprieta,ProprietaDesc,IDValore,ValoreDesc
-]]></script> 
+```
 
 When the user makes some selection, things become more complex because we first have to populate a temp-table with the product Ids 
 that match the selection criteria and, after that, we make grouping. 

@@ -1,7 +1,14 @@
 ---
-title: "Fast Catalog"
-tagline: SQL Migration to NoSQL
-header: SQL Migration to NoSQL
+title: "SQL Migration to NoSQL"
+excerpt: "Fast Catalog"
+header:
+    overlay_image: "https://images.unsplash.com/photo-1503449377594-32dd9ac4467c?auto=format&fit=crop&w=1351&q=80"
+    caption: "Photo credit: [**Unsplash**](https://unsplash.com)"
+toc: true
+toc_label: "Contents"
+author_profile: false
+sidebar:
+  nav: fastcatalog
 description: NoSQL, Prototyping, Tech
 group: FastCatalog
 tags: [Technology,Prototyping,NoSQL]
@@ -14,7 +21,7 @@ SQL Migration to NoSQL means move from table/rows to documents. There are severa
 
 In the <a href="https://github.com/williamverdolini/FastCatalog" target="_blank">public repository</a> you can find all the code: I’ve structured the code in order to move to a generic NoSQL DB, so I can change the NoSQL target (MongoDB, ElasticSearch, Raven, etc.) without changing the migration Logic. 
 
-### XML Format Query
+## XML Format Query
 
 I’ve use XML format for query. From the <a href="https://msdn.microsoft.com/library/ms178107(v=sql.110).aspx" target="_blank">official SQL Server docs</a>:
 
@@ -22,8 +29,7 @@ I’ve use XML format for query. From the <a href="https://msdn.microsoft.com/li
 
 With XML format I can create all the object structure (with its XML tree) during the extract phase. This make the code very clear and efficient, because allow the migration logic to do a simple mapping between XML Object and JSON Object. Here is the query used to extract all the products catalog:
 
-<script type="syntaxhighlighter" class="brush: sql">
-<![CDATA[
+```sql
 select 
 	'<Product>'+
 	-- Raw Product data
@@ -40,13 +46,11 @@ select
 	(select PE.CODART as 'Code' from eice.ProductSynonims PE where IdProduct = PC.id for XML raw('Synonim')) +
 	'</Product>'
 from eice.Products PC
-]]></script> 
+```
 
 This query produce a resultset of XML of the following format:
 
-
-<script type="syntaxhighlighter" class="brush: xml">
-<![CDATA[
+```xml
 <Product>
 	<Data>
 		<IdProduct>10000155769</IdProduct>
@@ -104,20 +108,19 @@ This query produce a resultset of XML of the following format:
 	<Synonim Code="WR02X13R3FTL"/>
 	<Synonim Code="CR-01FL6--13R3"/>
 </Product>
-]]></script> 
+```
 
 
-### Migration Logic
+## Migration Logic
 
 The generic ("fluent" and very simple) migration's logic is:
 
-<script type="syntaxhighlighter" class="brush: csharp">
-<![CDATA[
+```csharp
 new Migrator<NoSQLClient>()
 		.Initialize()
 		.Execute()
 		.PostMigration();
-]]></script> 
+```
 
 In this way, it is possibile to create specific NoSQLClient having:
 
@@ -127,8 +130,7 @@ In this way, it is possibile to create specific NoSQLClient having:
 
 The generic migration logic is here:
 
-<script type="syntaxhighlighter" class="brush: csharp">
-<![CDATA[
+```csharp
 namespace SQLMigration
 {
 	public class Migrator<T> where T : IDbClient, new()
@@ -187,12 +189,11 @@ namespace SQLMigration
 		}
 	}
 }
-]]></script> 
+```
 
 Here you can see the extension method FromXMLTo<T>, that performs the XML deserialization into generic <a href="https://en.wikipedia.org/wiki/Plain_Old_CLR_Object" target="_blank">POCO</a>.
 
-<script type="syntaxhighlighter" class="brush: csharp">
-<![CDATA[
+```csharp
 public static T FromXmlTo<T>(this String xml)
 {
 	T returnedXmlClass = default(T);
@@ -218,6 +219,6 @@ public static T FromXmlTo<T>(this String xml)
 	}
 	return returnedXmlClass;
 }
-]]></script> 
+```
 
 In the next articles I'll show how the migration worked in MongoDb and ElasticSearch and which points of interest came out.

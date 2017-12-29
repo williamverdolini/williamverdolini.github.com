@@ -7,6 +7,7 @@ header:
 toc: false
 toc_label: "Contents"
 author_profile: false
+id: /2014/08/20/cqrses-neventstore-snapshots
 sidebar:
   nav: cqrses
 description: Tech, CQRS+ES, NEventStore, Snapshots

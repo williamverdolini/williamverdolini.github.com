@@ -10,45 +10,45 @@ cqrses:
   - title: "Premise"
     children:
     - title: "Intro"
-      url: /2014/08/10/cqrses-intro
+      url: /2014/08/10/cqrses-intro/
     - title: "Architecture"
-      url: /2014/08/11/cqrses-architecture
+      url: /2014/08/11/cqrses-architecture/
   - title: "Inversion of Control"
     children:
     - title: "Command Handling via DI"
-      url: /2014/08/12/cqrses-CommandsDI
+      url: /2014/08/12/cqrses-CommandsDI/
     - title: "Service Locator"
-      url: /2014/08/13/cqrses-CommandsDI-service-locator
+      url: /2014/08/13/cqrses-CommandsDI-service-locator/
     - title: "Typed Factory"
-      url: /2014/08/14/cqrses-CommandsDI-typed-factory
+      url: /2014/08/14/cqrses-CommandsDI-typed-factory/
   - title: "Workers"
-    url: /2014/08/15/cqrses-workers
+    url: /2014/08/15/cqrses-workers/
   - title: "Validation Logic"
     children:
     - title: "Set Validation"
-      url: /2014/08/16/cqrses-set-validation
+      url: /2014/08/16/cqrses-set-validation/
     - title: "Have I understood?"
-      url: /2014/08/17/cqrses-validation-understood
+      url: /2014/08/17/cqrses-validation-understood/
     - title: "Some concerns"
-      url: /2014/08/18/cqrses-validation-concerns
+      url: /2014/08/18/cqrses-validation-concerns/
   - title: "Event Store"
     children:
     - title: "NEventStore"
-      url: /2014/08/19/cqrses-neventstore
+      url: /2014/08/19/cqrses-neventstore/
     - title: "Aggregate Snapshots"
-      url: /2014/08/20/cqrses-neventstore-snapshots
+      url: /2014/08/20/cqrses-neventstore-snapshots/
     - title: "Identity Mapping"
-      url: /2014/08/22/cqrses-neventstore-identities
+      url: /2014/08/22/cqrses-neventstore-identities/
     - title: "Legacy Migration"
-      url: /2014/08/31/cqrses-neventstore-migration
+      url: /2014/08/31/cqrses-neventstore-migration/
     - title: "Event Upconversion"
-      url: /2014/10/21/cqrses-neventstore-event-upconversion
+      url: /2014/10/21/cqrses-neventstore-event-upconversion/
   - title: "Async matters"
     children:
     - title: "UI Notification with SignalR"
-      url: /2015/08/22/cqrses-ui-notification
+      url: /2015/08/22/cqrses-ui-notification/
     - title: "OWIN + SignalR + Castle.Windsor"
-      url: /2015/08/23/cqrses-owin-signalR-castle-windsor
+      url: /2015/08/23/cqrses-owin-signalR-castle-windsor/
     - title: "NEventStore PollingClient"
-      url: /2015/08/27/cqrses-neventstore-pollingclient
+      url: /2015/08/27/cqrses-neventstore-pollingclient/
     

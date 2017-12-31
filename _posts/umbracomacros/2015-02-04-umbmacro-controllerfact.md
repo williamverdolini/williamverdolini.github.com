@@ -1,13 +1,21 @@
 ---
-title: "Umbraco Custom Macros"
-tagline: MVC Controller Factory
-header: MVC Controller Factory
+title: "MVC Controller Factory"
+excerpt: "Umbraco Custom Macros"
+header:
+    overlay_image: "/assets/images/hans-peter-gauster-252751.jpg"
+    overlay_filter: 0.4
+    caption: "Photo by Hans-Peter Gauster on [**Unsplash**](https://unsplash.com/photos/3y1zF4hIPCg)"
+toc: true
+toc_label: "Contents"
+author_profile: false
+sidebar:
+  nav: umbraco
 description: Umbraco, Castle Windsor, Inversion of Control, MVC, Tech
 group: Umbraco_CustomMacros
 tags: [Umbraco,Castle Windsor,Inversion of Control,MVC,Technology]
 ---
 
-###MVC (4) solutions for DI###
+## MVC (4) solutions for DI
 Dependency Injection is a must for a <a href="http://en.wikipedia.org/wiki/SOLID_%28object-oriented_design%29" target="_blank">S.O.L.I.D. code</a> and, for that, 
 you should use a DI container. Using Umbraco is not a problem about that and it's possible to exploit some feature to initialize the DI Container.
 About the DI Container, there's a lot out there and I choose <a href="http://docs.castleproject.org/Default.aspx" target="_blank">Castle Windsor</a>.
@@ -23,11 +31,10 @@ The second one gives a wider spectrum of usage, but works as a service locator, 
 With Castle Windsor is preferable to adopt the first solution, 'cause Windsor seems to have some problems with objects not properly released.
 Let's see how to do that in an Umbraco application.
 
-####MVC Controller Factory####
+### MVC Controller Factory
 The code for the factory is very simple and it could be taken from <a href="http://docs.castleproject.org/Windsor.Windsor-tutorial-part-two-plugging-Windsor-in.ashx" target="_blank">Castle Windsor documentation</a>
 
-<script type="syntaxhighlighter" class="brush: csharp">
-<![CDATA[
+```csharp
 public class WindsorControllerFactory : DefaultControllerFactory
 {
 	private readonly IKernel kernel;
@@ -51,15 +58,14 @@ public class WindsorControllerFactory : DefaultControllerFactory
 		return (IController)kernel.Resolve(controllerType);
 	}
 }
-]]></script> 
+```
 
 As you can see, there's not only code for controller creation, but also for its release.
 
-####Umbraco's instrumentation####
+### Umbraco's instrumentation
 Now that we have a WindsorControllerFactory, we have to use it as new MVC Controller factory. That could be done using Umbraco's Application event, as show below:
 
-<script type="syntaxhighlighter" class="brush: csharp;highlight: [8,11,20]">
-<![CDATA[
+```csharp
 public class BootstrapUmbracoAppEvent : ApplicationEventHandler
 {
 	private static IWindsorContainer container;
@@ -84,8 +90,8 @@ public class BootstrapUmbracoAppEvent : ApplicationEventHandler
 		return container;
 	}
 }
+```
 
-]]></script> 
 As you can see, the DI container is created, used to create a WindsorControllerFactory and then disposed.
 Complete code <a href="https://github.com/williamverdolini/Umbraco-CustomMacros/blob/master/CustomMacros/App_Start/BootstrapUmbracoAppEvent.cs" target="_blank">here</a>.
 

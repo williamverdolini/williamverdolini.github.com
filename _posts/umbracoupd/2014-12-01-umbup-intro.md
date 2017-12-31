@@ -1,7 +1,15 @@
 ---
-title: "Umbraco Upgrade"
-tagline: Intro
-header: Intro
+title: "Intro"
+excerpt: "Umbraco Upgrade"
+header:
+    overlay_image: "/assets/images/hans-peter-gauster-252751.jpg"
+    overlay_filter: 0.4
+    caption: "Photo by Hans-Peter Gauster on [**Unsplash**](https://unsplash.com/photos/3y1zF4hIPCg)"
+toc: false
+toc_label: "Contents"
+author_profile: false
+sidebar:
+  nav: umbraco
 description: Umbraco, Prototyping, Tech
 group: Umbraco_Update
 tags: [Technology,Umbraco]

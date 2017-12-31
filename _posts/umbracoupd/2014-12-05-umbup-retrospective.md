@@ -1,7 +1,15 @@
 ---
-title: "Umbraco Upgrade"
-tagline: First prototype retrospective
-header: First prototype retrospective
+title: "First prototype retrospective"
+excerpt: "Umbraco Upgrade"
+header:
+    overlay_image: "/assets/images/hans-peter-gauster-252751.jpg"
+    overlay_filter: 0.4
+    caption: "Photo by Hans-Peter Gauster on [**Unsplash**](https://unsplash.com/photos/3y1zF4hIPCg)"
+toc: true
+toc_label: "Contents"
+author_profile: false
+sidebar:
+  nav: umbraco
 description: Umbraco, Prototyping, Tech
 group: Umbraco_Update
 tags: [Technology,Umbraco,Prototyping]

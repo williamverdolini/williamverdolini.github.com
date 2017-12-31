@@ -1,7 +1,15 @@
 ---
-title: "Umbraco Upgrade"
-tagline: Upgrate to version 6.2.4
-header: Upgrate to version 6.2.4
+title: "Upgrate to version 6.2.4"
+excerpt: "Umbraco Upgrade"
+header:
+    overlay_image: "/assets/images/hans-peter-gauster-252751.jpg"
+    overlay_filter: 0.4
+    caption: "Photo by Hans-Peter Gauster on [**Unsplash**](https://unsplash.com/photos/3y1zF4hIPCg)"
+toc: true
+toc_label: "Contents"
+author_profile: false
+sidebar:
+  nav: umbraco
 description: Umbraco, Prototyping, Tech
 group: Umbraco_Update
 tags: [Technology,Umbraco,Prototyping]
@@ -71,31 +79,30 @@ I did the same steps of <a href="/2014/12/04/umbup-718-manual-upgrade/" target="
 [umbracoUserLogins]<br/>
 <br/>
 
-###Upgrade Tables with modified structure
+## Upgrade Tables with modified structure
 
-####Upgrade ContentType tables
+### Upgrade ContentType tables
 Same script as previous prototype (prototype's failure is never a complete failure)
 
-####Upgrade PropertyType tables
+### Upgrade PropertyType tables
 Same script as previous prototype
 
-####Upgrade PropertyData tables
+### Upgrade PropertyData tables
 cmsPropertyData Table contains data about macro and document property's content. What I've figured out is that the new release want that the property data (in XML format) has a specific format, like the following:
 
-<script type="syntaxhighlighter" class="brush: html">
-<![CDATA[
+```xml
 <?UMBRACO_MACRO macroAlias="......"  otherProperties="values" />
-]]></script> 
+```
 
 with properties name in <a href="http://en.wikipedia.org/wiki/CamelCase" target="_blank">CamelCase</a> format.
 
 To achieve this result I've used <a href="https://gist.github.com/williamverdolini/5c369b4d620405033b35#file-dev_cms_4-7_update_to_umbraco_6-2-4-gist-sql-L2663-L2822" target="_blank">Regular Expressions in OLE Automation Procedures</a>, inside SQL Server. 
 
-###Removed Tables
+## Removed Tables
 Besides cmsTab, other two tables have been removed: umbracoApp, umbracoAppTree. For these there is no migration script, because they became two different config files: <a href="http://our.umbraco.org/documentation/extending-umbraco/section-trees/" target="_blank">application.config and trees.config</a>.
 Initially I've created a T-SQL procedure to write the XML files from the legacy tables, but the informations were few and, at the end, I made some manual corrections.
 
-###The complete Upgrade script
+## The complete Upgrade script
 I've published <a href="https://gist.github.com/williamverdolini/5c369b4d620405033b35" target="_blank">the complete SQL script to upgrade from Umbraco version 4.7.1 to version 6.2.4</a>.
 It uses <a href="http://msdn.microsoft.com/library/ms162773.aspx" target="_blank">sqlcmd</a>, but it's quite easy to remove that variables.
 

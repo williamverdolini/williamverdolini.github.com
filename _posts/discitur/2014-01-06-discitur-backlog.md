@@ -2,8 +2,8 @@
 title: "Backlog"
 excerpt: "Il Progetto Discitur"
 header:
-    overlay_image: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1404&q=80"
-    caption: "Photo credit: [**Unsplash**](https://unsplash.com)"
+    overlay_image: "/assets/images/neonbrand-426918.jpg"
+    caption: "Photo by NeONBRAND on [**Unsplash**](https://unsplash.com/photos/zFSo6bnZJTw)"
 toc: true
 toc_label: "Contents"
 author_profile: false

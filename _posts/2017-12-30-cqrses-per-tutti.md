@@ -7,6 +7,7 @@ header:
     caption: "Photo by Nigel Tadyanehondo on [**Unsplash**](https://unsplash.com/photos/pXf4OH65OhE)"
 toc: false
 toc_label: "Contents"
+last_modified_at: 2017-12-31T00:00:00
 author_profile: true
 categories: 
    - CQRS+ES

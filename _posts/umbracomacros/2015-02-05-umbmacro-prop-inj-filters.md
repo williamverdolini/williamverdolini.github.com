@@ -1,7 +1,15 @@
 ---
-title: "Umbraco Custom Macros"
-tagline: Properties Injection in MVC Filters
-header: Properties Injection in MVC Filters
+title: "Properties Injection in MVC Filters"
+excerpt: "Umbraco Custom Macros"
+header:
+    overlay_image: "/assets/images/hans-peter-gauster-252751.jpg"
+    overlay_filter: 0.4
+    caption: "Photo by Hans-Peter Gauster on [**Unsplash**](https://unsplash.com/photos/3y1zF4hIPCg)"
+toc: false
+toc_label: "Contents"
+author_profile: false
+sidebar:
+  nav: umbraco
 description: Umbraco, Castle Windsor, Inversion of Control, MVC, Tech
 group: Umbraco_CustomMacros
 tags: [Umbraco,Castle Windsor,Inversion of Control,MVC,Technology]
@@ -16,8 +24,7 @@ Obviously injecting dependencies is a cleaner way to apply the <a href="http://e
 To do that we have to override the default implementation of <a href="https://msdn.microsoft.com/en-us/library/system.web.mvc.iactioninvoker(v=vs.118).aspx" target="_blank">IActionInvoker</a>, which is used to invoke an MVC action in response to an HTTP request. In the Umbraco context, we have to 
 override <a href="https://github.com/umbraco/Umbraco-CMS/blob/6.2.5/src/Umbraco.Web/Mvc/RenderActionInvoker.cs" target="_blank">Umbraco.Web.Mvc.RenderActionInvoker</a>. Here it is:
 
-<script type="syntaxhighlighter" class="brush: csharp;highlight: [9,14]">
-<![CDATA[
+```csharp
 public class WindsorActionInvoker : RenderActionInvoker 
 {
 	readonly IKernel kernel;
@@ -37,7 +44,8 @@ public class WindsorActionInvoker : RenderActionInvoker
 		return base.BeginInvokeActionMethodWithFilters(controllerContext, filters, actionDescriptor, parameters, callback, state);
 	}
 }
-]]></script>
+```
+
 two notes:
 
 1. we want to inject Properties in Filters, so we need to override the **InvokeActionMethodWithFilters**
@@ -46,8 +54,7 @@ We want to exclude MacroController's global filter, because all public propertie
 
 You should also have noticed the **InjectProperties** extension method. Here is the code.
 
-<script type="syntaxhighlighter" class="brush: csharp">
-<![CDATA[
+```
 public static class WindsorExtension
 {
 	public static void InjectProperties(this IKernel kernel, object target)
@@ -71,7 +78,7 @@ public static class WindsorExtension
 		}
 	}
 }
-]]></script>
+```
 
 the final step is to declare the <a href="https://github.com/williamverdolini/Umbraco-CustomMacros/blob/master/CustomMacros/Areas/Infrastructure/Injection/Installers/ControllersInstaller.cs#L20" target="_blank">dependency map</a>. No other configuration is required, because (custom) ActionInvoker is already invoked within the Controller lifecyle, 
 known and managed by Castle Windsor.

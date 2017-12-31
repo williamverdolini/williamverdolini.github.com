@@ -1,13 +1,21 @@
 ---
-title: "Umbraco Upgrade"
-tagline: Some final consideration
-header: Some final consideration
+title: "Some final consideration"
+excerpt: "Umbraco Upgrade"
+header:
+    overlay_image: "/assets/images/hans-peter-gauster-252751.jpg"
+    overlay_filter: 0.4
+    caption: "Photo by Hans-Peter Gauster on [**Unsplash**](https://unsplash.com/photos/3y1zF4hIPCg)"
+toc: true
+toc_label: "Contents"
+author_profile: false
+sidebar:
+  nav: umbraco
 description: Umbraco, Prototyping, Tech
 group: Umbraco_Update
 tags: [Technology,Umbraco,Prototyping]
 ---
 
-###Final Prototype Retrospective
+## Final Prototype Retrospective
 I like the happy endings.
 
 But it's always important to summarize what was good and what was not in this experience.
@@ -20,7 +28,7 @@ Here is a list of good principles and techniques applied:
 not a requisite to rename that components just to keep the legacy naming convention. So, I kept the Umbraco convention and I've not spent a minute on it.
 
 
-###What could be done better
+## What could be done better
 
 Studying and deepening not known topics is part of a prototype. If I had spent more time understanding how the new Umbraco release was made and which impacts could I have had, probably I'd have reached the same conclusion (abandon Umbraco 7 and upgrade to Umbraco 6) in much less time...<br/>
 But my "keyboard attraction" often wins over the rational approach...<br/>

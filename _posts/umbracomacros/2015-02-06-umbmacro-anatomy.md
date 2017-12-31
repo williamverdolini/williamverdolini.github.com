@@ -1,7 +1,15 @@
 ---
-title: "Umbraco Custom Macros"
-tagline: the Custom Macro's Anatomy
-header: the Custom Macro's Anatomy
+title: "the Custom Macro's Anatomy"
+excerpt: "Umbraco Custom Macros"
+header:
+    overlay_image: "/assets/images/hans-peter-gauster-252751.jpg"
+    overlay_filter: 0.4
+    caption: "Photo by Hans-Peter Gauster on [**Unsplash**](https://unsplash.com/photos/3y1zF4hIPCg)"
+toc: true
+toc_label: "Contents"
+author_profile: false
+sidebar:
+  nav: umbraco
 description: Umbraco, Architecture, Macros, Tech
 group: Umbraco_CustomMacros
 tags: [Technology,Umbraco,Architecture]
@@ -32,7 +40,7 @@ there is code to assure that the macro can provide just commands declared with t
 Let's dive into the Command Handling part, where the business logic resides.
 <br/> 
  
-###Command Handling###
+## Command Handling
 The <a href="https://github.com/williamverdolini/Umbraco-CustomMacros/blob/master/CustomMacros/Areas/Infrastructure/Commands/ICommandHandler.cs" target="_blank">ICommandHandler</a> Interface 
 requires the implementation of _"pseduo-action"_ depending on the concrete command class.
 

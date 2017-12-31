@@ -1,7 +1,15 @@
 ---
-title: "Umbraco Custom Macros"
-tagline: Properties Configurability
-header: Properties Configurability
+title: "Properties Configurability"
+excerpt: "Umbraco Custom Macros"
+header:
+    overlay_image: "/assets/images/hans-peter-gauster-252751.jpg"
+    overlay_filter: 0.4
+    caption: "Photo by Hans-Peter Gauster on [**Unsplash**](https://unsplash.com/photos/3y1zF4hIPCg)"
+toc: true
+toc_label: "Contents"
+author_profile: false
+sidebar:
+  nav: umbraco
 description: Umbraco, Architecture, Macros, Tech
 group: Umbraco_CustomMacros
 tags: [Technology,Umbraco,Architecture]
@@ -15,18 +23,16 @@ These parameters can be handled in the Custom Macro's logic because <a href="/20
 
 From developer's point of view, these parameters are declared with specific interfaces, that derive all from <a href="https://github.com/williamverdolini/Umbraco-CustomMacros/blob/master/CustomMacros/Areas/Infrastructure/Controllers/IMacroProperties.cs" target="_blank">IMacroProperties</a>, like the following:
 
-<script type="syntaxhighlighter" class="brush: csharp;">
-<![CDATA[
+```csharp
 public interface IToDoListMacroProperties : IMacroProperties
 {
 		string IsIdVisible { get; set; } 
 }
-]]></script>
+```
 
 and this interfaces are implemented by Custom Macro's Controller:
 
-<script type="syntaxhighlighter" class="brush: csharp;highlight: [11,13]">
-<![CDATA[
+```csharp
 [PluginController("Sample")]
 public class ToDoListController : MacroController,
 	// Command Provider
@@ -43,12 +49,11 @@ public class ToDoListController : MacroController,
 
 	...
 }
-]]></script>
+```
 
 Now, in the "command handle logic", the developer can use these **Macro's Properties** to get the values set during the configuration phase, without cares about **how** to retrieve these values.
 
-<script type="syntaxhighlighter" class="brush: csharp;highlight: [7]">
-<![CDATA[
+```csharp
 [PluginController("Sample")]
 public ActionResult Handle(OrderToDoListsCommand command)
 {
@@ -62,18 +67,17 @@ public ActionResult Handle(OrderToDoListsCommand command)
 		worker.GetLists().OrderByDescending(orderChoise[command.FieldName]).ToList()
 		);
 }
-]]></script>
+```
 
 Nothing More.
 
 How is it possible?
 
-###Macro's Properties Filters###
+## Macro's Properties Filters
 For reasons of simplicity we assume to have all Macro parameters as strings (type: text). All the magic happens into the Controller Base class. Let's see the code:
 
 
-<script type="syntaxhighlighter" class="brush: csharp;highlight: [3,11]">
-<![CDATA[
+```csharp
 [SessionExpiredException(Order = 20)]
 [LogException(RedirectTo = "/Errore", Order = 10)]
 [RetrieveMacroProperties(Order = 20)]
@@ -99,7 +103,7 @@ public abstract class MacroController : SurfaceController, IMacroProperties
 
 	...
 }
-]]></script>
+```
 
 So, focusing on Macro's properties:
 

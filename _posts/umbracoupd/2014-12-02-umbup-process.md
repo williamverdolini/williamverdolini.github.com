@@ -1,13 +1,21 @@
 ---
-title: "Umbraco Upgrade"
-tagline: The Upgrade Process
-header: The Upgrade Process
+title: "The Upgrade Process"
+excerpt: "Umbraco Upgrade"
+header:
+    overlay_image: "/assets/images/hans-peter-gauster-252751.jpg"
+    overlay_filter: 0.4
+    caption: "Photo by Hans-Peter Gauster on [**Unsplash**](https://unsplash.com/photos/3y1zF4hIPCg)"
+toc: true
+toc_label: "Contents"
+author_profile: false
+sidebar:
+  nav: umbraco
 description: Umbraco, Prototyping, Tech
 group: Umbraco_Update
 tags: [Technology,Umbraco,Prototyping]
 ---
 
-###Before to start
+## Before to start
 
 Before to start it's important to clearly define the goals and the conditions to follow.
 
@@ -19,7 +27,7 @@ Here are my <a href="http://en.wikipedia.org/wiki/Exit-criteria" target="_blank"
 
 
 
-###The official Process (and the first failure)
+## The official Process (and the first failure)
 
 Initially I tried to follow the <a href="http://our.umbraco.org/documentation/Installation/Upgrading/version-specific" target="_blank">official upgrade path described in the Umbraco documentation</a> or in <a href="http://www.blix.co/blog/2014/6/5/follow-the-path-upgrading-umbraco-from-v4-to-v7.aspx" target="_blank">other articles in the web</a>. The process is pretty clear and it consists in a gradual upgrade throughout all the most important releases since the 4.7.1 to 7.1.8. 
 
@@ -38,7 +46,7 @@ No. Stop! That's _definitely_ not my way.
 
 First failure. And first hard decision: leave down the proven task list and create my own.
 
-###<a href="http://gettingthingsdone.com/" target="_blank">Getting Things Done</a> 
+## <a href="http://gettingthingsdone.com/" target="_blank">Getting Things Done</a> 
 
 GTD. Good principles always have an acronym!
 Out of my mind, my approach was:

@@ -1,7 +1,15 @@
 ---
-title: "Umbraco Upgrade"
-tagline: Upgrate to version 7.1.8
-header: Upgrate to version 7.1.8
+title: "Upgrate to version 7.1.8"
+excerpt: "Umbraco Upgrade"
+header:
+    overlay_image: "/assets/images/hans-peter-gauster-252751.jpg"
+    overlay_filter: 0.4
+    caption: "Photo by Hans-Peter Gauster on [**Unsplash**](https://unsplash.com/photos/3y1zF4hIPCg)"
+toc: true
+toc_label: "Contents"
+author_profile: false
+sidebar:
+  nav: umbraco
 description: Umbraco, Prototyping, Tech
 group: Umbraco_Update
 
@@ -79,10 +87,10 @@ the following is a summary of the differences founded, grouped by difficulty lev
 Furthermore, there were some new tables...
 
 
-###Upgrade Tables with modified structure
+## Upgrade Tables with modified structure
 At first I faced the most difficult set of tables, because solving those could allow me to understand the global effort to complete the prototype and verify what could be closed at the end of my time-box.
 
-####Upgrade ContentType tables
+### Upgrade ContentType tables
 There are at least three tables in this group: cmsContentType, cmsContentType2ContentType (**NEW table!**), cmsContentTypeAllowedContentType.
 Their purpose is to define the relations among <a href="http://our.umbraco.org/wiki/how-tos/working-with-document-types" target="_blank">Umbraco Document Types</a>.
 
@@ -91,7 +99,7 @@ I've changed the generated script in order to:
 - <a href="https://gist.github.com/williamverdolini/5c369b4d620405033b35#file-dev_cms_4-7_update_to_umbraco_6-2-4-gist-sql-L796-L851" target="_blank">copy contentType records in a temporary table</a>
 - <a href="https://gist.github.com/williamverdolini/5c369b4d620405033b35#file-dev_cms_4-7_update_to_umbraco_6-2-4-gist-sql-L1778-L1787" target="_blank">Populate new table cmsContentType2ContentType using the temp table</a>
 
-####Upgrade PropertyType tables
+### Upgrade PropertyType tables
 There are two tables in this group: cmsPropertyType, cmsPropertyTypeGroup (**NEW table!**). These tables manage the relations of Document property, their relationship, their type, etc. About this topic there is another table involved: cmsTab (that groups properties in specific tabs), that was removed in the new release...
 
 I've changed the generated script in order to:
@@ -102,12 +110,12 @@ I've changed the generated script in order to:
 - <a href="https://gist.github.com/williamverdolini/5c369b4d620405033b35#file-dev_cms_4-7_update_to_umbraco_6-2-4-gist-sql-L2587-L2656" target="_blank">Create and run a procedure to correctly update cmsPropertyType, cmsPropertyTypeGroup</a>
 
 
-####Upgrade DataType tables
+### Upgrade DataType tables
 Tables like cmsDataType contain data about how (macro's and content's) properties are managed. 
 Here came some big problems...Actually we have customized some functionalities for insert/edit macro properties, creating some custom back-office module. So, besides the data and the tables, we should spend a lot of time to rewrite these functionalities for the renewed Umbraco back office, developed in Angular.js.
 Probably it's not just a problem about my time-box, but also about my (implicit) goals: in this moment I can't spend too much time to allow the dev team learning Angular.js. I know that framework, it's cool, but <a href="http://www.bennadel.com/blog/2439-my-experience-with-angularjs-the-super-heroic-javascript-mvw-framework.htm" target="_blank">it's not so easy as it seems the first days</a>...and I’d want my dev team to spend time learning other framework that could pump the application performance, like AspNet.MVC (<a href="http://www.codeproject.com/Articles/821275/Webforms-vs-MVC-and-Why-MVC-is-better" target="_blank">vs WebForms</a>).
 
-###So...
+## So...
 Umbraco 7.1.8 is NOT my landing version...<br/>
 This prototype is failed. <br/>
 <a href="/2014/12/02/umbup-process/#off-proc" target="_blank">Second failure</a>.

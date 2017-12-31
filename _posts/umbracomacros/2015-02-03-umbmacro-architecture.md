@@ -1,13 +1,21 @@
 ---
-title: "Umbraco Custom Macros"
-tagline: Architecture
-header: Architecture
+title: "Umbraco architecture"
+excerpt: "Umbraco Custom Macros"
+header:
+    overlay_image: "/assets/images/hans-peter-gauster-252751.jpg"
+    overlay_filter: 0.4
+    caption: "Photo by Hans-Peter Gauster on [**Unsplash**](https://unsplash.com/photos/3y1zF4hIPCg)"
+toc: true
+toc_label: "Contents"
+author_profile: false
+sidebar:
+  nav: umbraco
 description: Umbraco, Architecture, Macros, Tech
 group: Umbraco_CustomMacros
 tags: [Technology,Umbraco,Architecture]
 ---
 
-###The Umbraco's Idea###
+## The Umbraco's Idea
 Umbraco is a <a href="http://en.wikipedia.org/wiki/Content_management_system" target="_blank">CMS</a> Product. Its mission is to allow users to easily write and publish their own web contents. I don't want to explain all the Umbraco functionalities 
 (see <a href="https://our.umbraco.org/documentation" target="_blank">official docs</a>), but just highlight the basic idea around which Umbraco is based. Each page in Umbraco has two main properties, that are the Umbraco's pillars:
 
@@ -22,7 +30,7 @@ Each Content Page should be of a specific Document Type and can be associate to 
 context, use this back-office configurations in his <a href="https://github.com/umbraco/Umbraco-CMS/blob/6.2.5/src/Umbraco.Web/Mvc/RenderMvcController.cs" target="_blank">specific Controller</a> 
 to manage the connections between actions, Models (Document types) and Views (Templates).
 
-####Macros in Rich Text Editor#####
+### Macros in Rich Text Editor
 As .NET developer, one of the most interesting Umbraco feature is the ability to let the web-site administrator to add not only static content, 
 but also dynamic components, or, as Umbraco has named, *Macros*.
 
@@ -40,7 +48,7 @@ The same we daily work with!
 Besides that, Umbraco allows to define macro's properties that can be set by the web-site administrator, 
 adding some configuration lever to the macros depending on property's values.
 
-###The Custom Macro's Idea###
+## The Custom Macro's Idea
 So, Macros are good candidates to play the role of business modules that could be composed in pages in different ways, depending on customer’s needs. 
 
 The real challenge, now, is to create macros that are _**agnostic**_ about what there’s around them. What does it mean?

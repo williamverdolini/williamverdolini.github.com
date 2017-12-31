@@ -129,3 +129,37 @@ fastcatalog:
       url: /2015/07/31/fastcatalog-web-mongodb/
     - title: "Automapper"
       url: /2015/08/01/fastcatalog-web-automapper/
+
+umbraco:
+  - title: "Umbraco Upgrade"
+    children:
+    - title: "Intro"
+      url: /2014/12/01/umbup-intro/
+    - title: "The process"
+      url: /2014/12/02/umbup-process/      
+    - title: "Installation"
+      url: /2014/12/03/umbup-installation/      
+    - title: "Manual upgrade to 7.18"
+      url: /2014/12/04/umbup-718-manual-upgrade/      
+    - title: "First retrospective"
+      url: /2014/12/05/umbup-retrospective/      
+    - title: "Manual upgrade to 6.24"
+      url: /2014/12/06/umbup-624-manual-upgrade/      
+    - title: "Final considerations"
+      url: /2014/12/07/umbup-consideration/      
+  - title: "Umbraco Custom Macros"
+    children:
+    - title: "Setup"
+      url: /2015/02/02/umbmacro-setup/
+    - title: "Umbraco architecture"
+      url: /2015/02/03/umbmacro-architecture/
+    - title: "MVC Controller factory"
+      url: /2015/02/04/umbmacro-controllerfact/
+    - title: "Properties injections"
+      url: /2015/02/05/umbmacro-prop-inj-filters/
+    - title: "Umbraco macro anatomy"
+      url: /2015/02/06/umbmacro-anatomy/
+    - title: "Umbraco views"
+      url: /2015/02/07/umbmacro-views/
+    - title: "Properties Configurability"
+      url: /2015/02/08/umbmacro-properties/

@@ -2,8 +2,8 @@
 title: "Intro"
 excerpt: "CQRS+ES Todo List"
 header:
-    overlay_image: "https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?auto=format&fit=crop&w=1350&q=80"
-    caption: "Photo credit: [**Unsplash**](https://unsplash.com)"
+    overlay_image: "/assets/images/markus-spiske-207946.jpg"
+    caption: "Photo by Markus Spiske on [**Unsplash**](https://unsplash.com/photos/Skf7HxARcoc)"
 toc: true
 toc_label: "Contents"
 author_profile: false

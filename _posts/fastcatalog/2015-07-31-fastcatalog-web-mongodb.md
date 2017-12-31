@@ -2,8 +2,8 @@
 title: "Multi-attribute Search with MongoDb"
 excerpt: "Fast Catalog"
 header:
-    overlay_image: "https://images.unsplash.com/photo-1503449377594-32dd9ac4467c?auto=format&fit=crop&w=1351&q=80"
-    caption: "Photo credit: [**Unsplash**](https://unsplash.com)"
+    overlay_image: "/assets/images/amanda-belec-349362.jpg"
+    caption: "Photo by Amanda Belec on [**Unsplash**](https://unsplash.com/photos/Z1JgfuSQ80s)"
 toc: true
 toc_label: "Contents"
 author_profile: false

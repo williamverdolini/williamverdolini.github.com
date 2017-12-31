@@ -17,7 +17,7 @@ tags: [Technology,CQRS+ES]
 I couldn’t say exactly when I heard of Command Query Responsibility Segregation (CQRS) and Event Sourcing (ES) for the first time, but I remember the milestones that enlightened me a lot about this topic:
 
 
-1.    .NET Community Days 2014 Milano: <a href="http://www.communitydays.it/events/2014/vs05/" target="_blank">DDD+CQRS+ES session</a> with **Andrea Brandolini** and **Andrea Balducci**
+1.    .NET Community Days 2014 Milano: <a href="http://www.communitydays.it/events/2014/vs05/" target="_blank">DDD+CQRS+ES session</a> with **Alberto Brandolini** and **Andrea Balducci**
 2.    <a href="https://play.google.com/store/books/details/Stefano_Ottaviani_Gestire_la_complessit%C3%A0_del_softw?id=-DECAwAAQBAJ" target="_blank">Bachelor's degree thesis</a> of **Stefano Ottaviani**
 3.    Slideshare Presentations of **<a href="http://www.slideshare.net/andreabalducci/alam-aeki-guida-illustrata-alla-modellazione-di-un-dominio-con-event-sourcing-event-storming" target="_blank">Andrea Balducci</a>** and **<a href="http://www.slideshare.net/ziobrando?utm_campaign=profiletracking&utm_medium=sssite&utm_source=ssslideview" target="_blank">Alberto Brandolini</a>**
 4.    Some very helpful explanations and advice from <a href="http://www.primordialcode.com/" target="_blank"><b>Alessandro Giorgetti</b></a>

@@ -1,0 +1,67 @@
+{% assign feature_row_posts = page.feature_row_posts %}
+
+
+<div class="feature__wrapper">
+
+  {% for f in site.posts limit:3 %}
+    {% if f.url contains "://" %}
+      {% capture f_url %}{{ f.url }}{% endcapture %}
+    {% else %}
+      {% capture f_url %}{{ f.url | absolute_url }}{% endcapture %}
+    {% endif %}
+
+    <div class="feature__item{% if include.type %}--{{ include.type }}{% endif %} pseudolink" onclick="location.href ='{{ f_url }}'">
+      <div class="archive__item">
+        {% if f.header.overlay_image or f.header.image %}
+		  {% if f.header.overlay_image %}
+			  {% assign img = f.header.overlay_image %}
+		  {% elsif f.header.image %}
+			  {% assign img = f.header.image  %}
+		  {% endif %}			
+          <div class="archive__item-teaser">
+            <img src=
+			  {% if img contains "://" %}
+				"{{ img }}"
+			  {% else %}
+				"{{ img | absolute_url }}"
+			  {% endif %}
+            alt="{% if f.alt %}{{ f.alt }}{% endif %}">
+          </div>
+        {% endif %}
+
+        <div class="archive__item-body">
+          {% if f.title %}
+            <h2 class="archive__item-title">{{ f.title }} </h2>
+          {% endif %}
+
+          {% if f.excerpt %}
+            <div class="archive__item-excerpt">
+			  {% assign post = f %}
+              {{ f.excerpt | markdownify }}
+                <p class="page__meta">
+			  {% if f.last_modified_at %}
+					<strong><i class="fa fa-fw fa-calendar" aria-hidden="true"></i> {{ site.data.ui-text[site.locale].date_label | default: "Updated:" }}</strong> <time datetime="{{ f.last_modified_at | date: "%Y-%m-%d" }}">{{ f.last_modified_at | date: "%B %d, %Y" }}</time>
+              {% elsif f.date %}
+					<strong><i class="fa fa-fw fa-calendar" aria-hidden="true"></i> {{ site.data.ui-text[site.locale].date_label | default: "Updated:" }}</strong> <time datetime="{{ f.date | date_to_xmlschema }}">{{ f.date | date: "%B %d, %Y" }}</time>
+              {% endif %}
+			  <br/>
+			  {% if f.read_time %}
+					<strong><i class="fa fa-clock-o" aria-hidden="true"></i></strong> {% include read-time.html %}
+			  {% endif %}
+ 			  </p>
+			  
+            </div>
+          {% endif %}
+
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+
+</div>
+
+<style>
+.pseudolink:hover {
+	cursor:pointer;
+}
+</style>

@@ -7,6 +7,7 @@ header:
   overlay_image: "/assets/images/david-kovalenko-414249.jpg"
   caption: "Photo by David Kovalenko on [**Unsplash**](https://unsplash.com/photos/G85VuTpw6jg)"
 excerpt: "<br/><br/><br/><br/>A volte guardo gli alberi, a volte la foresta.<br/>Da vicino, per i dettagli.<br/>Dall'alto, per la visione d'insieme.<br/><br/>E c'è sempre qualcosa da imparare.<br/>{::nomarkdown}{:/nomarkdown}"
+feature_row_posts: 3
 feature_row:
   - image_path: "/assets/images/markus-spiske-207946.jpg"
     alt: "CQRS + ES Todo List"
@@ -43,5 +44,7 @@ github:
 ---
 
 {% include feature_row id="intro" type="center" %}
+
+{% include feature_row_posts %}
 
 {% include feature_row %}

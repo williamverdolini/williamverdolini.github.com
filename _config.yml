@@ -121,3 +121,9 @@ tag_archive:
   path: /tags/   
 
 search: true
+
+# Analytics
+analytics:
+  provider               : "google-universal" # false (default), "google", "google-universal", "custom"
+  google:
+    tracking_id          : "UA-48643433-1" # Replace this with your ID, or delete

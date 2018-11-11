@@ -98,7 +98,7 @@ In italiano non c'è alcuna differenza linguistica tra i gradi di realtà delle 
 Facciamo un esempio per capirci e supponiamo di ascoltare la frase 
 > "Vorrei programmare meglio"
 
-Un greco antico poteva riuscire a passare quattro diversi gradi di realtà della stessa frase (mentre noi siamo costretti a riepigare verso periodi ipotetici se ci affidiamo alla sola scrittura):
+Un greco antico poteva riuscire a passare quattro diversi gradi di realtà della stessa frase (mentre noi siamo costretti a ripiegare verso periodi ipotetici se ci affidiamo alla sola scrittura):
 
 - **REALTA'**: "vorrei programmare meglio...mi prendo un po' di tempo per fare refactoring di questo pezzo di codice, so come farlo e lo farò"
 - **EVENTUALITA'**: "vorrei programmare meglio...se non ci fossero queste continue interruzioni e telefonate". Sono i fattori esterni, oggettivi che lo impediscono.

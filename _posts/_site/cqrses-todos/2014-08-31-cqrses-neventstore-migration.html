@@ -1,0 +1,98 @@
+<p>In the <a href="/2014/08/22/cqrses-neventstore-identities/" target="_blank">previous article</a>, I was asking myself «how does NEventStore work with legacy systems?». Here again I’m asking myself which kind of strategies could I implement to migrate data from Legacy System (n-tier) to CQRS+ES?</p>
+
+<p>From the data-layer perspective, here is the scenario I’m talking about:</p>
+
+<p><img src="/images/cqrses/migration.png" class="img-rounded" /></p>
+
+<p>That’s:</p>
+
+<ul>
+  <li>I’d like to keep the same structure of the legacy database for my Read-model. Probably this is not the best practice (because the legacy database could not be optimized for reading, as CQRS+ES allows to have), but it should minimize the rework on the presentation layer or external systems, specially if we have exposed the IDs (in URL, API or wherever)</li>
+  <li>I need some Ids-map for mapping NEventStore GUID with existent ids</li>
+</ul>
+
+<h2 id="migration-strategies">Migration Strategies</h2>
+<p>Despite all the variants that anyone could think, I can see two kind of approaches:</p>
+
+<ol>
+  <li><strong>Migration Domain Event</strong>: probably this is the “NEventStore way” to approach this kind of migration. It means to create a line of “command-event” to initialize the AggregateRoot state reading all the data from legacy database; from the implementation point of view it’s exactly the same of creating new command-event for your AR; these events will begin the history of your ARs hereafter</li>
+  <li><strong>Fake-Snapshots</strong>: working with an event-store also this approach involves the creation of events, but in this case I’m talking about external (No-Domain) events that are immediately followed by an Aggregate Snapshot that exploits the Aggregate Memento.</li>
+</ol>
+
+<p>Let’s dive into the second option.</p>
+
+<h3 id="fake-snapshots">Fake-Snapshots</h3>
+<p>This approach is realized by this logic:</p>
+
+<ol>
+  <li>Every entity not yet migrated is an entity (in the target database) without an Id-Mapping. So this kind of check could drive the whole migration flow, allowing us to parallelize the migration or quit-and-resume the migration.
+    <div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">foreach</span> <span class="p">(</span><span class="kt">var</span> <span class="n">list</span> <span class="k">in</span> <span class="n">_database</span><span class="p">.</span><span class="n">ToDoLists</span><span class="p">)</span>
+<span class="p">{</span>
+ <span class="k">if</span> <span class="p">(</span><span class="n">_db</span><span class="p">.</span><span class="n">IdMaps</span><span class="p">.</span><span class="n">GetAggregateId</span><span class="p">&lt;</span><span class="n">ToDoList</span><span class="p">&gt;(</span><span class="n">list</span><span class="p">.</span><span class="n">Id</span><span class="p">).</span><span class="nf">Equals</span><span class="p">(</span><span class="n">Guid</span><span class="p">.</span><span class="n">Empty</span><span class="p">))</span>
+ <span class="p">{</span>
+     <span class="c1">// Migrate entity</span>
+ <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>    </div>
+  </li>
+  <li>I retrieve a not used ID for the IDs-mapping
+    <div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Get fresh new ID</span>
+<span class="n">Guid</span> <span class="n">entityId</span> <span class="p">=</span> <span class="n">Guid</span><span class="p">.</span><span class="nf">NewGuid</span><span class="p">();</span>
+<span class="k">while</span><span class="p">(!</span><span class="n">_db</span><span class="p">.</span><span class="n">IdMaps</span><span class="p">.</span><span class="n">GetModelId</span><span class="p">&lt;</span><span class="n">ToDoList</span><span class="p">&gt;(</span><span class="n">entityId</span><span class="p">).</span><span class="nf">Equals</span><span class="p">(</span><span class="m">0</span><span class="p">))</span>
+ <span class="n">entityId</span> <span class="p">=</span> <span class="n">Guid</span><span class="p">.</span><span class="nf">NewGuid</span><span class="p">();</span>
+</code></pre></div>    </div>
+  </li>
+  <li>Create a Memento entity from the readmodel data
+    <div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Create Memento from ReadModel</span>
+<span class="kt">var</span> <span class="n">entity</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Todo</span><span class="p">.</span><span class="n">Domain</span><span class="p">.</span><span class="n">Model</span><span class="p">.</span><span class="nf">ToDoListMemento</span><span class="p">(</span><span class="n">entityId</span><span class="p">,</span> <span class="m">1</span><span class="p">,</span> <span class="n">list</span><span class="p">.</span><span class="n">Title</span><span class="p">,</span> <span class="n">list</span><span class="p">.</span><span class="n">Description</span><span class="p">);</span>
+</code></pre></div>    </div>
+  </li>
+  <li>Create a fake External event. This is how I trick the NEventStore’s snapshooting policies, because NEventStore does NOT allow you to create a snapshot not connected to a commit. This makes sense to me, but during the normal life of an AR, if we’ll create snapshots and then we’ll retrieve the AggregateRoot by Id, NEventStore will retrieve the AR from Snapshot through the memento pattern and it will re-tape all the next events, WITHOUT checking for the existence of the commit connected to the snapshot…so…maybe this approach is not so ugly…
+    <div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Create a fake External event</span>
+<span class="k">using</span> <span class="p">(</span><span class="kt">var</span> <span class="n">stream</span> <span class="p">=</span> <span class="n">_store</span><span class="p">.</span><span class="nf">OpenStream</span><span class="p">(</span><span class="n">entityId</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="kt">int</span><span class="p">.</span><span class="n">MaxValue</span><span class="p">))</span>
+<span class="p">{</span>
+ <span class="n">stream</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="k">new</span> <span class="n">EventMessage</span> <span class="p">{</span> <span class="n">Body</span> <span class="p">=</span> <span class="n">entity</span> <span class="p">});</span>
+ <span class="n">stream</span><span class="p">.</span><span class="nf">CommitChanges</span><span class="p">(</span><span class="n">Guid</span><span class="p">.</span><span class="nf">NewGuid</span><span class="p">());</span>
+<span class="p">}</span>
+</code></pre></div>    </div>
+  </li>
+  <li>Now I create the snapshot with the data enveloped into the specific Memento class
+    <div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Save Snapshot from entity's Memento image</span>
+<span class="n">_store</span><span class="p">.</span><span class="n">Advanced</span><span class="p">.</span><span class="nf">AddSnapshot</span><span class="p">(</span><span class="k">new</span> <span class="nf">Snapshot</span><span class="p">(</span><span class="n">entity</span><span class="p">.</span><span class="n">Id</span><span class="p">.</span><span class="nf">ToString</span><span class="p">(),</span> <span class="n">entity</span><span class="p">.</span><span class="n">Version</span><span class="p">,</span> <span class="n">entity</span><span class="p">));</span>
+</code></pre></div>    </div>
+  </li>
+  <li>At the end I create the IDs-mapping
+    <div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Save Ids mapping</span>
+<span class="n">_db</span><span class="p">.</span><span class="n">IdMaps</span><span class="p">.</span><span class="n">Map</span><span class="p">&lt;</span><span class="n">ToDoList</span><span class="p">&gt;(</span><span class="n">list</span><span class="p">.</span><span class="n">Id</span><span class="p">,</span> <span class="n">entityId</span><span class="p">);</span>
+</code></pre></div>    </div>
+  </li>
+</ol>
+
+<h2 id="some-consideration">Some consideration</h2>
+<p>What I like in this approach is that I kept completely separated the domain from the migration logic. Nothing about the migration is present in the Domain or Command/Query stacks. That’s the point in my opinion: the migration is the beginning of all of your existent ARs, but it’s not relevant in terms of business-domain, it’s more like a technical step, so this kind of code should not pollute the business code (wait, I’m not saying that migrations do not involve some domain expert’s decisions, but these are decisions that generally do not impact on the normal life of the ARs after the migrations).</p>
+
+<p>Migration are very complex projects, often realized by specific teams, sometimes different from business dev teams. In my experience I worked in dev team on some very complex domains, while some different teams were working on a migration project on the same production environments (think about a multi-tenant environment with a roll-out plan for different “go-live”). I didn’t know their logic; they didn’t know mine; but the database structure and its rules were in common in the same time. Keep the code separated was a must.
+Again, these are my thoughts and my solution; I’m not sure is the best and I’m open to learn from your experience and ideas.</p>
+
+<p>If you are interested, all the code is present <a href="https://github.com/williamverdolini/CQRS-ES-Todos/tree/master/Todo.Legacy.Migration" target="_blank">in the repository under a specific project (Todo.Legacy.Migration)</a>, but DI’s container specific installer and migration invocation, but just for the sake of this training journey.
+All the code about migration is visible in this <a href="https://github.com/williamverdolini/CQRS-ES-Todos/commit/0aa05acbe6d773ad2fa97af4faa9b1c8693b8103" target="_blank">commit</a>.</p>
+
+<h3 id="update---20102014">Update - 20/10/2014</h3>
+<p>Recently I’ve reviewed the last part of the migration strategy, cause I wanted to make some practices about <a href="/2014/10/21/cqrses-neventstore-event-upconversion" target="_blank">Events-Replaying</a>. Actually doing some experimentation about replaying the committed events (necessary for example to recreate a <a href="http://cqrs.wikidot.com/doc:projection" target="_blank">projection</a>) allowed me to figure out an important error in this strategy: <strong>the migration event should be able to be listened (and rebuilt) by the read-model event-handlers</strong>.</p>
+
+<p>That’s why if we didn’t have an event-handler for that external events, the projection was not able to be correctly rebuilt, because it couldn’t re-create the migrated entities and, afterwards, the next committed events could not be correctly handled. 
+So the migration logic was be modified in two points:</p>
+
+<ol>
+<li><a href="https://github.com/williamverdolini/CQRS-ES-Todos/blob/master/Todo.Domain/Messages/Events/ToDoEvents.cs#L134" target="_blank">Memento Propagation events</a>: migration events were added in order to propagate the initial state of the Aggregates (from migration) to read model projection.
+</li>
+<li><a href="https://github.com/williamverdolini/CQRS-ES-Todos/blob/master/Todo.QueryStack/Logic/EventHandlers/ToDoEventHandlers.cs#L162-L211" target="_blank">Memento Propagation events Handlers</a>: the handlers were added. Some migration logic could be managed in these handlers, but I prefer to keep migration logic in Migration manager and leave in these handlers only the logic necessary for rebuilding task.
+</li>
+</ol>
+
+<p>here the <a href="https://github.com/williamverdolini/CQRS-ES-Todos/blob/master/Todo.Legacy.Migration/Logic/LegacySnapshotCreator.cs#L48-L88" target="_blank">code for the reviewed migration strategy</a>.</p>
+
+<h3 id="some-final-consideration">Some final consideration</h3>
+<p>The last update introduced something that could be considered an “open point”. The migration event should carry a complete state of the AggregateRoots from previous system. To do that I consider reasonable to use a Memento as the event’s single property.
+This kind of event could be named to give a full meaning of the Migration process (i.e. MigratedToDoListeEvent) or with a more general name, that could be used also for maintenance purposes. For example to introduce some data-fix (cause bugs or whatever) in the events sequence.
+This is something like a “return to CRUD logic”, using events without a specific domain meaning, but…it’s convenient, and easy, and just for devops team.</p>

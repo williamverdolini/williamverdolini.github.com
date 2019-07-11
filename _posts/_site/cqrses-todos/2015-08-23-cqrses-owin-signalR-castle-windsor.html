@@ -1,0 +1,64 @@
+<p>So far so good.</p>
+
+<p>The implementation described in the <a href="/2015/08/22/cqrses-ui-notification/" target="_blank">previous article</a> has some “hidden initialization matters”. Let me explain: I use Global.asax to initialize much of my modules. To provide more details:</p>
+
+<ol>
+  <li>I initialize <a href="https://github.com/castleproject/Windsor" target="_blank">Castle.Windsor</a> in Global.asax to leverage the HttpApplication events, i.e. I create the WindosrContainer instance in the Application_Start and in the Dispose phase I can dispose the container as explained in <a href="http://blog.ploeh.dk/2012/10/03/DependencyInjectioninASP.NETWebAPIwithCastleWindsor/" target="_blank">this article</a></li>
+  <li>In the same Application_Start phase I can configure all the other components, passing the DI container everywhere it’s necessary, i.e. in the NeventStore installer or in the WebApi CompositionRoot, as described in the same article above</li>
+  <li>In addition to this I set-up SignalR that is written as an <a href="http://owin.org/" target="_blank">Owin</a> compatible module, so we need to create our Owin middleware/module. To know more detail about that, you can read <a href="http://weblogs.asp.net/pglavich/owin-katana-and-getting-started " target="_blank">this good introduction</a></li>
+</ol>
+
+<p>So, where is the problem?</p>
+
+<p>How if we need the Dependency Injection in SignalR?</p>
+
+<p>As explained in <a href="http://www.asp.net/signalr/overview/advanced/dependency-injection" target="_blank">this tutorial</a>, we’ll use this kind of initial Hub configuration, that’s configuring a dependency resolver specific of the container you are using:</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">Startup</span>
+<span class="p">{</span>
+	<span class="k">public</span> <span class="k">void</span> <span class="nf">Configuration</span><span class="p">(</span><span class="n">IAppBuilder</span> <span class="n">app</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="n">app</span><span class="p">.</span><span class="nf">MapSignalR</span><span class="p">(</span><span class="k">new</span> <span class="n">HubConfiguration</span>
+		<span class="p">{</span>
+			<span class="n">Resolver</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">WindsorDependencyResolver</span><span class="p">(</span><span class="n">container</span><span class="p">)</span>
+		<span class="p">});</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>With Castle.Windsor, the resolver looks like the following</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">WindsorDependencyResolver</span> <span class="p">:</span> <span class="n">DefaultDependencyResolver</span>
+<span class="p">{</span>
+	<span class="k">private</span> <span class="k">readonly</span> <span class="n">IWindsorContainer</span> <span class="n">_container</span><span class="p">;</span>
+
+	<span class="k">public</span> <span class="nf">WindsorDependencyResolver</span><span class="p">(</span><span class="n">IWindsorContainer</span> <span class="n">container</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="k">if</span> <span class="p">(</span><span class="n">container</span> <span class="p">==</span> <span class="k">null</span><span class="p">)</span>
+			<span class="k">throw</span> <span class="k">new</span> <span class="nf">ArgumentNullException</span><span class="p">(</span><span class="s">"container"</span><span class="p">);</span>
+
+		<span class="n">_container</span> <span class="p">=</span> <span class="n">container</span><span class="p">;</span>
+	<span class="p">}</span>
+
+	<span class="k">public</span> <span class="k">override</span> <span class="kt">object</span> <span class="nf">GetService</span><span class="p">(</span><span class="n">Type</span> <span class="n">serviceType</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="k">return</span> <span class="n">_container</span><span class="p">.</span><span class="n">Kernel</span><span class="p">.</span><span class="nf">HasComponent</span><span class="p">(</span><span class="n">serviceType</span><span class="p">)</span> <span class="p">?</span> <span class="n">_container</span><span class="p">.</span><span class="nf">Resolve</span><span class="p">(</span><span class="n">serviceType</span><span class="p">)</span> <span class="p">:</span> <span class="k">base</span><span class="p">.</span><span class="nf">GetService</span><span class="p">(</span><span class="n">serviceType</span><span class="p">);</span>
+	<span class="p">}</span>
+
+	<span class="k">public</span> <span class="k">override</span> <span class="n">IEnumerable</span><span class="p">&lt;</span><span class="kt">object</span><span class="p">&gt;</span> <span class="nf">GetServices</span><span class="p">(</span><span class="n">Type</span> <span class="n">serviceType</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="k">return</span> <span class="n">_container</span><span class="p">.</span><span class="n">Kernel</span><span class="p">.</span><span class="nf">HasComponent</span><span class="p">(</span><span class="n">serviceType</span><span class="p">)</span> <span class="p">?</span> <span class="n">_container</span><span class="p">.</span><span class="nf">ResolveAll</span><span class="p">(</span><span class="n">serviceType</span><span class="p">).</span><span class="n">Cast</span><span class="p">&lt;</span><span class="kt">object</span><span class="p">&gt;()</span> <span class="p">:</span> <span class="k">base</span><span class="p">.</span><span class="nf">GetServices</span><span class="p">(</span><span class="n">serviceType</span><span class="p">);</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>But where does the <strong>container</strong> come from in the Hub configuration?</p>
+
+<p>That is the point. As explained above, the DI container needs to be disposed and to do that I’ve created and disposed the container in Global.asax (honestly I haven’t figured out how to dispose the DI container in Owin configurations); so I can see two main options:</p>
+
+<ol>
+  <li>Create a public static reference to the container in Global.asax, as explained in <a href="http://blog.tuannguyena.com/pass-data-from-hosting-environment-to-owin-startup-class/" target="_blank">this article</a>. I don’t like too much this solution, because it forces to expose your DI container as public throughout all the application, and probably it’s not what you want to do.</li>
+  <li>Move all the initialization logic from Global.asax.Application_Start to Owin middleware configuration, forgetting about disposing (manually) the container</li>
+</ol>
+
+<p>Are there better ways?</p>

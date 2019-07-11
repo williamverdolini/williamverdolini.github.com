@@ -1,0 +1,89 @@
+<p>I did the same steps of <a href="/2014/12/04/umbup-718-manual-upgrade/" target="_blank">previous prototype</a>, now with Umbraco version 6.2.4. And the database schema and data comparison gave a simpler result (I’ve stroke out the differences):</p>
+
+<p><strong>Tables with modified structure (DL:5)</strong><br />
+[cmsContentType]<br />
+[cmsContentTypeAllowedContentType]<br />
+[cmsContentVersion]<br />
+<del>[cmsDataType]</del><br />
+[cmsPropertyType]<br />
+<del>[cmsTagRelationship]</del><br />
+<br /></p>
+
+<p><strong>Tables removed  (DL:4)</strong><br />
+<del>[cmsMacroPropertyType]</del><br />
+[cmsTab]<br />
+[umbracoApp]<br />
+[umbracoAppTree]<br />
+<br /></p>
+
+<p><strong>Tables with modified field’s names or field’s SQL types  (DL:3)</strong><br />
+[cmsMacroProperty]<br />
+[cmsTags]<br />
+<del>[cmsTask]</del><br />
+[cmsTaskType]<br />
+[umbracoLanguage]<br />
+[umbracoNode]<br />
+[cmsDataType]<br />
+[umbracoUser]<br />
+[umbracoUser2NodeNotify]<br />
+[umbracoUser2NodePermission]<br />
+<br /></p>
+
+<p><strong>Tables with modified indexes and other constraints (DL:2)</strong><br />
+[cmsContent]<br />
+[cmsDocumentType]<br />
+[cmsMember2MemberGroup]<br />
+[cmsMemberType]<br />
+[cmsPreviewXml]<br />
+[umbracoUserLogins]<br />
+[cmsTagRelationship]<br />
+[cmsTask]<br />
+[umbracoUserLogins]<br />
+<br /></p>
+
+<p><strong>Tables with modified field’s collations  (DL:1)</strong><br />
+[cmsContentXml]<br />
+[cmsDataTypePreValues]<br />
+[cmsDictionary]<br />
+[cmsDocument]<br />
+[cmsLanguageText]<br />
+[cmsMacro]<br />
+[cmsMember]<br />
+[cmsPropertyData]<br />
+[cmsStylesheet]<br />
+[cmsStylesheetProperty]<br />
+[cmsTemplate]<br />
+[umbracoDomains]<br />
+[umbracoLog]<br />
+[umbracoRelation]<br />
+[umbracoRelationType]<br />
+[umbracoUser2app]<br />
+[umbracoUserLogins]<br />
+<br /></p>
+
+<h2 id="upgrade-tables-with-modified-structure">Upgrade Tables with modified structure</h2>
+
+<h3 id="upgrade-contenttype-tables">Upgrade ContentType tables</h3>
+<p>Same script as previous prototype (prototype’s failure is never a complete failure)</p>
+
+<h3 id="upgrade-propertytype-tables">Upgrade PropertyType tables</h3>
+<p>Same script as previous prototype</p>
+
+<h3 id="upgrade-propertydata-tables">Upgrade PropertyData tables</h3>
+<p>cmsPropertyData Table contains data about macro and document property’s content. What I’ve figured out is that the new release want that the property data (in XML format) has a specific format, like the following:</p>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="err">&lt;</span>?UMBRACO_MACRO macroAlias="......"  otherProperties="values" /&gt;
+</code></pre></div></div>
+
+<p>with properties name in <a href="http://en.wikipedia.org/wiki/CamelCase" target="_blank">CamelCase</a> format.</p>
+
+<p>To achieve this result I’ve used <a href="https://gist.github.com/williamverdolini/5c369b4d620405033b35#file-dev_cms_4-7_update_to_umbraco_6-2-4-gist-sql-L2663-L2822" target="_blank">Regular Expressions in OLE Automation Procedures</a>, inside SQL Server.</p>
+
+<h2 id="removed-tables">Removed Tables</h2>
+<p>Besides cmsTab, other two tables have been removed: umbracoApp, umbracoAppTree. For these there is no migration script, because they became two different config files: <a href="http://our.umbraco.org/documentation/extending-umbraco/section-trees/" target="_blank">application.config and trees.config</a>.
+Initially I’ve created a T-SQL procedure to write the XML files from the legacy tables, but the informations were few and, at the end, I made some manual corrections.</p>
+
+<h2 id="the-complete-upgrade-script">The complete Upgrade script</h2>
+<p>I’ve published <a href="https://gist.github.com/williamverdolini/5c369b4d620405033b35" target="_blank">the complete SQL script to upgrade from Umbraco version 4.7.1 to version 6.2.4</a>.
+It uses <a href="http://msdn.microsoft.com/library/ms162773.aspx" target="_blank">sqlcmd</a>, but it’s quite easy to remove that variables.</p>
+

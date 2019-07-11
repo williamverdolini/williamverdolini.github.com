@@ -1,0 +1,165 @@
+<p><a href="http://automapper.org/" target="_blank">Automapper</a> is a nice discovery because it’s very easy to setup, it’s very easy to use and the code generated is very neat. <em>Yeah!</em></p>
+
+<p>What Automapper is?</p>
+
+<blockquote>
+  <p>A convention-based object-object mapper.</p>
+</blockquote>
+
+<p>That’s all, but it’s enough!</p>
+
+<p>It can unload your code of all that boring, heavy, “often-business-less” code to map one object to another type of object. Never more without (or without something similar).</p>
+
+<h2 id="configuration">Configuration</h2>
+
+<p>Setting up Automapper using an <a href="https://en.wikipedia.org/wiki/Inversion_of_control" target="_blank">IoC container</a> as <a href="https://github.com/castleproject/Windsor/blob/master/docs/README.md" target="_blank">Castle.Windsor</a> is very simple. Here are the steps I followed:</p>
+
+<ol>
+  <li>Configure the mapper searching and adding all the <a href="https://github.com/AutoMapper/AutoMapper/wiki/Configuration" target="_blank">Automapper profiles</a>.
+    <div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// In Global.asax or during App Initialization</span>
+<span class="k">protected</span> <span class="k">void</span> <span class="nf">Application_Start</span><span class="p">()</span>
+<span class="p">{</span>
+ <span class="p">...</span>
+ <span class="c1">// Configure all AutoMapper Profiles</span>
+ <span class="n">AutoMapperConfig</span><span class="p">.</span><span class="nf">Configure</span><span class="p">();</span>
+<span class="p">}</span>
+<span class="k">public</span> <span class="k">static</span> <span class="k">class</span> <span class="nc">AutoMapperConfig</span>
+<span class="p">{</span>
+ <span class="k">public</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">Configure</span><span class="p">()</span>
+ <span class="p">{</span>
+     <span class="n">Mapper</span><span class="p">.</span><span class="nf">Initialize</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="nf">GetConfiguration</span><span class="p">(</span><span class="n">Mapper</span><span class="p">.</span><span class="n">Configuration</span><span class="p">));</span>
+ <span class="p">}</span>
+ <span class="k">private</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">GetConfiguration</span><span class="p">(</span><span class="n">IConfiguration</span> <span class="n">configuration</span><span class="p">)</span>
+ <span class="p">{</span>
+     <span class="kt">var</span> <span class="n">profiles</span> <span class="p">=</span> <span class="k">typeof</span><span class="p">(</span><span class="n">SearchInputMapperProfile</span><span class="p">).</span><span class="n">Assembly</span><span class="p">.</span><span class="nf">GetTypes</span><span class="p">().</span><span class="nf">Where</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="k">typeof</span><span class="p">(</span><span class="n">Profile</span><span class="p">).</span><span class="nf">IsAssignableFrom</span><span class="p">(</span><span class="n">x</span><span class="p">));</span>
+     <span class="k">foreach</span> <span class="p">(</span><span class="kt">var</span> <span class="n">profile</span> <span class="k">in</span> <span class="n">profiles</span><span class="p">)</span>
+     <span class="p">{</span>
+         <span class="n">configuration</span><span class="p">.</span><span class="nf">AddProfile</span><span class="p">(</span><span class="n">Activator</span><span class="p">.</span><span class="nf">CreateInstance</span><span class="p">(</span><span class="n">profile</span><span class="p">)</span> <span class="k">as</span> <span class="n">Profile</span><span class="p">);</span>
+     <span class="p">}</span>
+ <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>    </div>
+  </li>
+  <li>Configure the DI container in order to use a factory method to instantiate the mapper engine everywhere you need it.
+    <div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">MappersInstaller</span> <span class="p">:</span> <span class="n">IWindsorInstaller</span>
+<span class="p">{</span>
+ <span class="k">public</span> <span class="k">void</span> <span class="nf">Install</span><span class="p">(</span><span class="n">Castle</span><span class="p">.</span><span class="n">Windsor</span><span class="p">.</span><span class="n">IWindsorContainer</span> <span class="n">container</span><span class="p">,</span> <span class="n">Castle</span><span class="p">.</span><span class="n">MicroKernel</span><span class="p">.</span><span class="n">SubSystems</span><span class="p">.</span><span class="n">Configuration</span><span class="p">.</span><span class="n">IConfigurationStore</span> <span class="n">store</span><span class="p">)</span>
+ <span class="p">{</span>
+     <span class="n">container</span><span class="p">.</span><span class="nf">Register</span><span class="p">(</span><span class="n">Component</span><span class="p">.</span><span class="n">For</span><span class="p">&lt;</span><span class="n">IMappingEngine</span><span class="p">&gt;().</span><span class="nf">UsingFactoryMethod</span><span class="p">(()</span> <span class="p">=&gt;</span> <span class="n">Mapper</span><span class="p">.</span><span class="n">Engine</span><span class="p">));</span>
+ <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>    </div>
+  </li>
+</ol>
+
+<h2 id="usage">Usage</h2>
+<p>After the above configuration, using Automapper is very straightforward. Mapping is a cross-cutting concern, so you could use both in Controllers or in Business Logic or in Repository as well.</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">CatalogController</span> <span class="p">:</span> <span class="n">ApiController</span>
+<span class="p">{</span>
+	<span class="k">private</span> <span class="k">readonly</span> <span class="n">ICatalogWorker</span> <span class="n">worker</span><span class="p">;</span>
+	<span class="k">private</span> <span class="k">readonly</span> <span class="n">IMappingEngine</span> <span class="n">mapper</span><span class="p">;</span>
+
+	<span class="k">public</span> <span class="nf">CatalogController</span><span class="p">(</span><span class="n">ICatalogWorker</span> <span class="n">worker</span><span class="p">,</span> <span class="n">IMappingEngine</span> <span class="n">mapper</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="n">Contract</span><span class="p">.</span><span class="n">Requires</span><span class="p">&lt;</span><span class="n">ArgumentNullException</span><span class="p">&gt;(</span><span class="n">worker</span> <span class="p">!=</span> <span class="k">null</span><span class="p">,</span> <span class="s">"worker"</span><span class="p">);</span>
+		<span class="n">Contract</span><span class="p">.</span><span class="n">Requires</span><span class="p">&lt;</span><span class="n">ArgumentNullException</span><span class="p">&gt;(</span><span class="n">mapper</span> <span class="p">!=</span> <span class="k">null</span><span class="p">,</span> <span class="s">"mapper"</span><span class="p">);</span>
+		<span class="k">this</span><span class="p">.</span><span class="n">worker</span> <span class="p">=</span> <span class="n">worker</span><span class="p">;</span>
+		<span class="k">this</span><span class="p">.</span><span class="n">mapper</span> <span class="p">=</span> <span class="n">mapper</span><span class="p">;</span>
+	<span class="p">}</span>
+
+	<span class="p">[</span><span class="n">HttpPost</span><span class="p">]</span>
+	<span class="k">public</span> <span class="k">async</span> <span class="n">Task</span><span class="p">&lt;</span><span class="n">IHttpActionResult</span><span class="p">&gt;</span> <span class="nf">Search</span><span class="p">(</span><span class="n">SearchInputViewModel</span> <span class="n">searchInput</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="k">try</span>
+		<span class="p">{</span>
+			<span class="n">SearchInput</span> <span class="n">input</span> <span class="p">=</span> <span class="n">mapper</span><span class="p">.</span><span class="n">Map</span><span class="p">&lt;</span><span class="n">SearchInputViewModel</span><span class="p">,</span> <span class="n">SearchInput</span><span class="p">&gt;(</span><span class="n">searchInput</span><span class="p">);</span>
+			<span class="k">return</span> <span class="nf">Ok</span><span class="p">(</span><span class="k">await</span> <span class="n">worker</span><span class="p">.</span><span class="nf">Search</span><span class="p">(</span><span class="n">input</span><span class="p">));</span>
+		<span class="p">}</span>
+		<span class="k">catch</span> <span class="p">(</span><span class="n">Exception</span> <span class="n">ex</span><span class="p">)</span>
+		<span class="p">{</span>
+			<span class="k">return</span> <span class="nf">BadRequest</span><span class="p">(</span><span class="n">ex</span><span class="p">.</span><span class="n">Message</span><span class="p">);</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="profiles">Profiles</h2>
+<p>Profiles are the classes where the mapping logic resides. They could be very simple if the property names of source and target classes are exactly the same (or <a href="https://github.com/AutoMapper/AutoMapper/wiki/Flattening" target="_blank">flattened</a>). This is very useful when you have to work with <a href="https://en.wikipedia.org/wiki/Data_transfer_object" target="_blank">DTO</a>.</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">SearchInputMapperProfile</span> <span class="p">:</span> <span class="n">Profile</span>
+<span class="p">{</span>
+	<span class="k">protected</span> <span class="k">override</span> <span class="k">void</span> <span class="nf">Configure</span><span class="p">()</span>
+	<span class="p">{</span>
+		<span class="n">CreateMap</span><span class="p">&lt;</span><span class="n">SearchInputViewModel</span><span class="p">,</span> <span class="n">SearchInput</span><span class="p">&gt;();</span>
+		<span class="n">CreateMap</span><span class="p">&lt;</span><span class="n">FilteredProductAttributeViewModel</span><span class="p">,</span> <span class="n">FilteredProductAttribute</span><span class="p">&gt;();</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>But it’s very flexible and allow you to define your own mapping logic, e.g. using <a href="https://github.com/AutoMapper/AutoMapper/wiki/Custom-value-resolvers" target="_blank">custom value Resolver</a>.</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">OrderedSearchInputMapperProfile</span> <span class="p">:</span> <span class="n">Profile</span>
+<span class="p">{</span>
+	<span class="k">protected</span> <span class="k">override</span> <span class="k">void</span> <span class="nf">Configure</span><span class="p">()</span>
+	<span class="p">{</span>
+		<span class="n">CreateMap</span><span class="p">&lt;</span><span class="n">OrderedSearchInput</span><span class="p">,</span> <span class="n">SearchInput</span><span class="p">&gt;()</span>
+			<span class="p">.</span><span class="nf">ForMember</span><span class="p">(</span><span class="n">dest</span> <span class="p">=&gt;</span> <span class="n">dest</span><span class="p">.</span><span class="n">Attributes</span><span class="p">,</span> <span class="n">opt</span> <span class="p">=&gt;</span> <span class="n">opt</span><span class="p">.</span><span class="n">ResolveUsing</span><span class="p">&lt;</span><span class="n">AttributesResolver</span><span class="p">&gt;());</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">class</span> <span class="nc">AttributesResolver</span> <span class="p">:</span> <span class="n">ValueResolver</span><span class="p">&lt;</span><span class="n">OrderedSearchInput</span><span class="p">,</span> <span class="n">IList</span><span class="p">&lt;</span><span class="n">FilteredProductAttribute</span><span class="p">&gt;&gt;</span>
+<span class="p">{</span>
+	<span class="k">protected</span> <span class="k">override</span> <span class="n">IList</span><span class="p">&lt;</span><span class="n">FilteredProductAttribute</span><span class="p">&gt;</span> <span class="nf">ResolveCore</span><span class="p">(</span><span class="n">OrderedSearchInput</span> <span class="n">source</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="kt">var</span> <span class="n">attributes</span> <span class="p">=</span> <span class="k">new</span> <span class="n">List</span><span class="p">&lt;</span><span class="n">FilteredProductAttribute</span><span class="p">&gt;();</span>
+		<span class="k">foreach</span> <span class="p">(</span><span class="kt">string</span> <span class="n">key</span> <span class="k">in</span> <span class="n">source</span><span class="p">.</span><span class="n">Attributes</span><span class="p">.</span><span class="nf">Select</span><span class="p">(</span><span class="n">o</span> <span class="p">=&gt;</span> <span class="n">o</span><span class="p">.</span><span class="n">Key</span><span class="p">).</span><span class="nf">Distinct</span><span class="p">())</span>
+		<span class="p">{</span>
+			<span class="n">attributes</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="k">new</span> <span class="n">FilteredProductAttribute</span> <span class="p">{</span> 
+				<span class="n">Key</span> <span class="p">=</span> <span class="n">key</span><span class="p">,</span>
+				<span class="n">Values</span> <span class="p">=</span> <span class="n">source</span><span class="p">.</span><span class="n">Attributes</span><span class="p">.</span><span class="nf">Where</span><span class="p">(</span><span class="n">s</span> <span class="p">=&gt;</span> <span class="n">s</span><span class="p">.</span><span class="n">Key</span><span class="p">.</span><span class="nf">Equals</span><span class="p">(</span><span class="n">key</span><span class="p">)).</span><span class="nf">Select</span><span class="p">(</span><span class="n">o</span> <span class="p">=&gt;</span> <span class="n">o</span><span class="p">.</span><span class="n">Value</span><span class="p">).</span><span class="nf">ToList</span><span class="p">()</span>
+			<span class="p">});</span>
+		<span class="p">}</span>
+		<span class="k">return</span> <span class="n">attributes</span><span class="p">;</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>or using a complete custom mapping like this:</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">SearchResponseMapperProfile</span> <span class="p">:</span> <span class="n">Profile</span>
+<span class="p">{</span>
+	<span class="k">protected</span> <span class="k">override</span> <span class="k">void</span> <span class="nf">Configure</span><span class="p">()</span>
+	<span class="p">{</span>
+		<span class="n">CreateMap</span><span class="p">&lt;</span><span class="n">ISearchResponse</span><span class="p">&lt;</span><span class="n">Product</span><span class="p">&gt;,</span> <span class="n">IList</span><span class="p">&lt;</span><span class="n">ProductAttributeAggregation</span><span class="p">&gt;&gt;()</span>
+			<span class="p">.</span><span class="nf">ConvertUsing</span><span class="p">(</span><span class="n">mappingFunction</span><span class="p">);</span>
+	<span class="p">}</span>
+
+	<span class="n">Func</span><span class="p">&lt;</span><span class="n">ISearchResponse</span><span class="p">&lt;</span><span class="n">Product</span><span class="p">&gt;,</span> <span class="n">IList</span><span class="p">&lt;</span><span class="n">ProductAttributeAggregation</span><span class="p">&gt;&gt;</span> <span class="n">mappingFunction</span> <span class="p">=</span> <span class="p">(</span><span class="n">source</span><span class="p">)</span> <span class="p">=&gt;</span>
+	<span class="p">{</span>
+		<span class="kt">var</span> <span class="n">bucket</span> <span class="p">=</span> <span class="n">source</span><span class="p">.</span><span class="n">Aggs</span><span class="p">.</span><span class="nf">Children</span><span class="p">(</span><span class="s">"multi_properties"</span><span class="p">);</span>
+
+		<span class="n">IList</span><span class="p">&lt;</span><span class="n">ProductAttributeAggregation</span><span class="p">&gt;</span> <span class="n">aggs</span> <span class="p">=</span> <span class="k">new</span> <span class="n">List</span><span class="p">&lt;</span><span class="n">ProductAttributeAggregation</span><span class="p">&gt;();</span>
+		<span class="k">foreach</span> <span class="p">(</span><span class="kt">var</span> <span class="n">item</span> <span class="k">in</span> <span class="n">bucket</span><span class="p">.</span><span class="nf">Terms</span><span class="p">(</span><span class="s">"all_properties"</span><span class="p">).</span><span class="n">Items</span><span class="p">)</span>
+		<span class="p">{</span>
+			<span class="n">IList</span><span class="p">&lt;</span><span class="n">ValueCount</span><span class="p">&gt;</span> <span class="n">values</span> <span class="p">=</span> <span class="k">new</span> <span class="n">List</span><span class="p">&lt;</span><span class="n">ValueCount</span><span class="p">&gt;();</span>
+
+			<span class="k">foreach</span> <span class="p">(</span><span class="kt">var</span> <span class="n">val</span> <span class="k">in</span> <span class="n">item</span><span class="p">.</span><span class="nf">Terms</span><span class="p">(</span><span class="s">"all_values_per_property"</span><span class="p">).</span><span class="n">Items</span><span class="p">)</span>
+			<span class="p">{</span>
+				<span class="n">values</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="k">new</span> <span class="n">ValueCount</span>
+				<span class="p">{</span>
+					<span class="n">Value</span> <span class="p">=</span> <span class="n">val</span><span class="p">.</span><span class="n">Key</span><span class="p">,</span>
+					<span class="n">Count</span> <span class="p">=</span> <span class="n">val</span><span class="p">.</span><span class="n">DocCount</span>
+				<span class="p">});</span>
+			<span class="p">}</span>
+
+			<span class="n">aggs</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="k">new</span> <span class="n">ProductAttributeAggregation</span>
+			<span class="p">{</span>
+				<span class="n">Key</span> <span class="p">=</span> <span class="n">item</span><span class="p">.</span><span class="n">Key</span><span class="p">,</span>
+				<span class="n">Values</span> <span class="p">=</span> <span class="n">values</span>
+			<span class="p">});</span>
+		<span class="p">}</span>
+		<span class="k">return</span> <span class="n">aggs</span><span class="p">;</span>
+	<span class="p">};</span>
+<span class="p">}</span>
+</code></pre></div></div>

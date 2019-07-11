@@ -1,0 +1,232 @@
+<p>So, ElastiSearch is very fast.<br />
+I was very excited to develop the multi-attribute feature starting with ElasticSearch. Here are the key points during this development:</p>
+
+<h2 id="from-json-to-nest">From JSON to NEST</h2>
+<p><a href="http://nest.azurewebsites.net/" target="_blank">NEST</a> is one of the official .NET clients for ElasticSearch; 
+NEST is a high level client with a lot of functionalities, like a <a href="http://nest.azurewebsites.net/nest/writing-queries.html#query-dsl" target="_blank">strongly typed query DSL</a>. 
+In particular, in the NEST docs, you can read:</p>
+
+<blockquote>
+  <p>NEST offers you several possibilities [to write queries]…</p>
+
+  <p><strong>Raw Strings</strong>: Although not preferred, many folks like to build their own JSON strings and just pass that along.</p>
+
+  <p><strong>Query DSL</strong>: The preferred way to write queries, since it gives you alot of cool features [Fluent Syntax, Conditionless Queries, etc.]</p>
+</blockquote>
+
+<p>I like fluent syntax, but…I don’t know how to say…probably I like a little less now.
+After some tries and attempts, I’ve finally rewritten the <a href="/2015/06/24/fastcatalog-sql2elastic/#query-for-all-product-attributes-175ms" target="_blank">Query for all product attributes</a>, here it is:</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">var</span> <span class="n">result</span> <span class="p">=</span> <span class="k">await</span> <span class="n">client</span><span class="p">.</span><span class="n">SearchAsync</span><span class="p">&lt;</span><span class="n">Product</span><span class="p">&gt;(</span><span class="n">s</span> <span class="p">=&gt;</span> <span class="n">s</span>
+	<span class="p">.</span><span class="nf">Aggregations</span><span class="p">(</span><span class="n">a</span> <span class="p">=&gt;</span> <span class="n">a</span>
+	<span class="p">.</span><span class="nf">Nested</span><span class="p">(</span><span class="s">"multi_properties"</span><span class="p">,</span> <span class="n">n</span> <span class="p">=&gt;</span> <span class="n">n</span>
+		<span class="p">.</span><span class="nf">Path</span><span class="p">(</span><span class="s">"attributes"</span><span class="p">)</span>
+		<span class="p">.</span><span class="nf">Aggregations</span><span class="p">(</span><span class="n">na</span> <span class="p">=&gt;</span> <span class="n">na</span>
+			<span class="p">.</span><span class="nf">Terms</span><span class="p">(</span><span class="s">"all_properties"</span><span class="p">,</span> <span class="n">f</span> <span class="p">=&gt;</span> <span class="n">f</span>
+				<span class="p">.</span><span class="nf">Field</span><span class="p">(</span><span class="n">o</span> <span class="p">=&gt;</span> <span class="n">o</span><span class="p">.</span><span class="n">Attributes</span><span class="p">.</span><span class="nf">First</span><span class="p">().</span><span class="n">Key</span><span class="p">)</span>
+				<span class="p">.</span><span class="nf">Size</span><span class="p">(</span><span class="m">0</span><span class="p">)</span>
+				<span class="p">.</span><span class="nf">Aggregations</span><span class="p">(</span><span class="n">nna</span> <span class="p">=&gt;</span> <span class="n">nna</span>
+					<span class="p">.</span><span class="nf">Terms</span><span class="p">(</span><span class="s">"all_values_per_property"</span><span class="p">,</span> <span class="n">nf</span> <span class="p">=&gt;</span> <span class="n">nf</span>
+						<span class="p">.</span><span class="nf">Field</span><span class="p">(</span><span class="n">o</span> <span class="p">=&gt;</span> <span class="n">o</span><span class="p">.</span><span class="n">Attributes</span><span class="p">.</span><span class="nf">First</span><span class="p">().</span><span class="n">Value</span><span class="p">)</span>
+						<span class="p">.</span><span class="nf">Size</span><span class="p">(</span><span class="m">10</span><span class="p">)))</span>
+			<span class="p">)))</span>
+	<span class="p">));</span>
+</code></pre></div></div>
+
+<p>After looking at it again and again it seems not as so bad as at first, but it was not easy to rewrite the JSON query. But what is not neglectable for me is the 
+readability: honestly it’s not easy to understand at glance this kind of query, so it’s important that you and your team will gain strong skills with Elastic fluent Syntax 
+in order to minimize this aspect for maintenance and evolution.</p>
+
+<p>Thinking again about that it’s not so different than learning SQL for the first time.</p>
+
+<p>The following is the NEST query for <a href="/2015/06/24/fastcatalog-sql2elastic/#query-for-product-attributes-filtered-by-some-attribute-values--6ms" target="_blank">Query for product attributes filtered by some attribute values</a>:</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">var</span> <span class="n">result</span> <span class="p">=</span> <span class="k">await</span> <span class="n">client</span><span class="p">.</span><span class="n">SearchAsync</span><span class="p">&lt;</span><span class="n">Product</span><span class="p">&gt;(</span><span class="n">s</span> <span class="p">=&gt;</span> <span class="n">s</span>
+	<span class="p">.</span><span class="nf">Aggregations</span><span class="p">(</span><span class="n">a</span> <span class="p">=&gt;</span> <span class="n">a</span>
+	<span class="p">.</span><span class="nf">Nested</span><span class="p">(</span><span class="s">"multi_properties"</span><span class="p">,</span> <span class="n">n</span> <span class="p">=&gt;</span> <span class="n">n</span>
+		<span class="p">.</span><span class="nf">Path</span><span class="p">(</span><span class="s">"attributes"</span><span class="p">)</span>
+		<span class="p">.</span><span class="nf">Aggregations</span><span class="p">(</span><span class="n">na</span> <span class="p">=&gt;</span> <span class="n">na</span>
+			<span class="p">.</span><span class="nf">Terms</span><span class="p">(</span><span class="s">"all_properties"</span><span class="p">,</span> <span class="n">f</span> <span class="p">=&gt;</span> <span class="n">f</span>
+				<span class="p">.</span><span class="nf">Field</span><span class="p">(</span><span class="n">o</span> <span class="p">=&gt;</span> <span class="n">o</span><span class="p">.</span><span class="n">Attributes</span><span class="p">.</span><span class="nf">First</span><span class="p">().</span><span class="n">Key</span><span class="p">)</span>
+				<span class="p">.</span><span class="nf">Size</span><span class="p">(</span><span class="m">0</span><span class="p">)</span>
+				<span class="p">.</span><span class="nf">Aggregations</span><span class="p">(</span><span class="n">nna</span> <span class="p">=&gt;</span> <span class="n">nna</span>
+					<span class="p">.</span><span class="nf">Terms</span><span class="p">(</span><span class="s">"all_values_per_property"</span><span class="p">,</span> <span class="n">nf</span> <span class="p">=&gt;</span> <span class="n">nf</span>
+						<span class="p">.</span><span class="nf">Field</span><span class="p">(</span><span class="n">o</span> <span class="p">=&gt;</span> <span class="n">o</span><span class="p">.</span><span class="n">Attributes</span><span class="p">.</span><span class="nf">First</span><span class="p">().</span><span class="n">Value</span><span class="p">)</span>
+						<span class="p">.</span><span class="nf">Size</span><span class="p">(</span><span class="m">0</span><span class="p">))))))</span>
+	<span class="p">)</span>
+	<span class="p">.</span><span class="nf">Query</span><span class="p">(</span><span class="n">q</span> <span class="p">=&gt;</span>
+		<span class="p">(</span><span class="n">input</span> <span class="p">!=</span> <span class="k">null</span> <span class="p">?</span> <span class="nf">GetInputQueryContainer</span><span class="p">(</span><span class="n">input</span><span class="p">)</span> <span class="p">:</span> <span class="n">q</span><span class="p">.</span><span class="nf">MatchAll</span><span class="p">())</span>
+	<span class="p">));</span>
+	
+<span class="p">...</span>
+	
+<span class="k">private</span> <span class="n">QueryContainer</span> <span class="nf">GetInputQueryContainer</span><span class="p">(</span><span class="n">SearchInput</span> <span class="n">input</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="n">Contract</span><span class="p">.</span><span class="n">Requires</span><span class="p">&lt;</span><span class="n">ArgumentNullException</span><span class="p">&gt;(</span><span class="n">input</span> <span class="p">!=</span> <span class="k">null</span><span class="p">,</span> <span class="s">"SearchInput"</span><span class="p">);</span>
+
+	<span class="n">IList</span><span class="p">&lt;</span><span class="n">FilterContainer</span><span class="p">&gt;</span> <span class="n">filters</span> <span class="p">=</span> <span class="k">new</span> <span class="n">List</span><span class="p">&lt;</span><span class="n">FilterContainer</span><span class="p">&gt;</span> <span class="p">{</span> <span class="p">};</span>
+	<span class="k">foreach</span> <span class="p">(</span><span class="kt">var</span> <span class="n">attribute</span> <span class="k">in</span> <span class="n">input</span><span class="p">.</span><span class="n">Attributes</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="n">filters</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="k">new</span> <span class="n">FilterDescriptor</span><span class="p">&lt;</span><span class="n">Product</span><span class="p">&gt;().</span><span class="nf">Nested</span><span class="p">(</span><span class="n">n</span> <span class="p">=&gt;</span> <span class="n">n</span><span class="p">.</span><span class="nf">Path</span><span class="p">(</span><span class="s">"attributes"</span><span class="p">)</span>
+			<span class="p">.</span><span class="nf">Query</span><span class="p">(</span><span class="n">q</span> <span class="p">=&gt;</span> <span class="n">q</span>
+				<span class="p">.</span><span class="nf">Bool</span><span class="p">(</span><span class="n">qq</span> <span class="p">=&gt;</span> <span class="n">qq</span>
+					<span class="p">.</span><span class="nf">Must</span><span class="p">(</span><span class="n">iq</span> <span class="p">=&gt;</span>
+					<span class="p">{</span>
+						<span class="n">QueryContainer</span> <span class="n">query</span> <span class="p">=</span> <span class="k">null</span><span class="p">;</span>
+						<span class="n">query</span> <span class="p">&amp;=</span> <span class="n">q</span><span class="p">.</span><span class="nf">Term</span><span class="p">(</span><span class="n">t</span> <span class="p">=&gt;</span> <span class="n">t</span><span class="p">.</span><span class="n">Attributes</span><span class="p">.</span><span class="nf">First</span><span class="p">().</span><span class="n">Key</span><span class="p">,</span> <span class="n">attribute</span><span class="p">.</span><span class="n">Key</span><span class="p">);</span>
+						<span class="n">query</span> <span class="p">&amp;=</span> <span class="n">q</span><span class="p">.</span><span class="nf">Terms</span><span class="p">(</span><span class="n">t</span> <span class="p">=&gt;</span> <span class="n">t</span><span class="p">.</span><span class="n">Attributes</span><span class="p">.</span><span class="nf">First</span><span class="p">().</span><span class="n">Value</span><span class="p">,</span> <span class="n">attribute</span><span class="p">.</span><span class="n">Values</span><span class="p">);</span>
+						<span class="k">return</span> <span class="n">query</span><span class="p">;</span>
+					<span class="p">})</span>
+		 <span class="p">))));</span>
+	<span class="p">}</span>
+
+	<span class="kt">var</span> <span class="n">termQuery</span> <span class="p">=</span> <span class="n">Query</span><span class="p">&lt;</span><span class="n">Product</span><span class="p">&gt;</span>
+		<span class="p">.</span><span class="nf">Filtered</span><span class="p">(</span><span class="n">f</span> <span class="p">=&gt;</span> <span class="n">f</span>
+			<span class="p">.</span><span class="nf">Filter</span><span class="p">(</span><span class="n">ff</span> <span class="p">=&gt;</span> <span class="n">ff</span>
+				<span class="p">.</span><span class="nf">Bool</span><span class="p">(</span><span class="n">fff</span> <span class="p">=&gt;</span> <span class="n">fff</span>
+					<span class="p">.</span><span class="nf">Must</span><span class="p">(</span><span class="n">filters</span><span class="p">.</span><span class="nf">ToArray</span><span class="p">())))</span>
+		<span class="p">);</span>
+	<span class="k">return</span> <span class="n">termQuery</span><span class="p">;</span>
+<span class="p">}</span>	
+</code></pre></div></div>
+
+<p>In doing this step I looked a lot for some on-line resources and documentation to improve my understanding and to write more readable queries, 
+but usually I’ve only found the JSON queries, not queries in fluent syntax…
+I think that it’s common spend the most of your time writing fluent NEST queries when you work with ElasticSearch and NEST.</p>
+
+<h2 id="multi-value-per-attribute">Multi-value per attribute</h2>
+
+<p>This is the capability to select more than one value for the same product attribute, e.g. if you want to search for all the TVs with 40-inch or 42-inch size. To hit the goal, when your user selects an attribute value, the application should update all other attributes values (and counters), keeping the values of the selected attribute unchanged, in order to allow the user to choose other values for the same  attribute.</p>
+
+<p>You can achieve this in different ways, for example using data stored in session memory. In general it could be a good solution, but what if 
+your requisite is “let the user to share with its friends the link of the research of TVs, in order to get some useful advices”? 
+Using the session memory is not a good option because the user and its friends will not share the same session memory and the final result will not be the same.</p>
+
+<p>Another way is to use a <strong>double query</strong> solution, that means that the search service will execute two very similar queries in sequence:</p>
+
+<ul>
+  <li>the first one is done to get the values for the last attribute selected.</li>
+  <li>the second one is done to get all other attributes values.</li>
+</ul>
+
+<p>The key word in this sentence is “<em>last</em>”, because it implies that <strong>the search criteria are sent to the search service in an ordered sequence</strong>. This allows the search service to execute the first query without the criteria about the last selected attribute and get all the values for that attribute and, consequently, to execute the second query with all the search criteria.</p>
+
+<p>Here is the search service <em>skeleton</em> (highlighted the two queries):</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">async</span> <span class="n">Task</span><span class="p">&lt;</span><span class="n">SearchResult</span><span class="p">&gt;</span> <span class="nf">Search</span><span class="p">(</span><span class="n">SearchInput</span> <span class="n">input</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="n">SearchResult</span> <span class="n">result</span><span class="p">;</span>
+	<span class="k">if</span> <span class="p">(</span><span class="n">input</span> <span class="p">!=</span> <span class="k">null</span> <span class="p">&amp;</span> <span class="n">input</span><span class="p">.</span><span class="n">Attributes</span><span class="p">.</span><span class="n">Count</span> <span class="p">&gt;</span> <span class="m">0</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="n">SearchInput</span> <span class="n">clonedInput</span> <span class="p">=</span> <span class="n">mapper</span><span class="p">.</span><span class="n">Map</span><span class="p">&lt;</span><span class="n">SearchInput</span><span class="p">,</span> <span class="n">SearchInput</span><span class="p">&gt;(</span><span class="n">input</span><span class="p">);</span>
+		<span class="n">FilteredProductAttribute</span> <span class="n">lastAttribute</span> <span class="p">=</span> <span class="n">clonedInput</span><span class="p">.</span><span class="n">Attributes</span><span class="p">.</span><span class="nf">Last</span><span class="p">();</span>
+		<span class="n">clonedInput</span><span class="p">.</span><span class="n">Attributes</span><span class="p">.</span><span class="nf">Remove</span><span class="p">(</span><span class="n">lastAttribute</span><span class="p">);</span>
+
+		<span class="n">SearchResult</span> <span class="n">first</span> <span class="p">=</span> <span class="k">await</span> <span class="nf">SingleSearch</span><span class="p">(</span><span class="n">clonedInput</span><span class="p">);</span>
+		<span class="kt">var</span> <span class="n">previousAggregation</span> <span class="p">=</span> <span class="n">first</span><span class="p">.</span><span class="n">Aggregations</span><span class="p">.</span><span class="nf">First</span><span class="p">(</span><span class="n">a</span> <span class="p">=&gt;</span> <span class="n">a</span><span class="p">.</span><span class="n">Key</span><span class="p">.</span><span class="nf">Equals</span><span class="p">(</span><span class="n">lastAttribute</span><span class="p">.</span><span class="n">Key</span><span class="p">));</span>
+
+		<span class="n">result</span> <span class="p">=</span> <span class="k">await</span> <span class="nf">SingleSearch</span><span class="p">(</span><span class="n">input</span><span class="p">);</span>
+		<span class="n">result</span><span class="p">.</span><span class="n">Aggregations</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="n">previousAggregation</span><span class="p">);</span>
+	<span class="p">}</span>
+	<span class="k">else</span>
+	<span class="p">{</span>
+		<span class="n">result</span> <span class="p">=</span> <span class="k">await</span> <span class="nf">SingleSearch</span><span class="p">(</span><span class="n">input</span><span class="p">);</span>
+	<span class="p">}</span>
+	<span class="n">result</span><span class="p">.</span><span class="n">Aggregations</span> <span class="p">=</span> <span class="n">result</span><span class="p">.</span><span class="n">Aggregations</span><span class="p">.</span><span class="nf">OrderBy</span><span class="p">(</span><span class="n">a</span> <span class="p">=&gt;</span> <span class="n">a</span><span class="p">.</span><span class="n">Key</span><span class="p">).</span><span class="nf">ToList</span><span class="p">();</span>
+
+	<span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="search-service-optimization">Search Service “Optimization”</h2>
+<p><strong>Disclaimer</strong>: <a href="https://github.com/williamverdolini/FastCatalog" target="_blank">all the code published</a> is not ready for production, because a lot of aspects are missing (validation, pagination, logging, etc.), and, based on that, talking about optimization is quite naïve. 
+Anyway I want to share some thoughts and my point of view (if you have some other solution please share).</p>
+
+<p>Executing two aggregation queries in sequence could be a pain, so it’s important to evaluate some optimization. Here the list from where I began.</p>
+
+<h2 id="only-counts">Only Counts</h2>
+<p>ElasticSearch allow to execute aggregation queries and return only the counter values, without the first page of documents. This avoids executing the fetch phase of the search making the request more efficient.</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">var</span> <span class="n">result</span> <span class="p">=</span> <span class="k">await</span> <span class="n">client</span><span class="p">.</span><span class="n">SearchAsync</span><span class="p">&lt;</span><span class="n">Product</span><span class="p">&gt;(</span><span class="n">s</span> <span class="p">=&gt;</span> <span class="n">s</span>
+	<span class="p">.</span><span class="nf">SearchType</span><span class="p">(</span><span class="n">Elasticsearch</span><span class="p">.</span><span class="n">Net</span><span class="p">.</span><span class="n">SearchType</span><span class="p">.</span><span class="n">Count</span><span class="p">);</span>
+	<span class="p">.</span><span class="nf">Aggregations</span><span class="p">(</span><span class="n">a</span> <span class="p">=&gt;</span> <span class="n">a</span>
+	<span class="p">...</span>
+	<span class="p">);</span>
+</code></pre></div></div>
+
+<h3 id="caching">Caching</h3>
+<p>ElasticSearch allow to cache your query.</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">var</span> <span class="n">result</span> <span class="p">=</span> <span class="k">await</span> <span class="n">client</span><span class="p">.</span><span class="n">SearchAsync</span><span class="p">&lt;</span><span class="n">Product</span><span class="p">&gt;(</span><span class="n">s</span> <span class="p">=&gt;</span> <span class="n">s</span>
+	<span class="p">.</span><span class="nf">QueryCache</span><span class="p">(</span><span class="k">true</span><span class="p">)</span>
+	<span class="p">.</span><span class="nf">Aggregations</span><span class="p">(</span><span class="n">a</span> <span class="p">=&gt;</span> <span class="n">a</span>
+	<span class="p">...</span>
+	<span class="p">);</span>
+</code></pre></div></div>
+
+<p>In official docs you can read:</p>
+
+<blockquote>
+  <p>the query cache will only cache the results of search requests where ?search_type=count, so it will not cache hits, but it will cache hits.total, aggregations, and suggestions.</p>
+</blockquote>
+
+<p>and keep in mind that:</p>
+
+<blockquote>
+  <p>The whole JSON body is used as the cache key. This means that if the JSON changes — for instance if keys are output in a different order — then the cache key will not be recognised.</p>
+</blockquote>
+
+<h3 id="excludeinclude-results">Exclude/Include results</h3>
+<p>Controversial topic about optimization. ElasticSearch allow to filter the aggregation result using exclude/include regEx pattern, as shown in the code:</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">async</span> <span class="n">Task</span><span class="p">&lt;</span><span class="n">SearchResult</span><span class="p">&gt;</span> <span class="nf">Search</span><span class="p">(</span><span class="n">SearchInput</span> <span class="n">input</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="k">private</span> <span class="k">async</span> <span class="n">Task</span><span class="p">&lt;</span><span class="n">SearchResult</span><span class="p">&gt;</span> <span class="nf">SingleSearch</span><span class="p">(</span><span class="n">SearchInput</span> <span class="n">input</span><span class="p">,</span> <span class="kt">bool</span> <span class="n">onlyCount</span> <span class="p">=</span> <span class="k">false</span><span class="p">,</span> <span class="kt">string</span> <span class="n">toExclude</span> <span class="p">=</span> <span class="k">null</span><span class="p">,</span> <span class="kt">string</span> <span class="n">toInclude</span> <span class="p">=</span> <span class="k">null</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="kt">var</span> <span class="n">result</span> <span class="p">=</span> <span class="k">await</span> <span class="n">client</span><span class="p">.</span><span class="n">SearchAsync</span><span class="p">&lt;</span><span class="n">Product</span><span class="p">&gt;(</span><span class="n">s</span> <span class="p">=&gt;</span>
+	<span class="p">{</span>
+		<span class="n">SearchDescriptor</span><span class="p">&lt;</span><span class="n">Product</span><span class="p">&gt;</span> <span class="n">search</span> <span class="p">=</span> <span class="k">new</span> <span class="n">SearchDescriptor</span><span class="p">&lt;</span><span class="n">Product</span><span class="p">&gt;();</span>
+		<span class="k">if</span> <span class="p">(</span><span class="n">onlyCount</span><span class="p">)</span>
+			<span class="n">search</span><span class="p">.</span><span class="nf">SearchType</span><span class="p">(</span><span class="n">Elasticsearch</span><span class="p">.</span><span class="n">Net</span><span class="p">.</span><span class="n">SearchType</span><span class="p">.</span><span class="n">Count</span><span class="p">);</span>
+
+		<span class="n">search</span>
+			<span class="p">.</span><span class="nf">QueryCache</span><span class="p">(</span><span class="k">true</span><span class="p">)</span>
+			<span class="p">.</span><span class="nf">Aggregations</span><span class="p">(</span><span class="n">a</span> <span class="p">=&gt;</span> <span class="n">a</span>
+			<span class="p">.</span><span class="nf">Nested</span><span class="p">(</span><span class="n">MULTI_PROPERTIES_QUERY</span><span class="p">,</span> <span class="n">n</span> <span class="p">=&gt;</span> <span class="n">n</span>
+				<span class="p">.</span><span class="nf">Path</span><span class="p">(</span><span class="n">PATH_ATTRIBUTES</span><span class="p">)</span>
+				<span class="p">.</span><span class="nf">Aggregations</span><span class="p">(</span><span class="n">na</span> <span class="p">=&gt;</span> <span class="n">na</span>
+					<span class="p">.</span><span class="nf">Terms</span><span class="p">(</span><span class="n">ALL_PROPERTIES_AGG</span><span class="p">,</span> <span class="n">f</span> <span class="p">=&gt;</span>
+					<span class="p">{</span>
+						<span class="n">TermsAggregationDescriptor</span><span class="p">&lt;</span><span class="n">Product</span><span class="p">&gt;</span> <span class="n">propertyAgg</span> <span class="p">=</span> <span class="k">new</span> <span class="n">TermsAggregationDescriptor</span><span class="p">&lt;</span><span class="n">Product</span><span class="p">&gt;();</span>
+						<span class="n">propertyAgg</span>
+							<span class="p">.</span><span class="nf">Field</span><span class="p">(</span><span class="n">o</span> <span class="p">=&gt;</span> <span class="n">o</span><span class="p">.</span><span class="n">Attributes</span><span class="p">.</span><span class="nf">First</span><span class="p">().</span><span class="n">Key</span><span class="p">)</span>
+							<span class="p">.</span><span class="nf">Size</span><span class="p">(</span><span class="m">0</span><span class="p">)</span>
+							<span class="p">.</span><span class="nf">Aggregations</span><span class="p">(</span><span class="n">nna</span> <span class="p">=&gt;</span> <span class="n">nna</span>
+								<span class="p">.</span><span class="nf">Terms</span><span class="p">(</span><span class="n">ALL_VALUES_PER_PROPERTY</span><span class="p">,</span> <span class="n">nf</span> <span class="p">=&gt;</span> <span class="n">nf</span>
+									<span class="p">.</span><span class="nf">Field</span><span class="p">(</span><span class="n">o</span> <span class="p">=&gt;</span> <span class="n">o</span><span class="p">.</span><span class="n">Attributes</span><span class="p">.</span><span class="nf">First</span><span class="p">().</span><span class="n">Value</span><span class="p">)</span>
+									<span class="p">.</span><span class="nf">Size</span><span class="p">(</span><span class="m">0</span><span class="p">)));</span>
+						<span class="k">if</span> <span class="p">(!</span><span class="kt">string</span><span class="p">.</span><span class="nf">IsNullOrEmpty</span><span class="p">(</span><span class="n">toExclude</span><span class="p">))</span>
+							<span class="n">propertyAgg</span><span class="p">.</span><span class="nf">Exclude</span><span class="p">(</span><span class="n">toExclude</span><span class="p">,</span> <span class="s">"LITERAL"</span><span class="p">);</span>
+						<span class="k">if</span> <span class="p">(!</span><span class="kt">string</span><span class="p">.</span><span class="nf">IsNullOrEmpty</span><span class="p">(</span><span class="n">toInclude</span><span class="p">))</span>
+							<span class="n">propertyAgg</span><span class="p">.</span><span class="nf">Include</span><span class="p">(</span><span class="n">toInclude</span><span class="p">,</span> <span class="s">"LITERAL"</span><span class="p">);</span>
+						<span class="k">return</span> <span class="n">propertyAgg</span><span class="p">;</span>
+					<span class="p">})))</span>
+			<span class="p">)</span>
+			<span class="p">.</span><span class="nf">Query</span><span class="p">(</span><span class="n">q</span> <span class="p">=&gt;</span>
+					<span class="p">(</span><span class="n">input</span> <span class="p">!=</span> <span class="k">null</span> <span class="p">?</span> <span class="nf">GetInputQueryContainer</span><span class="p">(</span><span class="n">input</span><span class="p">)</span> <span class="p">:</span> <span class="n">q</span><span class="p">.</span><span class="nf">MatchAll</span><span class="p">())</span>
+			<span class="p">);</span>
+		<span class="k">return</span> <span class="n">search</span><span class="p">;</span>
+	<span class="p">});</span>
+
+	<span class="k">return</span> <span class="nf">MapToSearchResult</span><span class="p">(</span><span class="n">result</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>It’s a controversial point because probably it’s the opposite of an optimization because these options force Elastic to do some extra controls/actions on the result applying regex on it. I’ve not done some comparisons and I’ve not found anything about it in the documentation to prove that, but I suppose so…anyway the whole search time is always fast and the service logic cleaner.</p>
+
+<h2 id="some-chat">Some chat</h2>
+<p>During the last period I’ve had the opportunity to ask to some <a href="http://dev.marche.it/" target="_blank">DevMarche guys</a> their opinion about ElasticSearch. 
+Their enlightened opinion was that ElasticSearch 
+is a very good product, one of the best product of the last period and probably is the best choice if you need to develop some “aggregation-based” application.
+This is particularly true in this proof of concept: a multi-attribute Search is <em>definitely</em> an “aggregation-based” application and that is proved very well by 
+the differences of the <a href="/2015/06/22/fastcatalog-sql2mongo/#queries" target="_blank">queries time seen with MongoDb</a> and with <a href="/2015/06/24/fastcatalog-sql2elastic/#queries" target="_blank">ElastiSearch</a>.</p>

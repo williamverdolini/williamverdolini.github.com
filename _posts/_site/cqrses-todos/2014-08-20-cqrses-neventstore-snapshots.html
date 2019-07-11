@@ -1,0 +1,102 @@
+<p>What is a Snapshot and when is it useful?</p>
+
+<blockquote>Snapshots are performance optimization and can often be ignored altogether except in the systems where latency is mission critical. Snapshots are a materialization of the stream at a certain revision. The snapshot can then be consumed by an aggregate to bring it back to a known state before applying all events which have occurred since the snapshot. Snapshots, if required, should be handled either by an outside process or, on a minimum, a different thread to avoid blocking main message processing<h6><a href="https://github.com/NEventStore/NEventStore/wiki/Architectural-Overview" target="_blank">NEventStore wiki</a></h6></blockquote>
+
+<p>This is a training project, so I want to see the very basics for implementing some snapshooting policies. That’s what I’ve done in 5 moves:</p>
+
+<ol>
+  <li>Implement IMemento interface for my aggregates
+    <div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">ToDoListMemento</span> <span class="p">:</span> <span class="n">IMemento</span>
+<span class="p">{</span>
+ <span class="k">public</span> <span class="n">Guid</span> <span class="n">Id</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+ <span class="k">public</span> <span class="kt">int</span> <span class="n">Version</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+ <span class="k">public</span> <span class="kt">string</span> <span class="n">Title</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">private</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+ <span class="k">public</span> <span class="kt">string</span> <span class="n">Description</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">private</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+ <span class="k">public</span> <span class="nf">ToDoListMemento</span><span class="p">(</span><span class="n">Guid</span> <span class="n">id</span><span class="p">,</span> <span class="kt">int</span> <span class="n">version</span><span class="p">,</span> <span class="kt">string</span> <span class="n">title</span><span class="p">,</span> <span class="kt">string</span> <span class="n">description</span><span class="p">)</span>
+ <span class="p">{</span>
+     <span class="n">Id</span> <span class="p">=</span> <span class="n">id</span><span class="p">;</span>
+     <span class="n">Version</span> <span class="p">=</span> <span class="n">version</span><span class="p">;</span>
+     <span class="n">Title</span> <span class="p">=</span> <span class="n">title</span><span class="p">;</span>
+     <span class="n">Description</span> <span class="p">=</span> <span class="n">description</span><span class="p">;</span>
+ <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>    </div>
+  </li>
+  <li>Create a factory method of these memento objects in my aggregates
+    <div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="n">IMemento</span> <span class="nf">CreateMemento</span><span class="p">()</span>
+<span class="p">{</span>
+ <span class="k">return</span> <span class="k">new</span> <span class="nf">ToDoListMemento</span><span class="p">(</span><span class="n">Id</span><span class="p">,</span> <span class="n">Version</span><span class="p">,</span> <span class="n">Title</span><span class="p">,</span> <span class="n">Description</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>    </div>
+  </li>
+  <li>Create a service that has the snapshooting policies. The snapshots are added to the NEventStore through its method. The following are very naïve code, but it’s ok for this exercise
+    <div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">abstract</span> <span class="k">class</span> <span class="nc">SnapshotCreator</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;</span> <span class="k">where</span> <span class="n">T</span> <span class="p">:</span> <span class="n">AggregateBase</span>
+<span class="p">{</span>
+ <span class="k">private</span> <span class="k">readonly</span> <span class="n">IRepository</span> <span class="n">_repo</span><span class="p">;</span>
+ <span class="k">private</span> <span class="k">readonly</span> <span class="n">IStoreEvents</span> <span class="n">_store</span><span class="p">;</span>
+ <span class="k">public</span> <span class="nf">SnapshotCreator</span><span class="p">(</span><span class="n">IRepository</span> <span class="n">repo</span><span class="p">,</span> <span class="n">IStoreEvents</span> <span class="n">store</span><span class="p">)</span>
+ <span class="p">{</span>
+     <span class="n">Contract</span><span class="p">.</span><span class="n">Requires</span><span class="p">&lt;</span><span class="n">ArgumentNullException</span><span class="p">&gt;(</span><span class="n">repo</span> <span class="p">!=</span> <span class="k">null</span><span class="p">,</span> <span class="s">"repo"</span><span class="p">);</span>
+     <span class="n">Contract</span><span class="p">.</span><span class="n">Requires</span><span class="p">&lt;</span><span class="n">ArgumentNullException</span><span class="p">&gt;(</span><span class="n">store</span> <span class="p">!=</span> <span class="k">null</span><span class="p">,</span> <span class="s">"repo"</span><span class="p">);</span>
+     <span class="n">_repo</span> <span class="p">=</span> <span class="n">repo</span><span class="p">;</span>
+     <span class="n">_store</span> <span class="p">=</span> <span class="n">store</span><span class="p">;</span>
+ <span class="p">}</span>
+ <span class="c1">/// &lt;summary&gt;</span>
+ <span class="c1">/// Save new Aggregate Snapshot depending on specific Snapshoting policies.</span>
+ <span class="c1">/// NOTE: In real context, it should be an external thread save snapshots, without interfere with online process</span>
+ <span class="c1">/// &lt;/summary&gt;</span>
+ <span class="c1">/// &lt;param name="command"&gt;&lt;/param&gt;</span>
+ <span class="k">public</span> <span class="k">void</span> <span class="nf">SaveSnapShot</span><span class="p">(</span><span class="n">Command</span> <span class="n">command</span><span class="p">)</span>
+ <span class="p">{</span>
+     <span class="n">T</span> <span class="n">list</span> <span class="p">=</span> <span class="n">_repo</span><span class="p">.</span><span class="n">GetById</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;(</span><span class="n">command</span><span class="p">.</span><span class="n">Id</span><span class="p">);</span>
+     <span class="c1">// Create a Snapshot every 1000 version of the Aggregate</span>
+     <span class="c1">// NOTE: very nasty logic/implementation, but just for training purposes</span>
+     <span class="k">if</span> <span class="p">(</span><span class="n">list</span><span class="p">.</span><span class="n">Version</span> <span class="p">%</span> <span class="m">1000</span> <span class="p">==</span> <span class="m">0</span><span class="p">)</span>
+         <span class="n">_store</span><span class="p">.</span><span class="n">Advanced</span><span class="p">.</span><span class="nf">AddSnapshot</span><span class="p">(</span><span class="k">new</span> <span class="nf">Snapshot</span><span class="p">(</span><span class="n">list</span><span class="p">.</span><span class="n">Id</span><span class="p">.</span><span class="nf">ToString</span><span class="p">(),</span> <span class="n">list</span><span class="p">.</span><span class="n">Version</span><span class="p">,</span> <span class="p">((</span><span class="n">IMementoCreator</span><span class="p">)</span><span class="n">list</span><span class="p">).</span><span class="nf">CreateMemento</span><span class="p">()));</span>
+ <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>    </div>
+  </li>
+  <li>Add the snapshooting policy to the process (after events commit is done). That’s no code for production, but it helps to understand how a real snapshooting policy could be realized
+    <div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#if DEBUG
+</span><span class="k">foreach</span> <span class="p">(</span><span class="kt">var</span> <span class="n">handler</span> <span class="k">in</span> <span class="n">handlers</span><span class="p">)</span>
+<span class="p">{</span>
+ <span class="c1">// If commandHandler is a SnapshotCreator it handles the snapshot persistence.</span>
+ <span class="c1">// NOTE: Very unrealistic Snapshooting policy/implementation, but it's just for training purposes</span>
+ <span class="k">if</span> <span class="p">(</span><span class="n">handler</span><span class="p">.</span><span class="nf">GetType</span><span class="p">().</span><span class="nf">IsSubclassOf</span><span class="p">(</span><span class="k">typeof</span><span class="p">(</span><span class="n">SnapshotCreator</span><span class="p">&lt;&gt;)))</span>
+ <span class="p">{</span>
+     <span class="n">MethodInfo</span> <span class="n">method</span> <span class="p">=</span> <span class="n">handler</span><span class="p">.</span><span class="nf">GetType</span><span class="p">().</span><span class="nf">GetMethod</span><span class="p">(</span><span class="s">"SaveSnapShot"</span><span class="p">);</span>
+     <span class="n">method</span><span class="p">.</span><span class="nf">Invoke</span><span class="p">(</span><span class="n">handler</span><span class="p">,</span> <span class="k">new</span> <span class="kt">object</span><span class="p">[]</span> <span class="p">{</span> <span class="n">message</span> <span class="p">});</span>
+ <span class="p">}</span>
+<span class="p">}</span>
+<span class="cp">#endif
+</span></code></pre></div>    </div>
+  </li>
+  <li>Finally, modify the AggregateFactory to create a new Aggregate instance from last snapshot retrieved by NEventStore
+    <div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">AggregateFactory</span> <span class="p">:</span> <span class="n">IConstructAggregates</span>
+<span class="p">{</span>
+ <span class="k">public</span> <span class="n">IAggregate</span> <span class="nf">Build</span><span class="p">(</span><span class="n">Type</span> <span class="n">type</span><span class="p">,</span> <span class="n">Guid</span> <span class="n">id</span><span class="p">,</span> <span class="n">IMemento</span> <span class="n">snapshot</span><span class="p">)</span>
+ <span class="p">{</span>
+     <span class="n">Type</span> <span class="n">typeParam</span> <span class="p">=</span> <span class="n">snapshot</span> <span class="p">!=</span> <span class="k">null</span> <span class="p">?</span> <span class="n">snapshot</span><span class="p">.</span><span class="nf">GetType</span><span class="p">()</span> <span class="p">:</span> <span class="k">typeof</span><span class="p">(</span><span class="n">Guid</span><span class="p">);</span>
+     <span class="kt">object</span><span class="p">[]</span> <span class="n">paramArray</span><span class="p">;</span>
+     <span class="k">if</span> <span class="p">(</span><span class="n">snapshot</span> <span class="p">!=</span> <span class="k">null</span><span class="p">)</span>
+         <span class="n">paramArray</span> <span class="p">=</span> <span class="k">new</span> <span class="kt">object</span><span class="p">[]</span> <span class="p">{</span> <span class="n">snapshot</span> <span class="p">};</span>
+     <span class="k">else</span>
+         <span class="n">paramArray</span> <span class="p">=</span> <span class="k">new</span> <span class="kt">object</span><span class="p">[]</span> <span class="p">{</span> <span class="n">id</span> <span class="p">};</span>
+     <span class="n">ConstructorInfo</span> <span class="n">constructor</span> <span class="p">=</span> <span class="n">type</span><span class="p">.</span><span class="nf">GetConstructor</span><span class="p">(</span>
+         <span class="n">BindingFlags</span><span class="p">.</span><span class="n">NonPublic</span> <span class="p">|</span> <span class="n">BindingFlags</span><span class="p">.</span><span class="n">Instance</span><span class="p">,</span> <span class="k">null</span><span class="p">,</span> <span class="k">new</span> <span class="n">Type</span><span class="p">[]</span> <span class="p">{</span> <span class="n">typeParam</span> <span class="p">},</span> <span class="k">null</span><span class="p">);</span>
+     <span class="k">if</span> <span class="p">(</span><span class="n">constructor</span> <span class="p">==</span> <span class="k">null</span><span class="p">)</span>
+     <span class="p">{</span>
+         <span class="k">throw</span> <span class="k">new</span> <span class="nf">InvalidOperationException</span><span class="p">(</span>
+             <span class="kt">string</span><span class="p">.</span><span class="nf">Format</span><span class="p">(</span><span class="s">"Aggregate {0} cannot be created: constructor with proper parameter not provided"</span><span class="p">,</span>
+                           <span class="n">type</span><span class="p">.</span><span class="n">Name</span><span class="p">));</span>
+     <span class="p">}</span>
+     <span class="k">return</span> <span class="n">constructor</span><span class="p">.</span><span class="nf">Invoke</span><span class="p">(</span><span class="n">paramArray</span><span class="p">)</span> <span class="k">as</span> <span class="n">IAggregate</span><span class="p">;</span>
+ <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>    </div>
+  </li>
+</ol>
+
+<p>All the code is published on <a href="https://github.com/williamverdolini/CQRS-ES-Todos/commit/d4e0435e0808e925ee7c0b543b992b980e512b8a" target="_blank">this commit</a>.</p>
+

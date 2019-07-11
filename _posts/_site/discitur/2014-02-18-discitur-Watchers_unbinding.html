@@ -1,0 +1,160 @@
+<!-- Markup JSON-LD generato da Assistente per il markup dei dati strutturati di Google. -->
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Article",
+  "name" : "Angular.js Watchers Unbinding (Performance)",
+  "author" : {
+    "@type" : "Person",
+    "name" : "William Verdolini"
+  },
+  "datePublished" : "2014-02-10",
+  "articleSection" : [ "Digest Cycle", "Angular.js", "watchers", "$$watchers", "$watch", "Performance" ],
+  "url" : "http://williamverdolini.github.io/2014/02/18/discitur-Watchers_unbinding/"
+}
+</script>
+
+<p>Uno degli aspetti che  mi “inquieta”
+di più di Angular.js è il processo di dirty checking. Ad ogni ciclo di $digest
+Angular controlla tutti i watcher registrati per verificare se le informazioni
+sono cambiate rispetto al ciclo precedente e se intercetta qualche cambiamento
+esegue il listener associato. Il controllo viene fatto sui dati primitivi,
+quindi nel caso sia messo sotto binding un array o  un oggetto vengono controllate tuttele
+proprietà dell’oggetto per verificare gli eventuali cambiamenti.</p>
+
+<p>Inoltre, per tutte le espressioni bindate nel view, Angular crea un watcher
+che viene “spazzolato” ad ogni ciclo per verificare se ci siano cambiamenti da
+recepire.</p>
+
+<p>Un buon articolo che approfondisce il tema è il seguente: <a href="http://blog.bguiz.com/post/57373805814/accessors-vs-dirty-checking-in-javascript-frameworks" target="_blank">http://blog.bguiz.com/post/57373805814/accessors-vs-dirty-checking-in-javascript-frameworks</a></p>
+
+<p>Su applicazioni di grandi dimensioni (o destinate a diventarlo) questo
+check potrebbe creare problemi di performance. Per migliorare le performance si
+può eliminare dai watchers quelli che non contengono contenuto veramente dinamico.
+Nella mia architettura, un buon numero di questi watchers è quello creato per
+la gestione delle labels. Tutti i miei controller contengono, nello scope, un
+oggetto <em>labels</em> che contiene tutte le
+etichette visualizzate in pagina.</p>
+
+<p>Per queste etichette, una volta inizializzato il controller e fatto il
+primo binding sulla View, non servirebbe più fare ulteriori controlli e
+potrebbero essere staccate dal dirty-checking eliminando/annullando il watcher
+associato.</p>
+
+<p>Ho provato due metodi per realizzare questo obiettivo:</p>
+
+<p> </p>
+
+<h3 id="metodo-custom">Metodo custom</h3>
+
+<p>Ho sperimentato il metodo più per scopi didattici/architetturali che per
+applicarlo nell’app, anche perché il risultato non è molto elegante. Ecco il
+codice inserito in uno dei miei controller:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">_watchers</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">_detachStaticWatchers</span> <span class="o">=</span> <span class="nx">$scope</span><span class="p">.</span><span class="nx">$watch</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// first digest cycle: do nothing to populate view</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">_watchers</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">_watchers</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="c1">// second digest cycle: remove static watchers</span>
+    <span class="k">else</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">_reLabels</span> <span class="o">=</span> <span class="sr">/^{</span><span class="se">\{</span><span class="sr">labels</span><span class="se">\.</span><span class="sr">.*}</span><span class="se">\}</span><span class="sr">/</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="nx">$scope</span><span class="p">.</span><span class="nx">$$watchers</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">--</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">$scope</span><span class="p">.</span><span class="nx">$$watchers</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">exp</span> <span class="o">&amp;&amp;</span>
+                <span class="nx">$scope</span><span class="p">.</span><span class="nx">$$watchers</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">exp</span><span class="p">.</span><span class="nx">exp</span> <span class="o">&amp;&amp;</span>
+                <span class="nx">_reLabels</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">$scope</span><span class="p">.</span><span class="nx">$$watchers</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">exp</span><span class="p">.</span><span class="nx">exp</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nx">$scope</span><span class="p">.</span><span class="nx">$$watchers</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="c1">// detach this watch</span>
+        <span class="nx">_detachStaticWatchers</span><span class="p">();</span>
+    <span class="p">}</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">$scope</span><span class="p">.</span><span class="nx">$$watchers</span><span class="p">.</span><span class="nx">length</span><span class="p">);</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">$scope</span><span class="p">.</span><span class="nx">$$watchers</span><span class="p">);</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<p>gli aspetti teorici utilizzati sono:</p>
+
+<ul>
+  <li><em>un
+   watcher senza listener viene eseguito ad ogni ciclo di digest</em>. Grazie a questa particolarità, registro un
+   watcher che ha lo scopo di spegnere i watcher delle espressioni statiche</li>
+  <li><em>un
+   watcher restitusce una funzione che, se invocata senza parametri, elimina
+   il watcher stesso</em>. Con
+   questo principio, alla fine dell’elaborazione il watcher stesso si elimina
+   da solo</li>
+</ul>
+
+<p> </p>
+
+<p>Come si può vedere, il risultato è triviale (faccio fare un “giro” di
+digest per assicurarmi di renderizzare le label ed al successivo giro elimino i
+watchers statici), ma funzionante (ecco un printscreen del mio log):</p>
+
+<p><img src="/images/discitur/watchers_unbinding.png" /></p>
+
+<p>Il codice è brutto (non ci piove),
+ma opportunamente rivisto e, riprendendo il tema dell’ereditarietà dei
+Controller, potrebbe essere codice candidato a finire nell’inizializzazione del
+Controller Base (da cui tutti ereditano).</p>
+
+<p>A questo punto chi sviluppa i
+controller si deve preoccupare di rispettare la convenzione utilizzata per
+l’inserimento delle labels e tutto sarebbe trasparente. Un esempio di quanto
+riportato è il seguente:</p>
+
+<ul>
+  <li>Controller
+   applicativo (LessonEditCtrl) è libero di logiche “low-level”</li>
+  <li>
+    <p>Nel
+   controller di base sono inseriti i metodi per rimuovere i watchers statici</p>
+  </li>
+  <li>Il Controller applicativo
+   eredita un controller di base (DisciturBaseCtrl)</li>
+  <li></li>
+</ul>
+
+<p>Brutto, ma invisibile e
+performante.
+ </p>
+
+<p>###<a href="https://github.com/Pasvaz/bindonce" target="_blank">Bindonce</a></p>
+
+<p>Questa libreria nasce proprio a questo scopo e realizza il mio obiettivo in
+maniera decisamente più elegante e standard, ovvero utilizzando delle
+direttive. si appoggia all’evento jQlite $destroy e quindi si occupa di
+staccare i binding marcati opportunamente.</p>
+
+<p>Bello, ma non è esattamente quello che cerco, perché vorrei tenere quanto
+più “pulita” la view di aspetti meramente tecnici.</p>
+
+<p>Per me, infatti, la View è un terreno che dovrebbe rimanere quanto più
+leggibile possibile e quanto meno denso di logica di UI. Questo perché, in un
+contesto reale, la view è data in pasto ad uno o più web-master che aggiungono
+classi o altre modifiche CSS o al wireframe per vestire il modulo in maniera
+appropriata. meno codice applicativo possono vedere e (peggio ancora) toccare,
+meglio è. Ancora di più se parliamo di aspetti più architetturali che
+funzionali. In particolare questo aspetto lo vedo nel “dominio” del controller, più che
+in quello della view; è il controller, infatti, che chiama i servizi e gestisce il dato 
+ed è nel controller che si ha quindi la conoscenza del fatto che la singola espressione sia statica o dinamica.</p>
+
+<p>Resta il fatto che <a href="http://slid.es/pasqualevazzana/angularjs-binding" target="_blank">Bindonce è molto elegante e rappresenta l’“Angular way” di approcciare questa problematica</a>.</p>
+
+<p>Inoltre ho avuto modo di conoscere l’<a href="https://twitter.com/PasqualeVazzana" target="_blank">autore della libreria</a> e di vedere all’opera le performance di una applicazione che utilizzava Bindonce.
+Risultato? Lo userò presto nel progetto.</p>
+
+<p>###Altre riflessioni:</p>
+
+<p>Avevo provato anche una cosa del genere nel controller:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">$scope</span><span class="p">.</span><span class="nx">$on</span><span class="p">(</span><span class="s1">'$viewContentLoaded'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="nx">$scope</span><span class="p">.</span><span class="nx">$$watchers</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span> <span class="c1">//uno a caso per fare una prova...</span>
+<span class="p">});</span>
+</code></pre></div></div>
+
+<p>ma non funziona perché l’evento è lanciato prima della risoluzione dello
+stato e quindi prima di renderizzare i watcher…peccato… </p>

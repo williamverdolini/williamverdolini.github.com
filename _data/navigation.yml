@@ -163,3 +163,10 @@ umbraco:
       url: /2015/02/07/umbmacro-views/
     - title: "Properties Configurability"
       url: /2015/02/08/umbmacro-properties/
+
+      
+# ngschematics:
+#   - title: "My journey into Angular Schematics"
+#     children:
+#     - title: "Intro"
+#       url: /2019/03/09/ngschematics-intro/

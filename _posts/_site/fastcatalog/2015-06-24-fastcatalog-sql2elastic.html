@@ -1,0 +1,230 @@
+<p>I did the same thing described in the <a href="/2015/06/22/fastcatalog-sql2mongo/" target="_blank">previous article</a> using <a href="https://www.elastic.co/" target="_blank">ElasticSearch</a> as target db. I’m using <a href="http://nest.azurewebsites.net/" target="_blank">Nest</a> as .NET driver. Here is the document model:</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">namespace</span> <span class="nn">SQL2Elastic.Models</span>
+<span class="p">{</span>    
+	<span class="p">[</span><span class="n">ElasticType</span><span class="p">]</span>
+	<span class="k">public</span> <span class="k">class</span> <span class="nc">ESProduct</span>
+	<span class="p">{</span>
+		<span class="p">[</span><span class="nf">ElasticProperty</span><span class="p">(</span><span class="n">Index</span> <span class="p">=</span> <span class="n">FieldIndexOption</span><span class="p">.</span><span class="n">NotAnalyzed</span><span class="p">,</span> <span class="n">Type</span> <span class="p">=</span> <span class="n">FieldType</span><span class="p">.</span><span class="n">String</span><span class="p">)]</span>
+		<span class="k">public</span> <span class="n">Guid</span> <span class="n">Id</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+		<span class="p">[</span><span class="nf">ElasticProperty</span><span class="p">(</span><span class="n">Index</span> <span class="p">=</span> <span class="n">FieldIndexOption</span><span class="p">.</span><span class="n">NotAnalyzed</span><span class="p">)]</span>
+		<span class="k">public</span> <span class="kt">string</span> <span class="n">Code</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+		<span class="k">public</span> <span class="kt">string</span> <span class="n">Description</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+		<span class="p">[</span><span class="nf">ElasticProperty</span><span class="p">(</span><span class="n">Index</span> <span class="p">=</span> <span class="n">FieldIndexOption</span><span class="p">.</span><span class="n">NotAnalyzed</span><span class="p">)]</span>
+		<span class="k">public</span> <span class="kt">double</span> <span class="n">Price</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+		<span class="p">[</span><span class="nf">ElasticProperty</span><span class="p">(</span><span class="n">Index</span> <span class="p">=</span> <span class="n">FieldIndexOption</span><span class="p">.</span><span class="n">NotAnalyzed</span><span class="p">)]</span>
+		<span class="k">public</span> <span class="kt">long</span> <span class="n">IdCategory</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+		<span class="p">[</span><span class="nf">ElasticProperty</span><span class="p">(</span><span class="n">Index</span> <span class="p">=</span> <span class="n">FieldIndexOption</span><span class="p">.</span><span class="n">NotAnalyzed</span><span class="p">)]</span>
+		<span class="k">public</span> <span class="n">IList</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;</span> <span class="n">Synonims</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+		<span class="p">[</span><span class="nf">ElasticProperty</span><span class="p">(</span><span class="n">Type</span> <span class="p">=</span> <span class="n">FieldType</span><span class="p">.</span><span class="n">Nested</span><span class="p">)]</span>
+		<span class="k">public</span> <span class="n">IList</span><span class="p">&lt;</span><span class="n">ProductAttribute</span><span class="p">&gt;</span> <span class="n">Attributes</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+	<span class="p">}</span>
+
+	<span class="p">[</span><span class="n">ElasticType</span><span class="p">]</span>
+	<span class="k">public</span> <span class="k">class</span> <span class="nc">ProductAttribute</span>
+	<span class="p">{</span>
+		<span class="p">[</span><span class="nf">ElasticProperty</span><span class="p">(</span><span class="n">Index</span> <span class="p">=</span> <span class="n">FieldIndexOption</span><span class="p">.</span><span class="n">NotAnalyzed</span><span class="p">)]</span>
+		<span class="k">public</span> <span class="kt">string</span> <span class="n">Key</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+		<span class="p">[</span><span class="nf">ElasticProperty</span><span class="p">(</span><span class="n">Index</span> <span class="p">=</span> <span class="n">FieldIndexOption</span><span class="p">.</span><span class="n">NotAnalyzed</span><span class="p">)]</span>
+		<span class="k">public</span> <span class="kt">string</span> <span class="n">Value</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>There are different ways to perform mapping with NEST: inference/dynamically generated, code based, attribute-based. I choosed <strong>Attributed-based</strong>, because I like the idea to link the document types to their mappings, it seems to me a natural way to see this thing. But, as you can see, <a href="https://www.elastic.co/guide/en/elasticsearch/guide/current/mapping-analysis.html" target="_blank">mapping comes with analysing</a>. <br />
+A step back: ElastiSearch was born to simplify text search in huge db. Full-text search is not particularly efficient in traditional RDBMS like MSSQL, while is very fast with ElasticSearch. Accordingly to that, ElasticSearch implicitly analyses all fields (because it wants to simplify the programmer’s job), and text fields with full-text analysis, unless you say to NOT to do that, as I did in most of my document type fields.</p>
+
+<p>Indeed the catalog I’m working with does not need the full-text search feature and, for this reason, ElasticSearch could be not the right choice for this scenario. But let’s give ElasticSearch a chance.</p>
+
+<p>The migration logic is inside its specific <a href="https://github.com/williamverdolini/FastCatalog/blob/master/Catalog/SQL2Elastic/Logic/ElasticSearchClient.cs" target="_blank">ElasticSearchClient</a>. Again, I want to highlight three aspects about that:</p>
+
+<ol>
+  <li>In the initialization logic there is the mapping logic taken from the document type’s attributes</li>
+  <li>XML-to-JSON mapping is natural too
+    <div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">void</span> <span class="nf">Save</span><span class="p">(</span><span class="n">SQLProduct</span> <span class="n">dbProduct</span><span class="p">)</span>
+<span class="p">{</span>
+ <span class="n">Contract</span><span class="p">.</span><span class="n">Requires</span><span class="p">&lt;</span><span class="n">ArgumentNullException</span><span class="p">&gt;(</span><span class="n">dbProduct</span> <span class="p">!=</span> <span class="k">null</span><span class="p">,</span> <span class="s">"dbProduct"</span><span class="p">);</span>
+ <span class="kt">var</span> <span class="n">product</span> <span class="p">=</span> <span class="k">new</span> <span class="n">ESProduct</span>
+ <span class="p">{</span>
+     <span class="n">Id</span> <span class="p">=</span> <span class="n">Guid</span><span class="p">.</span><span class="nf">NewGuid</span><span class="p">(),</span>
+     <span class="n">Code</span> <span class="p">=</span> <span class="n">dbProduct</span><span class="p">.</span><span class="n">Data</span><span class="p">.</span><span class="n">Code</span><span class="p">,</span>
+     <span class="n">Description</span> <span class="p">=</span> <span class="n">dbProduct</span><span class="p">.</span><span class="n">Data</span><span class="p">.</span><span class="n">Description</span><span class="p">,</span>
+     <span class="n">IdCategory</span> <span class="p">=</span> <span class="n">dbProduct</span><span class="p">.</span><span class="n">Data</span><span class="p">.</span><span class="n">IdCategory</span><span class="p">,</span>
+     <span class="n">Price</span> <span class="p">=</span> <span class="n">Math</span><span class="p">.</span><span class="nf">Round</span><span class="p">(</span><span class="m">10</span> <span class="p">+</span> <span class="n">rnd</span><span class="p">.</span><span class="nf">NextDouble</span><span class="p">()</span> <span class="p">*</span> <span class="p">(</span><span class="m">1000</span> <span class="p">-</span> <span class="m">10</span><span class="p">),</span> <span class="m">2</span><span class="p">),</span>
+     <span class="n">Synonims</span> <span class="p">=</span> <span class="n">dbProduct</span><span class="p">.</span><span class="n">Synonims</span><span class="p">.</span><span class="nf">ToStringList</span><span class="p">(),</span>
+     <span class="n">Attributes</span> <span class="p">=</span> <span class="n">dbProduct</span><span class="p">.</span><span class="n">Attributes</span><span class="p">.</span><span class="nf">ToProductAttributes</span><span class="p">()</span>
+ <span class="p">};</span>
+ <span class="n">products</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="n">product</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>    </div>
+  </li>
+  <li>No post-migration logic is necessary, because, by now, all the analysis settings put on initialization step are good enough. I’m waiting, at this point, to have migration time greater than with MongoDb, because when ElasticSearch indexes a document, it populates some other fields and index data…let’s see.</li>
+</ol>
+
+<p>Here is the console log for SQl to ElasticSearch migration:</p>
+
+<p><img src="/images/fastcatalog/fastcatalog_elastic_console.png" class="img-rounded" /><br /></p>
+
+<p>as expected, but pretty good.</p>
+
+<h2 id="queries">Queries</h2>
+
+<p>Let’s see the queries and times with ElastiSearch for multi-attribute catalog:</p>
+
+<h3 id="query-for-all-product-attributes-175ms">Query for all product attributes (~175ms)</h3>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">GET</span> <span class="o">/</span><span class="nx">catalog</span><span class="o">/</span><span class="nx">products</span><span class="o">/</span><span class="nx">_search</span><span class="p">?</span><span class="nx">search_type</span><span class="o">=</span><span class="nx">count</span>
+<span class="p">{</span>
+  <span class="s2">"aggs"</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">"multi_properties"</span><span class="p">:</span> <span class="p">{</span>
+      <span class="s2">"nested"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"path"</span><span class="p">:</span> <span class="s2">"attributes"</span>
+      <span class="p">},</span>
+      <span class="s2">"aggs"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"all_properties"</span><span class="p">:</span> <span class="p">{</span>
+          <span class="s2">"terms"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"field"</span><span class="p">:</span> <span class="s2">"key"</span><span class="p">,</span>
+            <span class="s2">"size"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s2">"order"</span><span class="p">:</span> <span class="p">{</span>
+              <span class="s2">"_term"</span><span class="p">:</span> <span class="s2">"asc"</span>
+            <span class="p">}</span>
+          <span class="p">},</span>
+          <span class="s2">"aggs"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"all_values_per_property"</span><span class="p">:</span> <span class="p">{</span>
+              <span class="s2">"terms"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"field"</span><span class="p">:</span> <span class="s2">"value"</span><span class="p">,</span>
+                <span class="s2">"size"</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+                <span class="s2">"order"</span><span class="p">:</span> <span class="p">{</span>
+                  <span class="s2">"_term"</span><span class="p">:</span> <span class="s2">"asc"</span>
+                <span class="p">}</span>
+              <span class="p">}</span>
+            <span class="p">}</span>
+          <span class="p">}</span>
+        <span class="p">}</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="query-for-product-attributes-filtered-by-some-attribute-values--6ms">Query for product attributes filtered by some attribute values  (~6ms)</h3>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">GET</span> <span class="o">/</span><span class="nx">catalog</span><span class="o">/</span><span class="nx">products</span><span class="o">/</span><span class="nx">_search</span><span class="p">?</span><span class="nx">search_type</span><span class="o">=</span><span class="nx">count</span>
+<span class="p">{</span>
+  <span class="s2">"aggs"</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">"multi_properties"</span><span class="p">:</span> <span class="p">{</span>
+      <span class="s2">"nested"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"path"</span><span class="p">:</span> <span class="s2">"attributes"</span>
+      <span class="p">},</span>
+      <span class="s2">"aggs"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"all_properties"</span><span class="p">:</span> <span class="p">{</span>
+          <span class="s2">"terms"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"field"</span><span class="p">:</span> <span class="s2">"key"</span><span class="p">,</span>
+            <span class="s2">"size"</span><span class="p">:</span> <span class="mi">0</span>
+          <span class="p">},</span>
+          <span class="s2">"aggs"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"all_values_per_property"</span><span class="p">:</span> <span class="p">{</span>
+              <span class="s2">"terms"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"field"</span><span class="p">:</span> <span class="s2">"value"</span><span class="p">,</span>
+                <span class="s2">"size"</span><span class="p">:</span> <span class="mi">10</span>
+              <span class="p">}</span>
+            <span class="p">}</span>
+          <span class="p">}</span>
+        <span class="p">}</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="p">},</span>  
+  <span class="s2">"query"</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">"filtered"</span><span class="p">:</span> <span class="p">{</span>
+      <span class="s2">"filter"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"bool"</span><span class="p">:</span> <span class="p">{</span>
+          <span class="s2">"must"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span>
+              <span class="s2">"nested"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"path"</span><span class="p">:</span> <span class="s2">"attributes"</span><span class="p">,</span>
+                <span class="s2">"query"</span><span class="p">:</span> <span class="p">{</span>
+                  <span class="s2">"bool"</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">"must"</span><span class="p">:</span> <span class="p">[</span>
+                      <span class="p">{</span><span class="s2">"term"</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s2">"key"</span><span class="p">:</span> <span class="p">{</span>
+                          <span class="s2">"value"</span><span class="p">:</span> <span class="s2">"FORMATO"</span>
+                        <span class="p">}</span>
+                      <span class="p">}},</span>
+                      <span class="p">{</span><span class="s2">"term"</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s2">"value"</span><span class="p">:</span> <span class="p">{</span>
+                          <span class="s2">"value"</span><span class="p">:</span> <span class="s2">"0402 (1.0 x 0.5mm)"</span>
+                        <span class="p">}</span>
+                      <span class="p">}}</span>
+                    <span class="p">]</span>
+                  <span class="p">}</span>
+                <span class="p">}</span>
+              <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+              <span class="s2">"nested"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"path"</span><span class="p">:</span> <span class="s2">"attributes"</span><span class="p">,</span>
+                <span class="s2">"query"</span><span class="p">:</span> <span class="p">{</span>
+                  <span class="s2">"bool"</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">"must"</span><span class="p">:</span> <span class="p">[</span>
+                      <span class="p">{</span><span class="s2">"term"</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s2">"key"</span><span class="p">:</span> <span class="p">{</span>
+                          <span class="s2">"value"</span><span class="p">:</span> <span class="s2">"TOLLERANZA"</span>
+                        <span class="p">}</span>
+                      <span class="p">}},</span>
+                      <span class="p">{</span><span class="s2">"terms"</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s2">"value"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"± 0.01%"</span><span class="p">,</span><span class="s2">"± 0.05%"</span><span class="p">,</span><span class="s2">"± 0.1%"</span><span class="p">]</span>
+                      <span class="p">}</span>
+                       
+                      <span class="p">}</span>
+                    <span class="p">]</span>
+                  <span class="p">}</span>
+                <span class="p">}</span>
+              <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+              <span class="s2">"nested"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"path"</span><span class="p">:</span> <span class="s2">"attributes"</span><span class="p">,</span>
+                <span class="s2">"query"</span><span class="p">:</span> <span class="p">{</span>
+                  <span class="s2">"bool"</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">"must"</span><span class="p">:</span> <span class="p">[</span>
+                      <span class="p">{</span><span class="s2">"term"</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s2">"key"</span><span class="p">:</span> <span class="p">{</span>
+                          <span class="s2">"value"</span><span class="p">:</span> <span class="s2">"TCR (ppm)"</span>
+                        <span class="p">}</span>
+                      <span class="p">}},</span>
+                      <span class="p">{</span><span class="s2">"term"</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s2">"value"</span><span class="p">:</span> <span class="p">{</span>
+                          <span class="s2">"value"</span><span class="p">:</span> <span class="s2">"5.0"</span>
+                        <span class="p">}</span>
+                      <span class="p">}}</span>
+                    <span class="p">]</span>
+                  <span class="p">}</span>
+                <span class="p">}</span>
+              <span class="p">}</span>
+            <span class="p">}</span>
+          <span class="p">]</span>
+        <span class="p">}</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="query-for-documents-filtered-by-some-attribute-values">Query for documents filtered by some attribute values</h3>
+<p>The same queries as before, but without the <strong>search_type=count</strong> querystring parameter. So you don’t need to perform two different queries to get all the result to display. Very powerful!!! Very Fast!!!</p>
+
+<div class="col-md-6">
+<h4>Pros</h4>
+<ul>
+<li>Fast...wow!</li>
+<li>Again, the query results give the complete <b>structured json object</b>, with the nested couples of attribute's value/count and, better than MongoDb, with Elastic'aggregates you can set the size of you aggregation and this fits very well with "see all values" feature in multi-attributes catalog.</li>
+<li>No need for separate find queries: the aggregate without <b>search_type=count</b> querystring parameter, returns the matched documents</li>
+</ul>
+</div>
+<div class="col-md-6">
+<h4>Cons</h4>
+<ul>
+<li>IMHO, queries and aggregates are not so readable and maintainable as they are with MongoDb</li>
+<li>Not so fast as MongoDb in the migration phase</li>
+</ul>
+</div>

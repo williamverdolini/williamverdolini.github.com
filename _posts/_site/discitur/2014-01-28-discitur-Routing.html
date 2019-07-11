@@ -1,0 +1,186 @@
+<!-- Markup JSON-LD generato da Assistente per il markup dei dati strutturati di Google. -->
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Article",
+  "name" : "Angular.js Routing (UI-Router)",
+  "author" : {
+    "@type" : "Person",
+    "name" : "williamverdolini"
+  },
+  "datePublished" : "2014-01-28",
+  "articleSection" : [ "Angular.js", "Routing" ],
+  "url" : "http://williamverdolini.github.io/2014/01/28/discitur-Routing/"
+}
+</script>
+
+<p>Come promesso nel primo sprint, avrei affrontato questo argomento non
+appena potevo. Il secondo sprint sembra ora essere sovrastimato per quello che
+occorre realizzare ed il primo sprint è stato chiuso più velocemente del
+previsto; perciò è l’opportunità giusta per approfondire alcuni aspetti più di
+design. E quindi dopo il TDD, ho voluto prendermi un po’ di tempo per inserire
+e provare UI-Router. La cosa è risultata molto semplice e veloce.
+Reingegnerizzare l’app ed i test per togliere angular-route e mettere dentro
+UI-Router è stato un passo senza grosse difficoltà. Uno di quegli step che ti
+fanno aumentare la considerazione del framework Angular e della sua
+estendibilità. Come immaginavo <a href="https://github.com/angular-ui/ui-router" target="_blank">UI-Router</a>
+ha tutto quello che mi serviva:</p>
+
+<ul>
+  <li>possibilità di annidare in maniera dinamica
+   le view</li>
+  <li>possibilità di risolvere dinamicamente view
+   in parallelo</li>
+  <li>possibilità di gestire il routing in maniera
+   più logica</li>
+  <li><a href="https://github.com/angular-ui/ui-router/wiki" target="_blank">buona documentazione</a></li>
+</ul>
+
+<p> </p>
+
+<p>Uno dei concetti interessanti e su cui farò più avanti un refactoring è
+quello delle viste abstract. Queste sono viste che non possono essere
+instanziate da sole, ma che si aspettano delle view figlie che le completino.
+Mi sembrano ottime per realizzare un concetto di masterpage, ovvero di una o
+più pagine contenitore che hanno l’unico scopo di impaginare il sito ed
+“intabellare” le reali view. Questo è un aspetto importante per me, soprattutto
+nell’ottica di avere un app molto grande; infatti questo concetto permette alla
+singola view di non preoccuparsi troppo delle regole di routing o di cosa c’è
+intorno a lei. Se strutturate bene (intendo definite le interfacce in termini
+di eventi per la comunicazione con gli altri VC) la singola coppia VC isolata
+può tranquillamente essere sviluppata in autonomia da un programmatore o un
+team.</p>
+
+<p>Per ora ho organizzato così l’app:</p>
+
+<p><img src="/images/discitur/masterpages.png" /></p>
+
+<p>separando quindi le pagine html
+che costituiscono le masterpages dell’applicazione, dai moduli angular veri e
+propri (che quindi hanno le singole funzionalità). L’impalcatura delle regole
+di routing (o per meglio dire, la macchina degli stati) è realizzata a due
+livelli.</p>
+
+<p> </p>
+
+<p><strong>1° Livello: Masterpages (Stati astratti)</strong></p>
+
+<p>Questo livello è definito nelle
+configurazioni dell’applicazione web e definisce che tipo di layout è previsto
+nella navigazione del sito. Queste configurazioni non definiscono delle vere e
+proprie regole di routing, per il fatto che tutti gli stati sono definiti come
+abstract e non possono quindi essere risolti dallo stateManager dell’ui-router
+senza altre configurazioni per l’implementazione. Ecco la parte interessante
+del codice:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">.</span><span class="nx">config</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">$stateProvider</span><span class="p">,</span> <span class="nx">$urlRouterProvider</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="nx">$stateProvider</span>
+        <span class="c1">//MasterPages (Abstract States)</span>
+        <span class="p">.</span><span class="nx">state</span><span class="p">(</span><span class="s1">'master'</span><span class="p">,</span> <span class="p">{</span>
+            <span class="na">url</span><span class="p">:</span> <span class="s1">''</span><span class="p">,</span>
+            <span class="na">abstract</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+            <span class="na">templateUrl</span><span class="p">:</span> <span class="s1">'masterpages/master.html'</span>
+        <span class="p">})</span>
+        <span class="c1">// One Column Layout (Abstract States)</span>
+        <span class="p">.</span><span class="nx">state</span><span class="p">(</span><span class="s1">'master.1cl'</span><span class="p">,</span> <span class="p">{</span>
+            <span class="na">url</span><span class="p">:</span> <span class="s1">'/project'</span><span class="p">,</span>
+            <span class="na">abstract</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+            <span class="na">parent</span><span class="p">:</span> <span class="s1">'master'</span><span class="p">,</span>
+            <span class="na">templateUrl</span><span class="p">:</span> <span class="s1">'masterpages/1cl.html'</span>
+        <span class="p">})</span>
+        <span class="c1">// Two Columns Layout (Abstract States)</span>
+        <span class="p">.</span><span class="nx">state</span><span class="p">(</span><span class="s1">'master.2cl'</span><span class="p">,</span> <span class="p">{</span>
+            <span class="na">url</span><span class="p">:</span> <span class="s1">''</span><span class="p">,</span>
+            <span class="na">abstract</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+            <span class="na">parent</span><span class="p">:</span> <span class="s1">'master'</span><span class="p">,</span>
+            <span class="na">templateUrl</span><span class="p">:</span> <span class="s1">'masterpages/2cl.html'</span>
+        <span class="p">})</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<p><strong>2° Livello: Content-Pages (Stati “fisici”)</strong></p>
+
+<p>Questo livello è quello che
+definisce l’insieme degli stati dell’applicazione e che definisce quindi le
+regole di routing. Ogni modulo ha le proprie regole di routing ed i propri stati,
+che devono implementare uno degli stati abstract definito nelle master pages.</p>
+
+<p> </p>
+
+<p>Ad es. per il sito “statico”, ho
+definito il modulo main, la cui configurazione è:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">.</span><span class="nx">config</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">$stateProvider</span><span class="p">,</span> <span class="nx">$urlRouterProvider</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// For any unmatched url, redirect to HomePage</span>
+    <span class="nx">$urlRouterProvider</span><span class="p">.</span><span class="nx">otherwise</span><span class="p">(</span><span class="s1">'/project/home'</span><span class="p">);</span>
+
+    <span class="nx">$stateProvider</span>
+        <span class="c1">// Web Site (Content States)</span>
+        <span class="p">.</span><span class="nx">state</span><span class="p">(</span><span class="s1">'master.1cl.home'</span><span class="p">,</span> <span class="p">{</span>
+            <span class="na">url</span><span class="p">:</span> <span class="s1">'/home'</span><span class="p">,</span>
+            <span class="na">parent</span><span class="p">:</span> <span class="s1">'master.1cl'</span><span class="p">,</span>
+            <span class="na">templateUrl</span><span class="p">:</span> <span class="s1">'modules/main/site/HomePage.html'</span>
+        <span class="p">})</span>
+        <span class="p">.</span><span class="nx">state</span><span class="p">(</span><span class="s1">'master.1cl.mission'</span><span class="p">,</span> <span class="p">{</span>
+            <span class="na">url</span><span class="p">:</span> <span class="s1">'/mission'</span><span class="p">,</span>
+            <span class="na">parent</span><span class="p">:</span> <span class="s1">'master.1cl'</span><span class="p">,</span>
+            <span class="na">templateUrl</span><span class="p">:</span> <span class="s1">'modules/main/site/Project.html'</span>
+        <span class="p">})</span>
+
+<span class="p">})</span>
+</code></pre></div></div>
+
+<p>Come si può vedere il parent usato è (per scelta) sempre ‘master.1cl’ ad indicare che le pagine statiche
+dell’applicazion sono sempre mono-colonna.</p>
+
+<p>Mentre per il modulo Lesson, alcuni stati sono i seguenti:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">.</span><span class="nx">config</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">$stateProvider</span><span class="p">,</span> <span class="nx">$urlRouterProvider</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="nx">$stateProvider</span>
+        <span class="p">.</span><span class="nx">state</span><span class="p">(</span><span class="s1">'lessonSearch'</span><span class="p">,</span> <span class="p">{</span>
+            <span class="na">url</span><span class="p">:</span> <span class="s1">'/lesson?keyword'</span><span class="p">,</span>
+            <span class="na">parent</span><span class="p">:</span> <span class="s1">'master.2cl'</span><span class="p">,</span>
+            <span class="na">onEnter</span><span class="p">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+                <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"Entering Lesson Search"</span><span class="p">);</span>
+            <span class="p">},</span>
+            <span class="na">views</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">'sidebar'</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="na">templateUrl</span><span class="p">:</span> <span class="s1">'modules/lesson/sidebar.html'</span>
+                <span class="p">},</span>
+                <span class="s1">'main'</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="na">templateUrl</span><span class="p">:</span> <span class="s1">'modules/lesson/LessonNews.html'</span><span class="p">,</span>
+                    <span class="na">controller</span><span class="p">:</span> <span class="s1">'LessonNewsCtrl'</span><span class="p">,</span>
+                    <span class="na">resolve</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="na">lessonNewsData</span><span class="p">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">LessonService</span><span class="p">,</span> <span class="nx">$stateParams</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="k">return</span> <span class="nx">LessonService</span><span class="p">.</span><span class="nx">search</span><span class="p">(</span><span class="nx">$stateParams</span><span class="p">);</span>
+                        <span class="p">}</span>
+
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">})</span>
+        <span class="p">.</span><span class="nx">state</span><span class="p">(</span><span class="s1">'404lesson'</span><span class="p">,</span> <span class="p">{</span>
+            <span class="na">url</span><span class="p">:</span> <span class="s1">'/404lesson'</span><span class="p">,</span>
+            <span class="na">parent</span><span class="p">:</span> <span class="s1">'master.2cl'</span><span class="p">,</span>
+            <span class="na">views</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">'sidebar'</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="na">templateUrl</span><span class="p">:</span> <span class="s1">'modules/lesson/sidebar.html'</span>
+                <span class="p">},</span>
+                <span class="s1">'main'</span><span class="p">:{</span>
+                    <span class="na">controller</span><span class="p">:</span> <span class="s1">'Lesson404Ctrl'</span><span class="p">,</span>
+                    <span class="na">templateUrl</span><span class="p">:</span> <span class="s1">'modules/lesson/Lesson404.html'</span><span class="p">,</span>
+                    <span class="na">onEnter</span><span class="p">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+                        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"master.2cl.404lesson"</span><span class="p">);</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">});</span>
+</code></pre></div></div>
+
+<p>Con un Layout a 2 colonne (parent: ‘master.2cl’). Il singolo modulo interno (ad es. il ‘LessonNewsCtrl’,che probabilmente assumerà un nome diverso al
+prossimo refactoring) è stato sviluppato senza minimamente tenere a mente alcun
+aspetto legato al wireframe dell’applicazione.</p>
+
+<p>Trovo la cosa modulare e molto comoda.</p>

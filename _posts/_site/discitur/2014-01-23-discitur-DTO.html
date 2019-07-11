@@ -1,0 +1,212 @@
+<!-- Markup JSON-LD generato da Assistente per il markup dei dati strutturati di Google. -->
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Article",
+  "name" : "Angular DTO",
+  "author" : {
+    "@type" : "Person",
+    "name" : "william verdolini"
+  },
+  "datePublished" : "2014-01-23",
+  "articleSection" : [ "Angular.js", "DTO", "Software Design" ],
+  "url" : "http://williamverdolini.github.io/2014/01/23/discitur-DTO/"
+}
+</script>
+
+<p>Nel primo sprint realizzavo un
+semplice controller che visualizzava i dati di una lezione. La lezione è un
+oggetto composto da diversi sotto-oggetti. La struttura che prevedevo nel
+front-end è:</p>
+
+<ul>
+  <li>Lesson (title, school, classroom, content, rate, publishedOn,
+   etc)
+    <ul>
+      <li>Author (name, surname, etc)</li>
+      <li>Lista di Goods (ciò che è andato bene nella
+lezione)
+        <ul>
+          <li>Good (description)</li>
+        </ul>
+      </li>
+      <li>Lista di Bads (ciò che andato male nella
+lezione)
+        <ul>
+          <li>Bads (description)</li>
+        </ul>
+      </li>
+      <li>Lista di Tags (per la classificazione
+trasversale della lezione)</li>
+    </ul>
+  </li>
+</ul>
+
+<p>Per l’approccio definito nel <a href="/2014/01/18/discitur-value_env">Ciclo di Raffinazione</a> ho sviluppato prima il FE con i mock dei
+servizi, ho verificato con il PO il risultato e successivamente ho realizzato
+il back-end. Una volta passato al BE ho trovato più adatto prevedere un modello
+(entity-table) che prevedesse una sola Entity/Table LessonFeedback per inserire
+sia gli aspetti positivi sia quelli negativi di una lezione, differenziandoli
+tramite l’attributo Nature del FeedBack</p>
+
+<p> </p>
+
+<p>A BE quindi il mio Entity Model era del tipo:</p>
+
+<ul>
+  <li>Lesson
+    <ul>
+      <li>Author (name, surname, email, userName, etc)</li>
+      <li>Lista di FeedBacks
+        <ul>
+          <li>FeedBack (Nature, description)</li>
+        </ul>
+      </li>
+      <li>Lista di Tags (perla classificazione
+trasversale della lezione)</li>
+    </ul>
+  </li>
+</ul>
+
+<p>Questo approccio e lo scenario in sè, di fatto, è un approccio ed uno
+scenario riscontrabile molto spesso anche in realtà enterprise, infatti capita che:</p>
+
+<ul>
+  <li>ci siano gruppi separati per l’analisi e lo
+   sviluppo del FE e del BE</li>
+  <li>ci sia già un dizionario dei servizi (SOA,
+   REST, ecc..) pronti per l’uso che restituiscono i dati che servono.
+   Nessuno sviluppatore di Back-end ti farà una copia di un servizio
+   esistente per ridarti la struttura che ti aspetti sul FE. Ed è in genere
+   giusto.</li>
+</ul>
+
+<p> </p>
+
+<p>Trovo sempre utile ed importante, quindi, marcare una linea netta di
+separazione tra FE e BE per una svariata serie di motivi. Ecco perché, anche
+senza avere a che fare con sistemi remoti, mi piace implementare classi <a href="http://en.wikipedia.org/wiki/Data_transfer_object" target="_blank">DTO</a> per il
+trasferimento dei dati dai servizi ad un Object Model più aderente alle
+esigenze dello specifico Front-End.</p>
+
+<p> </p>
+
+<p>In Angular ho realizzato il tutto attraverso l’uso dei concetti di Services
+e Promises, di seguito alcuni articoli utili nei miei approfondimenti (oltre la
+documentazione ufficiale) :</p>
+
+<ul>
+  <li><a href="http://blog.brunoscopelliti.com/angularjs-promise-or-dealing-with-asynchronous-requests-in-angularjs" target="_blank">http://blog.brunoscopelliti.com/angularjs-promise-or-dealing-with-asynchronous-requests-in-angularjs</a></li>
+  <li><a href="http://www.bennadel.com/blog/2527-Defining-Instantiatable-Classes-In-The-AngularJS-Dependency-Injection-Framework.htm" target="_blank">http://www.bennadel.com/blog/2527-Defining-Instantiatable-Classes-In-The-AngularJS-Dependency-Injection-Framework.htm</a></li>
+  <li><a href="https://egghead.io/lessons/angularjs-chained-promises" target="_blank">https://egghead.io/lessons/angularjs-chained-promises</a></li>
+</ul>
+
+<p> </p>
+
+<p>Ecco il codice.</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">angular</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">'Lesson'</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">factory</span><span class="p">(</span><span class="s1">'LessonDTO'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="kd">function</span> <span class="nx">LessonDTO</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">lessonId</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">title</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">discipline</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">school</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">classroom</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">rate</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">author</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">publishedOn</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">goods</span> <span class="o">=</span> <span class="p">[];</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">bads</span> <span class="o">=</span> <span class="p">[];</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">tags</span> <span class="o">=</span> <span class="p">[];</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">content</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">conclusion</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="p">(</span><span class="nx">LessonDTO</span><span class="p">);</span>
+    <span class="p">})</span>
+    <span class="p">.</span><span class="nx">factory</span><span class="p">(</span><span class="s1">'LessonService'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">$resource</span><span class="p">,</span> <span class="nx">$http</span><span class="p">,</span> <span class="nx">$q</span><span class="p">,</span> <span class="nx">LessonDTO</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="c1">// Retrieve Async data for lesson id in input </span>
+            <span class="c1">// and return a LessonDTO instance</span>
+            <span class="na">getDB</span><span class="p">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">inputParams</span><span class="p">)</span> <span class="p">{</span>
+                <span class="c1">// create deferring result</span>
+                <span class="kd">var</span> <span class="nx">deferred</span> <span class="o">=</span> <span class="nx">$q</span><span class="p">.</span><span class="nx">defer</span><span class="p">();</span>
+
+                <span class="c1">// Retrieve Async data for lesson id in input             </span>
+                <span class="nx">$http</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="s1">'../api/lesson/'</span> <span class="o">+</span> <span class="nx">inputParams</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span>
+                    <span class="p">.</span><span class="nx">success</span><span class="p">(</span>
+                        <span class="c1">// Success Callback: Data Transfer Object Creation</span>
+                        <span class="kd">function</span> <span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="kd">var</span> <span class="nx">lesson</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">LessonDTO</span><span class="p">();</span>
+                            <span class="nx">lesson</span><span class="p">.</span><span class="nx">lessondId</span> <span class="o">=</span> <span class="nx">result</span><span class="p">.</span><span class="nx">lessondId</span><span class="p">;</span>
+                            <span class="nx">lesson</span><span class="p">.</span><span class="nx">title</span> <span class="o">=</span> <span class="nx">result</span><span class="p">.</span><span class="nx">Title</span><span class="p">;</span>
+                            <span class="nx">lesson</span><span class="p">.</span><span class="nx">discipline</span> <span class="o">=</span> <span class="nx">result</span><span class="p">.</span><span class="nx">Discipline</span><span class="p">;</span>
+                            <span class="nx">lesson</span><span class="p">.</span><span class="nx">school</span> <span class="o">=</span> <span class="nx">result</span><span class="p">.</span><span class="nx">School</span><span class="p">;</span>
+                            <span class="nx">lesson</span><span class="p">.</span><span class="nx">classroom</span> <span class="o">=</span> <span class="nx">result</span><span class="p">.</span><span class="nx">Classroom</span><span class="p">;</span>
+                            <span class="nx">lesson</span><span class="p">.</span><span class="nx">author</span> <span class="o">=</span> <span class="p">{</span>
+                                <span class="na">name</span><span class="p">:</span> <span class="nx">result</span><span class="p">.</span><span class="nx">Author</span><span class="p">.</span><span class="nx">Name</span><span class="p">,</span>
+                                <span class="na">surname</span><span class="p">:</span> <span class="nx">result</span><span class="p">.</span><span class="nx">Author</span><span class="p">.</span><span class="nx">Surname</span>
+                            <span class="p">}</span>
+                            <span class="nx">lesson</span><span class="p">.</span><span class="nx">publishedOn</span> <span class="o">=</span> <span class="nx">result</span><span class="p">.</span><span class="nx">PublishDate</span><span class="p">;</span>
+                            <span class="nx">lesson</span><span class="p">.</span><span class="nx">rate</span> <span class="o">=</span> <span class="nx">result</span><span class="p">.</span><span class="nx">Rate</span><span class="p">;</span>
+                            <span class="nx">angular</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">result</span><span class="p">.</span><span class="nx">FeedBacks</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">feedBack</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+                                <span class="k">if</span> <span class="p">(</span><span class="nx">feedBack</span><span class="p">.</span><span class="nx">Nature</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nx">goods</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">feedBack</span><span class="p">.</span><span class="nx">Feedback</span><span class="p">)</span>
+                                <span class="k">if</span> <span class="p">(</span><span class="nx">feedBack</span><span class="p">.</span><span class="nx">Nature</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nx">bads</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">feedBack</span><span class="p">.</span><span class="nx">Feedback</span><span class="p">)</span>
+                            <span class="p">},</span> <span class="nx">lesson</span><span class="p">);</span>
+                            <span class="nx">angular</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">result</span><span class="p">.</span><span class="nx">Tags</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">tag</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+                                <span class="k">this</span><span class="p">.</span><span class="nx">tags</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">tag</span><span class="p">.</span><span class="nx">LessonTagName</span><span class="p">)</span>
+                            <span class="p">},</span> <span class="nx">lesson</span><span class="p">);</span>
+                            <span class="nx">lesson</span><span class="p">.</span><span class="nx">content</span> <span class="o">=</span> <span class="nx">result</span><span class="p">.</span><span class="nx">Content</span><span class="p">;</span>
+                            <span class="nx">lesson</span><span class="p">.</span><span class="nx">conclusion</span> <span class="o">=</span> <span class="nx">result</span><span class="p">.</span><span class="nx">Conclusion</span><span class="p">;</span>
+
+                            <span class="nx">deferred</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">lesson</span><span class="p">)</span>
+                        <span class="p">})</span>
+                    <span class="p">.</span><span class="nx">error</span><span class="p">(</span>
+                        <span class="c1">// Error Callback</span>
+                        <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+                            <span class="nx">deferred</span><span class="p">.</span><span class="nx">reject</span><span class="p">(</span><span class="s2">"no Lesson for id:"</span> <span class="o">+</span> <span class="nx">inputParams</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
+                        <span class="p">});</span>
+
+                <span class="k">return</span> <span class="nx">deferred</span><span class="p">.</span><span class="nx">promise</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">};</span>
+    <span class="p">});</span>
+</code></pre></div></div>
+
+<p>Il controller a questo punto resta semplice</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">angular</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">'Lesson'</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">controller</span><span class="p">(</span><span class="s1">'LessonCtrl'</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">'$scope'</span><span class="p">,</span>
+        <span class="s1">'lessonData'</span><span class="p">,</span>
+        <span class="kd">function</span> <span class="p">(</span>
+            <span class="nx">$scope</span><span class="p">,</span>
+            <span class="nx">lessonGet</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// lesson data async</span>
+            <span class="nx">$scope</span><span class="p">.</span><span class="nx">lesson</span> <span class="o">=</span> <span class="nx">lessonData</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">]);</span>
+</code></pre></div></div>
+
+<p>ed il suo template lavora su un Object Model disaccoppiato dal servizio di BE. </p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">"LessonSummary"</span> <span class="na">class=</span><span class="s">"row"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">"lessonGoods"</span> <span class="na">class=</span><span class="s">"col-md-6"</span> <span class="na">ng-switch=</span><span class="s">"lesson.goods &amp;&amp; lesson.goods.length&gt;0"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;h3&gt;&lt;/h3&gt;</span>
+            <span class="nt">&lt;ol</span> <span class="na">ng-switch-when=</span><span class="s">"true"</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;li</span> <span class="na">ng-repeat=</span><span class="s">"item in lesson.goods"</span><span class="nt">&gt;&lt;/li&gt;</span>
+            <span class="nt">&lt;/ol&gt;</span>
+            <span class="nt">&lt;div</span> <span class="na">ng-switch-when=</span><span class="s">"false"</span><span class="nt">&gt;&lt;/div&gt;</span>
+        <span class="nt">&lt;/div&gt;</span>
+        <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">"lessonBads"</span> <span class="na">class=</span><span class="s">"col-md-6"</span> <span class="na">ng-switch=</span><span class="s">"lesson.bads &amp;&amp; lesson.bads.length&gt;0"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;h3&gt;&lt;/h3&gt;</span>
+            <span class="nt">&lt;ol</span> <span class="na">ng-switch-when=</span><span class="s">"true"</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;li</span> <span class="na">ng-repeat=</span><span class="s">"item in lesson.bads"</span><span class="nt">&gt;&lt;/li&gt;</span>
+            <span class="nt">&lt;/ol&gt;</span>
+            <span class="nt">&lt;div</span> <span class="na">ng-switch-when=</span><span class="s">"false"</span><span class="nt">&gt;&lt;/div&gt;</span>
+        <span class="nt">&lt;/div&gt;</span>
+    <span class="nt">&lt;/div&gt;</span>
+</code></pre></div></div>
+
+<p>Questo design ha il vantaggio di limitare al solo LessonService il rework dovuto a variazioni del servizio di backend che non richiedono modifiche all’interfaccia utente.</p>
+

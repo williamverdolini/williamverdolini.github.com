@@ -1,0 +1,79 @@
+<p>Nel titolo c’è tutto (ma veramente tutto!!), però di fatto è il percorso
+mentale che ho fatto per arrivare alle conclusioni mostrate in questo
+paragrafo. Le conclusioni, dal punto di vista tecnico, non sono niente di
+speciale, ma trovo interessante il processo seguito perché penso sia del tutto
+comune e, quindi, un buon esempio di come aspetti tecnici, architetturali, di
+processo siano strettamente collegati tra loro.</p>
+
+<p> </p>
+
+<p>Tutto parte dalla mia volontà di fare un reale TDD per lo sprint 2. Quindi
+mi sono forzato a voler partire dalla realizzazione dei casi di test per la
+realizzazione del servizio di ricerca e per far questo, forte dell’esperienza
+fatta nel primo sprint, la mia intenzione è stata quella di utilizzare il team
+Grunt-Karma, che ho trovato efficace in termini di configurazione ambiente,
+velocità di esecuzione e debugging.</p>
+
+<p> </p>
+
+<p>A questo punto mi sono trovato di fronte ad un banalissimo problema di
+configurazione degli ambienti locali. i servizi REST ed il BE in generale sono
+sviluppati su tecnologia Microsoft (WebApi 2.0, Entity Framework 6, SQL
+Server), e per lo sviluppo ed il debug dei servizi lancio un IIS Express
+(integrato con Visual Studio). Grunt+Karma sono configurati per girare su server
+Connect (HTTP server per nodejs.org). Era mia intenzione realizzare quindi i
+casi di test (per il FE) e sulla base di questi sviluppare quanto necessario
+(eventualmente anche per il BE, in termini di E2E test). Sicuramente avrei
+potuto prevedere di realizzare i mock necessari, ma come primo esperimento TDD
+volevo una soluzione “full stack” che mi permettesse di toccare con mano la
+potenza dell’approccio. Quindi ho deciso di lavorare con entrambi i server
+attivi:</p>
+
+<ul>
+  <li>IIS Express per il debug/sviluppo delle wep
+   API</li>
+  <li>Connect per il test e lo sviluppo dei servizi
+   e controller Angular</li>
+</ul>
+
+<p> </p>
+
+<p>Nel far questo ho fatto una considerazione:</p>
+
+<ul>
+  <li>su Connect girerà solo contenuto statico (js,
+   html, css…). Fondamentalmente tutto il mondo Angular</li>
+  <li>si IIS Express gira il contenuto “dinamico”
+   o, meglio, la parte server</li>
+</ul>
+
+<p> </p>
+
+<p>A questo punto mi è venuto in mente il concetto (tra design e performance
+tuning) di servire il contenuto statico da un web server diverso da quello
+usato per generare contenuto dinamico. Una buona lettura al riguardo: <a href="http://www.webforefront.com/performance/webservers_statictier.html" target="_blank">http://www.webforefront.com/performance/webservers_statictier.html</a></p>
+
+<p> </p>
+
+<p>Nel mio caso il concetto di dinamico è usato in termini un po’ impropri,
+però il concetto è che se voglio usare tecnologia Microsoft che gira su IIS,
+non sono necessariamente vincolato ad usare IIS per servire anche il contenuto
+statico fornito dalla web app Angular. Per far questo ho utilizzato costanti
+dell’applicazione Angular per memorizzare apiURL da utilizzare su tutte le
+chiamate tramite $http e $resource. Questo il codice (ripulito delle parti non
+necessarie):</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">angular</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s2">"Discitur"</span><span class="p">,</span> <span class="p">[])</span>
+    <span class="p">.</span><span class="nx">constant</span><span class="p">(</span><span class="s1">'DisciturSettings'</span><span class="p">,</span> <span class="p">{</span>
+        <span class="na">apiUrl</span><span class="p">:</span> <span class="s1">'http://localhost:59739/api/'</span>
+    <span class="p">});</span>
+</code></pre></div></div>
+
+<p>e sul singolo servizio:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">$http</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="nx">DisciturSettings</span><span class="p">.</span><span class="nx">apiUrl</span> <span class="o">+</span> <span class="s1">'lesson/'</span> <span class="o">+</span> <span class="nx">inputParams</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Veramente due mosse, ma penso che il risultato sia molto flessibile. Cosa configurare sull’ambiente di produzione è a questo punto una scelta che può essere fatta valutando non l’aspetto software, ma solo quello sistemistico o di Configuration Management.
+Ah, dimenticavo…per il mio scopo (test su Grunt Connect e BE su IIS), funziona alla grande!</p>
+

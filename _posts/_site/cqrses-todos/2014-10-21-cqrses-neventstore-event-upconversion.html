@@ -1,0 +1,72 @@
+<p>First of all I want to thank <strong><a href="http://warappa.wordpress.com/" target="_blank">David Rettenbacher</a></strong> and <strong><a href="http://stackoverflow.com/users/355785/nathan-gonzalez" target="_blank">Nathan Gonzalez</a></strong> for their help in setting up the first tries of Event Upconverting, without them I would probably still be wasting my time tempting to do it…</p>
+
+<p>Event Conversion is a necessity, because the requisites changes, always. NEventStore team knows it. For that reason has given us some feature to manage it.<br />
+Why is so important? An event is something happened in the past and the past is…past! True, but at this point I know that every time I get an aggregate from the repository, NEventStore replay all the committed events to re-build the last state of the aggregate.
+These committed events could be some months old, and during this period new product version (with upgraded events class/handlers) could be released. So, How to handle the original events after event evolutions or fixes?</p>
+
+<p>Here it is where Event Upconverter comes to help!</p>
+
+<h2 id="event-versioning-strategies">Event Versioning Strategies</h2>
+<p>Every time we need to modify an event class, we should always consider to create a new version of the event, keeping the old one still live, in order to re-hydrate the aggregate from the repository stream. So, it’ important to define a versioning strategy for the events.</p>
+
+<p>There are different solutions explained by Damian Hickey in <a href="https://groups.google.com/forum/#!msg/neventstore/tscuQA1bZxQ/TE-u0_PpnyoJ" target="_blank">this post</a>. In the same post <strong>David Rettenbacher</strong> proposed a variant that I like, because it leaves the same event’s full name in the last version of the event itself and so, the code seems to be more readable and maintainable: <strong><em>using Attributes</em></strong>.</p>
+
+<h3 id="attribute-versioning-setup">Attribute Versioning setup</h3>
+<p>The strategy needs:</p>
+<ol>
+<li>a <a href="https://github.com/williamverdolini/CQRS-ES-Todos/blob/master/Todo.Infrastructure/Events/Versioning/VersionedEventAttribute.cs" target="_blank">VersionedEvent attribute</a> to link the concrete event classes with an alias for the event name (usually the event class name itself) and to associate that concrete event implementation with a version number.</li>
+<li>a <a href="https://github.com/williamverdolini/CQRS-ES-Todos/blob/master/Todo.Infrastructure/Events/Versioning/NewtonsoftJsonSerializer.cs" target="_blank">custom Serializer</a> that serialize/deserialize the event instances using a custom <a href="https://github.com/williamverdolini/CQRS-ES-Todos/blob/master/Todo.Infrastructure/Events/Versioning/VersionedEventSerializationBinder.cs" target="_blank">serialization binder</a>, implemented according to the attribute versioning strategy</li>
+<li>a <a href="https://github.com/williamverdolini/CQRS-ES-Todos/blob/master/Web.UI/Injection/Installers/EventStoreInstaller.cs#L82" target="_blank">NEventStore instrumentation in order to use this serialization strategy</a></li>
+<li>a <a href="https://github.com/williamverdolini/CQRS-ES-Todos/blob/master/Web.UI/Injection/Installers/EventStoreInstaller.cs#L90-L91" target="_blank">NEventStore instrumentation in order to enable Event-Upconversion</a></li>
+</ol>
+
+<h3 id="attribute-versioning-usage">Attribute Versioning usage</h3>
+<p>At this point to use this versioning strategy we need to:</p>
+<ol>
+<li><a href="https://github.com/williamverdolini/CQRS-ES-Todos/blob/master/Todo.Domain/Messages/Events/ToDoEvents.cs#L37-L38" target="_blank">Rename the old version of Event Class</a> (i.e. className_V0) and mark the class with the VersionedEvent attribute's info</li>
+<li><a href="https://github.com/williamverdolini/CQRS-ES-Todos/blob/master/Todo.Domain/Messages/Events/ToDoEvents.cs#L58-L59" target="_blank">Create the new version of the Event Class</a> (with the same original name) and mark the class with the VersionedEvent attribute using a major version number</li>
+<li>Create the <a href="https://github.com/williamverdolini/CQRS-ES-Todos/blob/master/Todo.Domain/Messages/Events/ToDoEventsConverters.cs" target="_blank">Event Upconverter</a> that implements the event conversion logic</li>
+</ol>
+
+<p>that’s all.</p>
+
+<h2 id="some-consideration">Some Consideration</h2>
+
+<h3 id="replaying-events">Replaying Events</h3>
+<p>Replay all the events from the beginning could be useful in different scenarios: create a new projection, rebuild an existent one (for example during a product upgrade) and before do it, it’s very important having the event upconversion strategy set up.
+The following one it’s a simple event rebuilder that re-publish all the events previously committed.</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">EventsRebuilder</span> <span class="p">:</span> <span class="n">IEventsRebuilder</span>
+<span class="p">{</span>
+	<span class="k">private</span> <span class="k">readonly</span> <span class="n">IStoreEvents</span> <span class="n">_store</span><span class="p">;</span>
+	<span class="k">private</span> <span class="k">readonly</span> <span class="n">IBus</span> <span class="n">_bus</span><span class="p">;</span>
+
+	<span class="k">public</span> <span class="nf">EventsRebuilder</span><span class="p">(</span><span class="n">IStoreEvents</span> <span class="n">store</span><span class="p">,</span> <span class="n">IBus</span> <span class="n">bus</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="n">Contract</span><span class="p">.</span><span class="n">Requires</span><span class="p">&lt;</span><span class="n">ArgumentNullException</span><span class="p">&gt;(</span><span class="n">store</span> <span class="p">!=</span> <span class="k">null</span><span class="p">,</span> <span class="s">"store"</span><span class="p">);</span>
+		<span class="n">Contract</span><span class="p">.</span><span class="n">Requires</span><span class="p">&lt;</span><span class="n">ArgumentNullException</span><span class="p">&gt;(</span><span class="n">bus</span> <span class="p">!=</span> <span class="k">null</span><span class="p">,</span> <span class="s">"bus"</span><span class="p">);</span>
+		<span class="n">_store</span> <span class="p">=</span> <span class="n">store</span><span class="p">;</span>
+		<span class="n">_bus</span> <span class="p">=</span> <span class="n">bus</span><span class="p">;</span>
+	<span class="p">}</span>
+
+	<span class="k">public</span> <span class="k">void</span> <span class="nf">Rebuild</span><span class="p">()</span>
+	<span class="p">{</span>
+		<span class="kt">var</span> <span class="n">commits</span> <span class="p">=</span> <span class="n">_store</span><span class="p">.</span><span class="n">Advanced</span><span class="p">.</span><span class="nf">GetFrom</span><span class="p">(</span><span class="k">null</span><span class="p">).</span><span class="nf">ToArray</span><span class="p">();</span>
+
+		<span class="k">foreach</span> <span class="p">(</span><span class="kt">var</span> <span class="n">commit</span> <span class="k">in</span> <span class="n">commits</span><span class="p">)</span>
+		<span class="p">{</span>
+			<span class="kt">var</span> <span class="n">evts</span> <span class="p">=</span> <span class="n">commit</span><span class="p">.</span><span class="n">Events</span>
+				<span class="p">.</span><span class="nf">Where</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">Body</span> <span class="k">is</span> <span class="n">Event</span><span class="p">)</span>
+				<span class="p">.</span><span class="nf">Select</span><span class="p">(</span><span class="n">evt</span> <span class="p">=&gt;</span> <span class="p">(</span><span class="kt">dynamic</span><span class="p">)</span><span class="n">evt</span><span class="p">.</span><span class="n">Body</span><span class="p">)</span>
+				<span class="p">.</span><span class="nf">FirstOrDefault</span><span class="p">();</span>
+
+			<span class="n">_bus</span><span class="p">.</span><span class="nf">Publish</span><span class="p">(</span><span class="n">evts</span><span class="p">);</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="well-begun-is-half-done">Well begun is half done</h3>
+<p>Thinking about Event Upconversion should be one of the first strategies to define when you adopt Event Sourcing. That’s just because the events are the data saved and serialized from the beginning, during all the life of your application. So, defining at the very first moment how to serialize and deserialize the event data allow you to write more maintanable code, without having to adjust the target after. 
+But in this sample application I wanted to put me in the worst condition: that’s, to add a event upconversion strategy after the application go-live.
+Using the VersionedEvent attribute as explained before allow me to add some more <a href="https://github.com/williamverdolini/CQRS-ES-Todos/blob/master/Todo.Infrastructure/Events/Versioning/VersionedEventSerializationBinder.cs#L18-L42" target="_blank">serialization/deserialization logic</a> in order to face this situation.</p>

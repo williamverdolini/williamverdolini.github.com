@@ -1,0 +1,97 @@
+<p>When you configure a macro in the Umbraco developer section, you can add some parameters to the macro, which the administrator can use to enable some specific behaviour (e.g. disply or not some data, or whatever you want).</p>
+
+<p><img src="/images/umbracomacros/Umbraco-macros-parameters.png" class="img-rounded" style="width: 100%; height:100%" /><br /><br /></p>
+
+<p>These parameters can be handled in the Custom Macro’s logic because <a href="/2015/02/07/umbmacro-views/#umbraco-link-partial-view" target="_blank">they are passed into the Custom Macro’s controller from Umbraco Page model</a>. So, these parameters become a natural way to add some configuration to our macros.</p>
+
+<p>From developer’s point of view, these parameters are declared with specific interfaces, that derive all from <a href="https://github.com/williamverdolini/Umbraco-CustomMacros/blob/master/CustomMacros/Areas/Infrastructure/Controllers/IMacroProperties.cs" target="_blank">IMacroProperties</a>, like the following:</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">interface</span> <span class="nc">IToDoListMacroProperties</span> <span class="p">:</span> <span class="n">IMacroProperties</span>
+<span class="p">{</span>
+		<span class="kt">string</span> <span class="n">IsIdVisible</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span> 
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>and this interfaces are implemented by Custom Macro’s Controller:</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">[PluginController("Sample")]</span>
+<span class="k">public</span> <span class="k">class</span> <span class="nc">ToDoListController</span> <span class="p">:</span> <span class="n">MacroController</span><span class="p">,</span>
+	<span class="c1">// Command Provider</span>
+	<span class="n">ICommandProvider</span><span class="p">&lt;</span><span class="n">SelectToDoListCommand</span><span class="p">&gt;,</span>
+	<span class="n">ICommandProvider</span><span class="p">&lt;</span><span class="n">ArchiveToDoListCommand</span><span class="p">&gt;,</span>
+	<span class="n">ICommandProvider</span><span class="p">&lt;</span><span class="n">OrderToDoListsCommand</span><span class="p">&gt;,</span>
+	<span class="c1">// Command Handler</span>
+	<span class="n">ICommandHandler</span><span class="p">&lt;</span><span class="n">ArchiveToDoListCommand</span><span class="p">&gt;,</span>
+	<span class="n">ICommandHandler</span><span class="p">&lt;</span><span class="n">OrderToDoListsCommand</span><span class="p">&gt;,</span>
+	<span class="c1">// Macro Properties</span>
+	<span class="n">IToDoListMacroProperties</span>
+<span class="p">{</span>
+	<span class="k">public</span> <span class="kt">string</span> <span class="n">IsIdVisible</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+
+	<span class="p">...</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Now, in the “command handle logic”, the developer can use these <strong>Macro’s Properties</strong> to get the values set during the configuration phase, without cares about <strong>how</strong> to retrieve these values.</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">[PluginController("Sample")]</span>
+<span class="k">public</span> <span class="n">ActionResult</span> <span class="nf">Handle</span><span class="p">(</span><span class="n">OrderToDoListsCommand</span> <span class="n">command</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="kt">bool</span> <span class="n">isAscending</span> <span class="p">=</span> <span class="n">Utilities</span><span class="p">.</span><span class="nf">CastBool</span><span class="p">(</span><span class="n">command</span><span class="p">.</span><span class="n">IsAscending</span><span class="p">);</span>
+	<span class="n">ViewBag</span><span class="p">.</span><span class="n">SortedFieldname</span> <span class="p">=</span> <span class="n">command</span><span class="p">.</span><span class="n">FieldName</span><span class="p">;</span>
+	<span class="n">ViewBag</span><span class="p">.</span><span class="n">IsAscending</span> <span class="p">=</span> <span class="p">!</span><span class="n">isAscending</span><span class="p">;</span>
+	<span class="n">ViewBag</span><span class="p">.</span><span class="n">IsIdVisible</span> <span class="p">=</span> <span class="n">Utilities</span><span class="p">.</span><span class="nf">CastBool</span><span class="p">(</span><span class="n">IsIdVisible</span><span class="p">);</span>
+	<span class="k">return</span> <span class="nf">PartialView</span><span class="p">(</span>
+		<span class="n">isAscending</span> <span class="p">?</span>
+		<span class="n">worker</span><span class="p">.</span><span class="nf">GetLists</span><span class="p">().</span><span class="nf">OrderBy</span><span class="p">(</span><span class="n">orderChoise</span><span class="p">[</span><span class="n">command</span><span class="p">.</span><span class="n">FieldName</span><span class="p">]).</span><span class="nf">ToList</span><span class="p">()</span> <span class="p">:</span>
+		<span class="n">worker</span><span class="p">.</span><span class="nf">GetLists</span><span class="p">().</span><span class="nf">OrderByDescending</span><span class="p">(</span><span class="n">orderChoise</span><span class="p">[</span><span class="n">command</span><span class="p">.</span><span class="n">FieldName</span><span class="p">]).</span><span class="nf">ToList</span><span class="p">()</span>
+		<span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Nothing More.</p>
+
+<p>How is it possible?</p>
+
+<h2 id="macros-properties-filters">Macro’s Properties Filters</h2>
+<p>For reasons of simplicity we assume to have all Macro parameters as strings (type: text). All the magic happens into the Controller Base class. Let’s see the code:</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">[SessionExpiredException(Order = 20)]</span>
+<span class="na">[LogException(RedirectTo = "/Errore", Order = 10)]</span>
+<span class="na">[RetrieveMacroProperties(Order = 20)]</span>
+<span class="na">[SubscribeCommandsToProvide(Order = 40)]</span>
+<span class="na">[SubscribeCommandsToHandle(Order = 50)]</span>
+<span class="k">public</span> <span class="k">abstract</span> <span class="k">class</span> <span class="nc">MacroController</span> <span class="p">:</span> <span class="n">SurfaceController</span><span class="p">,</span> <span class="n">IMacroProperties</span>
+<span class="p">{</span>
+	<span class="p">...</span>
+
+	<span class="p">[</span><span class="n">MapToView</span><span class="p">]</span>
+	<span class="p">[</span><span class="nf">PopulateMacroProperties</span><span class="p">(</span><span class="n">Order</span> <span class="p">=</span> <span class="m">10</span><span class="p">)]</span>
+	<span class="k">public</span> <span class="n">ActionResult</span> <span class="nf">Init</span><span class="p">(</span><span class="n">IDictionary</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span> <span class="kt">object</span><span class="p">&gt;</span> <span class="n">MacroParameters</span><span class="p">)</span>
+	<span class="p">{</span>
+			<span class="k">return</span> <span class="nf">HandleCommand</span><span class="p">(</span><span class="nf">GetBusinessCommand</span><span class="p">());</span>
+	<span class="p">}</span>
+
+	<span class="p">[</span><span class="n">HttpPost</span><span class="p">]</span>
+	<span class="p">[</span><span class="nf">MapToView</span><span class="p">(</span><span class="n">ViewName</span> <span class="p">=</span> <span class="s">"Handle"</span><span class="p">)]</span>
+	<span class="k">public</span> <span class="n">ActionResult</span> <span class="nf">Execute</span><span class="p">()</span>
+	<span class="p">{</span>
+			<span class="k">return</span> <span class="nf">HandleCommand</span><span class="p">(</span><span class="nf">GetBusinessCommand</span><span class="p">());</span>
+	<span class="p">}</span>
+
+	<span class="p">...</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>So, focusing on Macro’s properties:</p>
+
+<ul>
+  <li>for the <strong>init</strong> action two particular filters are called in sequence: <a href="https://github.com/williamverdolini/Umbraco-CustomMacros/blob/master/CustomMacros/Areas/Infrastructure/Filters/MacroPropertiesAttribute.cs#L52" target="_blank">PopulateMacroProperties</a> and <a href="https://github.com/williamverdolini/Umbraco-CustomMacros/blob/master/CustomMacros/Areas/Infrastructure/Filters/MacroPropertiesAttribute.cs#L12" target="_blank">RetrieveMacroProperties</a></li>
+  <li>for all the other actions only <a href="https://github.com/williamverdolini/Umbraco-CustomMacros/blob/master/CustomMacros/Areas/Infrastructure/Filters/MacroPropertiesAttribute.cs#L12" target="_blank">RetrieveMacroProperties</a> filter is called</li>
+</ul>
+
+<p><strong>PopulateMacroProperties</strong>: retrieves the macro parameter from ActionParameters and populates a local dictionary in session.</p>
+
+<p><strong>RetrieveMacroProperties</strong>: retrieves the macro parameter from the local dictionary in session and, by reflection, sets the Controller’s properties with the same characteristics</p>
+
+<p>all <a href="https://github.com/williamverdolini/Umbraco-CustomMacros/blob/master/CustomMacros/Areas/Infrastructure/Filters/MacroPropertiesAttribute.cs" target="_blank">filters code</a> is here.</p>

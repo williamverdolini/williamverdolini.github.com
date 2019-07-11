@@ -1,0 +1,69 @@
+<!-- Markup JSON-LD generato da Assistente per il markup dei dati strutturati di Google. -->
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Article",
+  "name" : "Deploy automatico: Grunt!",
+  "author" : {
+    "@type" : "Person",
+    "name" : "William Verdolini"
+  },
+  "datePublished" : "2014-03-30",
+  "articleSection" : [ "Configuration Management","Deploy","Grunt"  ],
+  "url" : "http://williamverdolini.github.io/2014/03/30/discitur-Deploy_Grunt"
+}
+</script>
+
+<p>Una volta chiusa la prima beta-version, l’aspetto deploy diventa un tema
+interessante. In uno scenario enterprise il deploy di un’applicazione è un
+aspetto decisamente importante. In molti progetti in cui ho lavorato il
+Configuration Management aveva una parte significativa nella gestione del ciclo
+di vita del software e, in ultima istanza, nei costi del progetto.</p>
+
+<p>Ci sono davvero scuole di pensiero e metodologie dietro il configuration
+management, ma, da sviluppatore software e project manager, gli aspetti che
+alla fine più mi premono sono:</p>
+
+<ul>
+  <li>velocizzare le attività di impacchettamento e
+   rilascio del software (time-to-market!!)</li>
+  <li>automatizzarlo (ho visto troppi ftp manuali
+   sbagliati in vita mia…)</li>
+</ul>
+
+<p>Al quarto deploy su github-pages per l’ambiente di test, ero già
+stanco…quindi mi son detto che era ora di sfruttare le potenzialità appena
+intraviste di Grunt. Non è stato difficile, fondamentalmente Grunt è pensato per
+essere modulare e per poter inserire nuove funzionalità all’occorrenza. Al
+momento il mio processo di deploy prevede questi step:</p>
+
+<ol>
+  <li><strong>clean</strong>: pulizia delle cartelle definite per
+  l’ambiente di deploy</li>
+  <li><strong>concat:css</strong>: concatenazione in unico file dei css</li>
+  <li><strong>concat:libraries</strong>: concatenazione in un unico file dei js di
+  terze parti</li>
+  <li><strong>concat:app</strong>: concatenazione in un unico file dei js dell’applicazione</li>
+  <li><strong>cssmin</strong>: minificazione del file css</li>
+  <li><strong>uglify</strong>: minificazione e compattazione dei file js</li>
+  <li><strong>copy</strong>: copia dei file da deployare nelle cartelle
+  finali dell’ambiente di deploy</li>
+  <li><strong>htmlbuild</strong>: manipolazione di index.html per linkare i
+  css ed i js concatenati/minificati/compattati a seconda dell’ambiente</li>
+  <li><strong>hashres</strong>: modifica dei riferimenti ai file js e css
+  per forzare l’aggiornamento sui client (per evitare il caching delle
+  precedenti versioni dei file)</li>
+</ol>
+
+<p>Una versione funzionante si trova sul repository: <a href="https://github.com/williamverdolini/discitur-web/blob/master/Gruntfile.js" target="_blank">https://github.com/williamverdolini/discitur-web/blob/master/Gruntfile.js</a></p>
+
+<p>Fatto. Duplicare il set di task per il deploy in produzione è altrettanto
+semplice ed ora con un clik è possibile eseguire in maniera automatizzata il
+deploy dell’applicazioni in test o in produzione senza troppo sforzo.</p>
+
+<p>Ovviamente questi task si possono aggiungere e complicare a piacere; ad es.
+mi piacerebbe (in un prossimo futuro) gestire in automatico il clone da una
+release specifica di github (passata magari da riga di comando al grunt) e l’ftp
+finale verso l’ambiente. Come dicevo prima Grunt nasce per essere modulare e
+quindi nulla vieta di agganciare moduli per il <a href="https://github.com/sindresorhus/grunt-shell" target="_blank">lancio di comandi da shell</a>
+o di creare proprio moduli custom per le più disparate esigenze.</p>

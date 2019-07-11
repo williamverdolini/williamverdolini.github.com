@@ -1,0 +1,117 @@
+<p><em>What should I validate?</em></p>
+
+<p>For me, this was the question for the most of the time (and now yet). Should I validate commands or aggregates? For who, like me, is used with n-layered architectures the answer is pretty simple: Aggregates (aka Entities). But that is something controversial in CQRS world. Or, better to say, in CQRS+ES world.</p>
+
+<p>Infact with ES the main idea is to have an only-append event store that should be accessed just to retrieve Aggregates by ID or to save them. Nothing more. So how could I validate a single aggregate without the capability to read a set of aggregates? The answer is: I cannot.
+I read a lot about set validation and the most valuable reading, for me, is the <a href="http://codebetter.com/gregyoung/2010/08/12/eventual-consistency-and-set-validation/" target="_blank">Greg Young’s one</a>. He says that we should to do an “eventual consistent validation”, i.e. a validation based on eventual consistent data. So, as defined in the <a href="/2014/08/11/cqrses-architecture/" target="_blank">previous diagram</a>, I realized a set of Command validators that could perform its own check. I put this code as before the command handling, because the purpose of this kind of validation is to check that the command is valid from business point of view.</p>
+
+<p>Let’s see some code.
+First of all, I’ve used a very flexible library to do this kind of command validation: <a href="https://fluentvalidation.codeplex.com/" target="_blank">FluentValidation</a>. It gave me the ability to check for simple and complex rules, always having a very readable and maintainable code.</p>
+
+<p>This is a sample code for an eventual consistent set validation:</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">CreateToDoListCommandValidator</span> <span class="p">:</span> <span class="n">AbstractValidator</span><span class="p">&lt;</span><span class="n">CreateToDoListCommand</span><span class="p">&gt;</span>
+<span class="p">{</span>
+	<span class="k">private</span> <span class="k">readonly</span> <span class="n">IDatabase</span> <span class="n">database</span><span class="p">;</span>
+	<span class="k">public</span> <span class="nf">CreateToDoListCommandValidator</span><span class="p">(</span><span class="n">IDatabase</span> <span class="n">db</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="n">Contract</span><span class="p">.</span><span class="n">Requires</span><span class="p">&lt;</span><span class="n">ArgumentNullException</span><span class="p">&gt;(</span><span class="n">db</span> <span class="p">!=</span> <span class="k">null</span><span class="p">,</span> <span class="s">"db"</span><span class="p">);</span>
+		<span class="n">database</span> <span class="p">=</span> <span class="n">db</span><span class="p">;</span>
+		<span class="nf">RuleFor</span><span class="p">(</span><span class="n">command</span> <span class="p">=&gt;</span> <span class="n">command</span><span class="p">.</span><span class="n">Id</span><span class="p">).</span><span class="nf">NotEmpty</span><span class="p">();</span>
+		<span class="nf">RuleFor</span><span class="p">(</span><span class="n">command</span> <span class="p">=&gt;</span> <span class="n">command</span><span class="p">.</span><span class="n">Title</span><span class="p">).</span><span class="nf">NotEmpty</span><span class="p">();</span>
+		<span class="nf">RuleFor</span><span class="p">(</span><span class="n">command</span> <span class="p">=&gt;</span> <span class="n">command</span><span class="p">.</span><span class="n">Title</span><span class="p">).</span><span class="nf">Must</span><span class="p">(</span><span class="n">BeUniqueTitle</span><span class="p">).</span><span class="nf">WithMessage</span><span class="p">(</span><span class="s">"List's Title is already used. Please choose another."</span><span class="p">);</span>
+	<span class="p">}</span>
+	<span class="k">private</span> <span class="kt">bool</span> <span class="nf">BeUniqueTitle</span><span class="p">(</span><span class="kt">string</span> <span class="n">title</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="k">return</span> <span class="p">!</span><span class="n">database</span><span class="p">.</span><span class="n">ToDoLists</span><span class="p">.</span><span class="nf">Any</span><span class="p">(</span><span class="n">t</span> <span class="p">=&gt;</span> <span class="n">t</span><span class="p">.</span><span class="n">Title</span><span class="p">.</span><span class="nf">Equals</span><span class="p">(</span><span class="n">title</span><span class="p">));</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>As everywhere in my code, <a href="http://docs.castleproject.org/Default.aspx" target="_blank">Castle Windsor</a> resolves the necessary dependency for me.
+The same structure is good for consistent validation (aka validation based on Domain Repository).</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">MarkToDoItemAsCompletedCommandValidator</span> <span class="p">:</span><span class="n">AbstractValidator</span><span class="p">&lt;</span><span class="n">MarkToDoItemAsCompleteCommand</span><span class="p">&gt;</span>
+<span class="p">{</span>
+	<span class="k">private</span> <span class="k">readonly</span> <span class="n">IRepository</span> <span class="n">repository</span><span class="p">;</span>
+
+	<span class="k">public</span> <span class="nf">MarkToDoItemAsCompletedCommandValidator</span><span class="p">(</span><span class="n">IRepository</span> <span class="n">repo</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="n">Contract</span><span class="p">.</span><span class="n">Requires</span><span class="p">&lt;</span><span class="n">ArgumentNullException</span><span class="p">&gt;(</span><span class="n">repo</span> <span class="p">!=</span> <span class="k">null</span><span class="p">,</span> <span class="s">"repo"</span><span class="p">);</span>
+		<span class="n">repository</span> <span class="p">=</span> <span class="n">repo</span><span class="p">;</span>
+
+		<span class="nf">RuleFor</span><span class="p">(</span><span class="n">command</span> <span class="p">=&gt;</span> <span class="n">command</span><span class="p">.</span><span class="n">ClosingDate</span><span class="p">).</span><span class="nf">Must</span><span class="p">(</span><span class="n">GreaterThanOrEqualToCreation</span><span class="p">)</span>
+			<span class="p">.</span><span class="nf">WithMessage</span><span class="p">(</span><span class="n">Messages</span><span class="p">.</span><span class="n">greaterthanorequal_error</span><span class="p">,</span> <span class="s">"ClosingDate"</span><span class="p">,</span> <span class="s">"CreationDate"</span><span class="p">);</span>
+	<span class="p">}</span>
+
+	<span class="k">private</span> <span class="kt">bool</span> <span class="nf">GreaterThanOrEqualToCreation</span><span class="p">(</span><span class="n">MarkToDoItemAsCompleteCommand</span> <span class="n">command</span><span class="p">,</span> <span class="n">DateTime</span> <span class="n">closingDate</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="n">ToDoItem</span> <span class="n">item</span> <span class="p">=</span> <span class="n">repository</span><span class="p">.</span><span class="n">GetById</span><span class="p">&lt;</span><span class="n">ToDoItem</span><span class="p">&gt;(</span><span class="n">command</span><span class="p">.</span><span class="n">Id</span><span class="p">);</span>
+		<span class="k">return</span> <span class="n">closingDate</span> <span class="p">&gt;=</span> <span class="n">item</span><span class="p">.</span><span class="n">CreationDate</span><span class="p">;</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>So far so good. Now I use these command validators in the same way I use command handlers:</p>
+
+<ol>
+  <li>Create a Validator Typed Factory
+    <div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">interface</span> <span class="nc">ICommandValidatorFactory</span>
+<span class="p">{</span>
+ <span class="n">IValidator</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;[]</span> <span class="n">GetValidatorsForCommand</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;(</span><span class="n">T</span> <span class="n">command</span><span class="p">);</span>        
+<span class="p">}</span>
+</code></pre></div>    </div>
+  </li>
+  <li>Register the typed factory in DI container
+    <div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">CommandStackInstaller</span> <span class="p">:</span> <span class="n">IWindsorInstaller</span>
+<span class="p">{</span>
+ <span class="k">public</span> <span class="k">void</span> <span class="nf">Install</span><span class="p">(</span><span class="n">IWindsorContainer</span> <span class="n">container</span><span class="p">,</span> <span class="n">IConfigurationStore</span> <span class="n">store</span><span class="p">)</span>
+ <span class="p">{</span>
+     <span class="n">container</span><span class="p">.</span><span class="nf">Register</span><span class="p">(</span>
+         <span class="n">Classes</span>
+         <span class="p">.</span><span class="n">FromAssemblyContaining</span><span class="p">&lt;</span><span class="n">ToDoListCommandHandlers</span><span class="p">&gt;()</span>
+         <span class="p">.</span><span class="nf">BasedOn</span><span class="p">(</span><span class="k">typeof</span><span class="p">(</span><span class="n">ICommandHandler</span><span class="p">&lt;&gt;))</span> <span class="c1">// That implement ICommandHandler Interface</span>
+         <span class="p">.</span><span class="n">WithService</span><span class="p">.</span><span class="nf">Base</span><span class="p">()</span>    <span class="c1">// and its name contain "CommandHandler"</span>
+         <span class="p">.</span><span class="nf">LifestyleSingleton</span><span class="p">()</span>
+         <span class="p">);</span>
+     <span class="n">container</span><span class="p">.</span><span class="nf">Register</span><span class="p">(</span>
+         <span class="n">Classes</span>
+         <span class="p">.</span><span class="n">FromAssemblyContaining</span><span class="p">&lt;</span><span class="n">CreateToDoListCommandValidator</span><span class="p">&gt;()</span>
+         <span class="p">.</span><span class="nf">BasedOn</span><span class="p">(</span><span class="k">typeof</span><span class="p">(</span><span class="n">IValidator</span><span class="p">&lt;&gt;))</span> <span class="c1">// That implement IValidator Interface</span>
+         <span class="p">.</span><span class="n">WithService</span><span class="p">.</span><span class="nf">Base</span><span class="p">()</span>    <span class="c1">// and its name contain "Validator"</span>
+         <span class="p">.</span><span class="nf">LifestyleSingleton</span><span class="p">()</span>
+         <span class="p">);</span>
+     <span class="c1">// DI Registration for Typed Factory for Command and Event Handlers</span>
+     <span class="n">container</span><span class="p">.</span><span class="n">AddFacility</span><span class="p">&lt;</span><span class="n">TypedFactoryFacility</span><span class="p">&gt;()</span>
+         <span class="p">.</span><span class="nf">Register</span><span class="p">(</span><span class="n">Component</span><span class="p">.</span><span class="n">For</span><span class="p">&lt;</span><span class="n">ICommandHandlerFactory</span><span class="p">&gt;().</span><span class="nf">AsFactory</span><span class="p">())</span>
+         <span class="p">.</span><span class="nf">Register</span><span class="p">(</span><span class="n">Component</span><span class="p">.</span><span class="n">For</span><span class="p">&lt;</span><span class="n">ICommandValidatorFactory</span><span class="p">&gt;().</span><span class="nf">AsFactory</span><span class="p">())</span>
+         <span class="p">.</span><span class="nf">Register</span><span class="p">(</span><span class="n">Component</span><span class="p">.</span><span class="n">For</span><span class="p">&lt;</span><span class="n">IEventHandlerFactory</span><span class="p">&gt;().</span><span class="nf">AsFactory</span><span class="p">());</span>
+ <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>    </div>
+  </li>
+  <li>Call the factory and the validation as before the command handling
+    <div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">void</span> <span class="n">IBus</span><span class="p">.</span><span class="n">Send</span><span class="p">&lt;</span><span class="n">TCommand</span><span class="p">&gt;(</span><span class="n">TCommand</span> <span class="n">message</span><span class="p">)</span>
+<span class="p">{</span>
+ <span class="err">#</span><span class="n">region</span> <span class="n">Command</span> <span class="n">Validations</span>
+ <span class="c1">// Eventual consistency checks</span>
+ <span class="c1">// ATTENTION: based on domain requisites could be possibile to add constraint to readmodel DB</span>
+ <span class="c1">//          or to check before persisting. In this case, it's quite rare to have concurrent conflicts</span>
+ <span class="c1">//          so, this "eventual check" is perfect in most of the domain cases and could be assumed as good default rule</span>
+ <span class="n">IValidator</span><span class="p">&lt;</span><span class="n">TCommand</span><span class="p">&gt;[]</span> <span class="n">validators</span> <span class="p">=</span> <span class="n">_commandValidatorFactory</span><span class="p">.</span><span class="n">GetValidatorsForCommand</span><span class="p">&lt;</span><span class="n">TCommand</span><span class="p">&gt;(</span><span class="n">message</span><span class="p">);</span>
+ <span class="k">foreach</span> <span class="p">(</span><span class="kt">var</span> <span class="n">validator</span> <span class="k">in</span> <span class="n">validators</span><span class="p">)</span>
+ <span class="p">{</span>
+     <span class="n">validator</span><span class="p">.</span><span class="nf">ValidateAndThrow</span><span class="p">(</span><span class="n">message</span><span class="p">);</span>
+ <span class="p">}</span>
+ <span class="err">#</span><span class="n">endregion</span>
+ <span class="err">#</span><span class="n">region</span> <span class="n">Command</span> <span class="n">Handling</span>
+ <span class="n">ICommandHandler</span><span class="p">&lt;</span><span class="n">TCommand</span><span class="p">&gt;[]</span> <span class="n">handlers</span> <span class="p">=</span> <span class="n">_commandHandlerfactory</span><span class="p">.</span><span class="n">GetHandlersForCommand</span><span class="p">&lt;</span><span class="n">TCommand</span><span class="p">&gt;(</span><span class="n">message</span><span class="p">);</span>
+ <span class="k">foreach</span> <span class="p">(</span><span class="kt">var</span> <span class="n">handler</span> <span class="k">in</span> <span class="n">handlers</span><span class="p">)</span>
+ <span class="p">{</span>
+     <span class="n">handler</span><span class="p">.</span><span class="nf">Handle</span><span class="p">(</span><span class="n">message</span><span class="p">);</span>
+ <span class="p">}</span>
+ <span class="err">#</span><span class="n">endregion</span>
+<span class="p">}</span>
+</code></pre></div>    </div>
+  </li>
+</ol>

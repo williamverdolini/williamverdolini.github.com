@@ -1,0 +1,230 @@
+<!-- Markup JSON-LD generato da Assistente per il markup dei dati strutturati di Google. -->
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Article",
+  "name" : "Angular.js Digest Cycle",
+  "author" : {
+    "@type" : "Person",
+    "name" : "William Verdolini"
+  },
+  "datePublished" : "2014-02-10",
+  "articleSection" : [ "Digest Cycle", "Angular.js", "watchers", "$$watchers", "$watch" ],
+  "url" : "http://williamverdolini.github.io/2014/02/10/discitur-Digest/"
+}
+</script>
+
+<p>Altro aspetto sempre legato all’autenticazione: come intercettare che
+l’utente si logghi e come reagire a questo evento.</p>
+
+<p>Aggiungo qualche aspetto in più: la login, nell’applicazione Discitur,
+nasce per stare in una finestra modale, che può essere richiamata da più parti
+dell’applicazione. Ad es., già in questo sprint (che è il primo ad usare il
+concetto di autenticazione) la login si richiama da almeno tre punti
+differenti:</p>
+
+<ol>
+  <li>Dalla barra di navigazione principale tramite
+  il link “Accedi”</li>
+  <li>Dalle form di Commento inserite alla fine di
+  ogni lezione (le lezioni sono visibili a tutti, ma commentare è una
+  funzionalità che prevede autenticazione)</li>
+  <li>dalla sezione “Valutazioni” per inserire la propria
+  valutazione</li>
+</ol>
+
+<p>Nel corso dei prossimi sprint ci saranno sicuramente altri punti che prevedranno
+un accesso autenticato. Quindi quello che vorrei evitare è di “inquinare” i
+vari controlli (che hanno bisogno dell’autenticazione) con codice per l’apertura
+della finestra modale, che renderebbero i controller highly-coupled tra loro.</p>
+
+<p>Per far questo, mi appoggio alla gestione degli eventi Angular, in
+particolare <a href="https://github.com/williamverdolini/discitur-web/blob/sprint3/app/modules/lesson/LessonCommentDrv.js#L60" target="_blank">lanciando dal $rootScope un broadcast dell’evento di login</a>. Una velocissima
+riflessione: uso il <a href="http://docs.angularjs.org/api/ng/service/$rootScope" target="_blank">$rootScope</a> per essere sicuro che l’evento raggiunga il
+controller principale da cui la finestra modale di login si genera. Se utilizzassi
+il semplice $scope del controller di partenza, ed il controller non fosse uno
+scope padre di quello che voglio raggiungere, rischierei di lanciare nel vuoto
+l’evento</p>
+
+<p>Quindi, se da un mio generico controller ho bisogno della login utente,
+predispongo un metodo che mi lancia il mio evento:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">scope</span><span class="p">.</span><span class="nx">actions</span> <span class="o">=</span> <span class="p">{</span>
+   <span class="c1">// call Sign Modal Dialog to login</span>
+   <span class="na">openSignIn</span><span class="p">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+      <span class="nx">$rootScope</span><span class="p">.</span><span class="nx">$broadcast</span><span class="p">(</span><span class="s1">'disc.login'</span><span class="p">,</span> <span class="nx">scope</span><span class="p">.</span><span class="nx">actions</span><span class="p">)</span>
+   <span class="p">},</span>
+   <span class="p">...</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>A questo punto, da qualche parte, l’evento sarà gestito e la finestra di
+Login aperta. In questo articolo, più che su aspetti di UI o di interazione con
+il back-end, mi volevo concentrare sulla gestione del dato di autenticazione e
+su come questo sia propagato ai vari controller che lo controllano. Procedendo
+per punti, questi sono i passaggi seguiti:</p>
+
+<ol>
+  <li>la login viene invocata e procede ad eseguire
+  le autenticazione server-side</li>
+  <li>se la <a href="https://github.com/williamverdolini/discitur-web/blob/sprint3/app/modules/user/UserService.js#L69" target="_blank">login</a>
+  da esito positivo, viene valorizzata una proprietà “<a href="https://github.com/williamverdolini/discitur-web/blob/sprint3/app/modules/user/UserService.js#L66" target="_blank">user</a>”
+  del servizio di autenticazione con un oggetto contenente tutte le
+  informazioni sull’utente</li>
+  <li>Questo oggetto, essendo all’interno di un
+  servizio (che per sua natura è un singleton) è unica ed i suoi
+  aggiornamenti sono visibili ovunque si faccia injection del servizio</li>
+  <li>all’interno dei controller che hanno bisogno
+  di conoscere lo stato di autenticazione dell’utente, si realizza un <a href="https://github.com/williamverdolini/discitur-web/blob/sprint3/app/modules/lesson/LessonCommentDrv.js#L134" target="_blank">watcher</a>
+  delle proprietà di user interessate, in particolare user.isLogged</li>
+</ol>
+
+<p>Personalmente trovo questo approccio funzionale, ma non proprio elegante,
+in particolare avrei preferito non scrivere un watcher dello stesso tipo in
+ogni controller; viceversa avrei voluto iniettare il mio servizio di
+autenticazione e controllare le proprietà dell’oggetto user, per capire se
+l’autenticazione è avvenuta o meno.</p>
+
+<p>Facendo un confronto tra quello che ho fatto e quello che
+mi sarebbe piaciuto fare:</p>
+
+<h4>Quello che ho fatto</h4>
+
+<p><b><i>Controller</i></b>:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">scope</span><span class="p">.</span><span class="nx">local</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="na">isLogged</span><span class="p">:</span> <span class="nx">AuthService</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">isLogged</span><span class="p">,</span>
+  <span class="na">sameUser</span><span class="p">:</span> <span class="p">(</span><span class="nx">scope</span><span class="p">.</span><span class="nx">comment</span><span class="p">.</span><span class="nx">author</span><span class="p">.</span><span class="nx">username</span> <span class="o">==</span> <span class="nx">AuthService</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">username</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="p">...</span>
+
+<span class="nx">scope</span><span class="p">.</span><span class="nx">$watch</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">AuthService</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">isLogged</span><span class="p">;</span>
+<span class="p">},</span>
+<span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="nx">scope</span><span class="p">.</span><span class="nx">local</span><span class="p">.</span><span class="nx">isLogged</span> <span class="o">=</span> <span class="nx">AuthService</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">isLogged</span><span class="p">;</span>
+  <span class="nx">scope</span><span class="p">.</span><span class="nx">local</span><span class="p">.</span><span class="nx">sameUser</span> <span class="o">=</span> <span class="p">(</span><span class="nx">scope</span><span class="p">.</span><span class="nx">comment</span><span class="p">.</span><span class="nx">author</span><span class="p">.</span><span class="nx">username</span> <span class="o">==</span> <span class="nx">AuthService</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">username</span><span class="p">);</span>
+                        <span class="p">}</span>
+                    <span class="p">);</span>
+</code></pre></div></div>
+
+<p><b><i>Template</i></b>:</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"col-xs-12"</span> <span class="na">ng-show=</span><span class="s">"!local.isLogged || !local.sameUser"</span><span class="nt">&gt;</span>
+<span class="nt">&lt;h5&gt;&lt;small&gt;</span>
+<span class="nt">&lt;a</span> <span class="na">ng-click=</span><span class="s">"actions.openUserComment()"</span><span class="nt">&gt;&lt;/a&gt;</span>
+<span class="nt">&lt;/small&gt;</span>
+<span class="nt">&lt;/h5&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+</code></pre></div></div>
+
+<h4>Quello che avrei voluto fare</h4>
+
+<p><b><i>Template</i></b>:</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"col-xs-12"</span> 
+     <span class="na">ng-show=</span><span class="s">"! AuthService.user.isLogged || ! AuthService.user.username==comment.author.username "</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;h5&gt;</span>
+    <span class="nt">&lt;small&gt;&lt;a</span> <span class="na">ng-click=</span><span class="s">"actions.openUserComment()"</span><span class="nt">&gt;&lt;/a&gt;&lt;/small&gt;</span>
+  <span class="nt">&lt;/h5&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+</code></pre></div></div>
+
+<p>Quello che ho fatto è conseguenza del ciclo di digest e delle logiche che
+utilizza Angular per il controllo dei cambiamenti. Angular esegue un “dirty
+checking” ad ogni ciclo di digest (agganciato al ciclo degli eventi del
+browser). Il ciclo d checking spazzola tutti gli scope alla ricerca di
+modifiche ai valori, Il problema è che i servizi non sono spazzolati in
+autonomia da angular e quindi sono richiesti i watcher che altro non sono che
+funzioni che il ciclo di digest periodico di angular richiama per aggiornare i
+vari scope. Il giro mi è chiaro e alla fine è ok, ma mi sarebbe piaciuto se il
+ciclo di digest avesse spazzolato anche i servizi iniettati dai vari scope.
+ </p>
+
+<p><strong><em>Revisione</em></strong></p>
+
+<p>Facendo ulteriori approfondimenti e, soprattutto, avendo approfondito <a href="http://stackoverflow.com/a/16465890/3316654" target="_blank">questo post</a> ho capito
+meglio come lavora il ciclo di digest di Angular. Il check che Angular fa è
+relativo ai soli tipi primitivi, e, nel caso di <a href="http://docs.angularjs.org/api/ng.$rootScope.Scope#methods_$watch" target="_blank">watcher</a>
+accesi su oggetti non primitivi, Angular fa un dirty checking di tutte le
+proprietà primitive dell’oggetto, secondo quanto riportato dal metodo di
+confronto utilizzato: <a href="http://docs.angularjs.org/api/angular.equals" target="_blank">angular.equal</a>.</p>
+
+<p><b><i>Controller</i></b>:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">scope</span><span class="p">.</span><span class="nx">local</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="na">user</span><span class="p">:</span> <span class="nx">AuthService</span><span class="p">.</span><span class="nx">user</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><b><i>Template</i></b>:</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"col-xs-12"</span> 
+     <span class="na">ng-show=</span><span class="s">"!scope.local.user.isLogged || ! AuthService.user.username==comment.author.username "</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;h5&gt;</span>
+    <span class="nt">&lt;small&gt;&lt;a</span> <span class="na">ng-click=</span><span class="s">"actions.openUserComment()"</span><span class="nt">&gt;&lt;/a&gt;&lt;/small&gt;</span>
+  <span class="nt">&lt;/h5&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+</code></pre></div></div>
+
+<p>Con il codice precedente, Angular definisce un $watch sull’oggetto “scope.local.user.isLogged” per farlo individua la poprietà dello scope “scope.local.user” che, per riferimento è settata con l’oggetto user del servizio. Quindi
+con il seguente codice:</p>
+
+<p><b><i>Controller</i></b>:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">scope</span><span class="p">.</span><span class="nx">local</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="na">user</span><span class="p">:</span> <span class="nx">AuthService</span><span class="p">.</span><span class="nx">user</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><b><i>Template</i></b>:</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ng-show="!scope.local.user.isLogged"&gt;
+</code></pre></div></div>
+
+<p>Angular, imposta un watcher del seguente tipo:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">scope</span><span class="p">.</span><span class="nx">$watch</span><span class="p">(</span>
+    <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">scope</span><span class="p">.</span><span class="nx">local</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">isLogged</span> <span class="p">},</span> <span class="c1">// where scope.local.user === AuthService.user</span>
+    <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="c1">// do binding…</span>
+    <span class="p">}</span>
+<span class="p">);</span>
+</code></pre></div></div>
+
+<p>In questa maniera si è riuscito a mettere in binding le proprietà di un
+servizio, senza dover ricorrere ad un watcher esplicito nel controller.</p>
+
+<p><em>prima riflessione</em>:</p>
+
+<p>Il codice che volevo scrivere inizialmente era sbagliato per il semplice
+fatto che i watcher non si attaccano direttamente ai servizi (magari un giorno
+lo faranno), ma guardano all’interno del loro scope.</p>
+
+<p><em>seconda riflessione</em>:</p>
+
+<p>una lettura che ha confermato tutti i miei approfondimenti è stata questa: <a href="http://stsc3000.github.io/blog/2013/10/26/a-tale-of-frankenstein-and-binding-to-service-values-in-angular-dot-js/" target="_blank">http://stsc3000.github.io/blog/2013/10/26/a-tale-of-frankenstein-and-binding-to-service-values-in-angular-dot-js/</a></p>
+
+<p>Se solo l’avessi trovata prima…</p>
+
+<p>In ogni caso, è sicuro che d’ora in avanti scriverò codice più consapevole!</p>
+
+<p><em>terza riflessione</em>:</p>
+
+<p>questo dei watcher apre un argomento, quello delle performance, abbastanza
+importante. In applicazioni complesse è facile arrivare a migliaia e migliaia
+di questi watcher che girano ad ogni ciclo di digest…</p>
+
+<p>Non lo faccio ora, ma una cosa intelligente da fare è quella di staccare i
+watcher quando non ce n’è più bisogno. Delle letture velocissime (ma interessanti)
+che ho fatto a riguardo:</p>
+
+<p><a href="http://angular-tips.com/blog/2013/08/removing-the-unneeded-watches/" target="_blank">http://angular-tips.com/blog/2013/08/removing-the-unneeded-watches/</a></p>
+
+<p><a href="http://www.bennadel.com/blog/2480-Unbinding-watch-Listeners-In-AngularJS.htm" target="_blank">http://www.bennadel.com/blog/2480-Unbinding-watch-Listeners-In-AngularJS.htm</a>.</p>
+
+<p> </p>
+
+<p> </p>
+
+<p>  </p>

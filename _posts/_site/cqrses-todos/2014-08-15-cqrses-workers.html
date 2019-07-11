@@ -1,0 +1,49 @@
+<p>One of the (so much) hints caught on CQRS+ES session presented by Andrea Saltarello is something that does not matters so much with CQRS, but more with Single Responsibility Principle. I’m talking about WorkerServices (Workers), whose purpose is to keep a loose coupling between implementation logic and domain logic.
+It’s a tipical topic for software designers, rather than domain experts…and I like it!</p>
+
+<p>The idea is very simple: divide the presentation layer from the service layer (where service is to be read in DDD sauce). An image speaks better than a thousand words:</p>
+
+<p><img src="/images/cqrses/workers.png" class="img-rounded" /></p>
+
+<p>Why is so important? Because the Worker gives me two main advantages:</p>
+
+<ol>
+  <li>The capability to focus on domain (business) actions, both command or queries, when dealing with development or troubleshooting. Obviously it’s possible to specialize the Worker in order to have a CommandWorker and a QueryWorker</li>
+  <li>The capability to change my “presentation” framework with the minimum effort. With this pattern I could change MVC into WebApi (i.e.) without a re-factoring that involves Command/Query models.</li>
+</ol>
+
+<p>Going deeper into the implementation, a Worker has to deal with the two “channels” of CQRS approach: the Command channel (to send commands) and the Query channel (to retrieve data). Because of that, it’s natural to implement a Worker injecting the two “buses”:</p>
+
+<ul>
+  <li>Command Bus: channel to send commands to the bus on the Command Model</li>
+  <li>Database: channel to send queries to an eventual consistent storage</li>
+</ul>
+
+<p>The following is a sample</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">ToDoWorker</span>
+<span class="p">{</span>
+    <span class="k">private</span> <span class="k">readonly</span> <span class="n">IBus</span> <span class="n">bus</span><span class="p">;</span>
+    <span class="k">private</span> <span class="k">readonly</span> <span class="n">IDatabase</span> <span class="n">database</span><span class="p">;</span>
+    <span class="k">public</span> <span class="nf">ToDoWorker</span><span class="p">(</span><span class="n">IBus</span> <span class="n">commandBus</span><span class="p">,</span> <span class="n">IRepository</span> <span class="n">repo</span><span class="p">,</span> <span class="n">IDatabase</span> <span class="n">db</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">Contract</span><span class="p">.</span><span class="n">Requires</span><span class="p">&lt;</span><span class="n">ArgumentNullException</span><span class="p">&gt;(</span><span class="n">commandBus</span> <span class="p">!=</span> <span class="k">null</span><span class="p">,</span> <span class="s">"commandBus"</span><span class="p">);</span>
+        <span class="n">Contract</span><span class="p">.</span><span class="n">Requires</span><span class="p">&lt;</span><span class="n">ArgumentNullException</span><span class="p">&gt;(</span><span class="n">db</span> <span class="p">!=</span> <span class="k">null</span><span class="p">,</span> <span class="s">"db"</span><span class="p">);</span>
+
+        <span class="n">bus</span> <span class="p">=</span> <span class="n">commandBus</span><span class="p">;</span>
+        <span class="n">database</span> <span class="p">=</span> <span class="n">db</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="err">#</span><span class="n">region</span> <span class="n">Command</span> <span class="n">Responsibility</span>
+    <span class="k">public</span> <span class="k">void</span> <span class="nf">CreateToDoList</span><span class="p">(</span><span class="n">CreateTodoListCommandModel</span> <span class="n">model</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">bus</span><span class="p">.</span><span class="n">Send</span><span class="p">&lt;</span><span class="n">CreateToDoListCommand</span><span class="p">&gt;(</span><span class="k">new</span> <span class="nf">CreateToDoListCommand</span><span class="p">(</span><span class="n">model</span><span class="p">.</span><span class="n">Id</span><span class="p">,</span> <span class="n">model</span><span class="p">.</span><span class="n">Title</span><span class="p">,</span> <span class="n">model</span><span class="p">.</span><span class="n">Description</span><span class="p">));</span>
+    <span class="p">}</span>
+    <span class="err">#</span><span class="n">endregion</span>
+    <span class="err">#</span><span class="n">region</span> <span class="n">Query</span> <span class="n">Responsibility</span>
+    <span class="k">public</span> <span class="k">async</span> <span class="n">Task</span><span class="p">&lt;</span><span class="n">List</span><span class="p">&lt;</span><span class="n">ToDoList</span><span class="p">&gt;&gt;</span> <span class="nf">GetLists</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="n">database</span><span class="p">.</span><span class="n">ToDoLists</span><span class="p">.</span><span class="nf">ToListAsync</span><span class="p">();</span>
+    <span class="p">}</span>
+    <span class="err">#</span><span class="n">endregion</span>
+<span class="p">}</span>
+</code></pre></div></div>

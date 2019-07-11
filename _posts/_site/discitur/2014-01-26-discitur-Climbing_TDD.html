@@ -1,0 +1,477 @@
+<!-- Markup JSON-LD generato da Assistente per il markup dei dati strutturati di Google. -->
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Article",
+  "name" : "Climbing Angular.js TDD",
+  "author" : {
+    "@type" : "Person",
+    "name" : "williamverdolini"
+  },
+  "datePublished" : "2014-01-26",
+  "articleSection" : [ "Angular.js", "TDD" ],
+  "url" : "http://williamverdolini.github.io/2014/01/26/discitur-Climbing_TDD/"
+}
+</script>
+
+<p><a href="/2014/01/26/discitur-Climbing_TDD_EN"><em>english</em></a></p>
+
+<p>Sto scalando la montagna, non sono ancora sicuro se riuscirò a raggiungere
+la vetta o ritornerò a valle tra un po’, ma dopo un sacco di fatica comincio a
+sentire un po’ di aria fresca…</p>
+
+<p> </p>
+
+<p>Ho deciso di cambiare un po’ del framework scelto nel primo sprint, giusto
+per essere più “standard” e trovare maggior supporto in rete, che in fase
+esplorativa è vitale. Quindi adesso uso <a href="http://jasmine.github.io/" target="_blank">jasmine</a> come framework per le
+asserzioni dello unit test. Per ora mi concentro sullo unit test per fare del
+vero TDD.</p>
+
+<p>Nota: in un progetto esplorativo come questo è ok, ma se mi chiedessero di
+implementare il TDD in un progetto reale, ci penserei bene e lo farei solo in
+un progetto in cui padroneggio le tecnologie e conosco le modalità di unit
+testing. O comunque metterei una clausola di qualche settimana per mettere in
+piedi una macchina per i test rodata, con esempi nelle diverse casisitiche.
+Approcciare il TDD in Angular è dura se non conosci Angular, le librerie ed i
+framework per i test. Ci si riesce (io, credo di essere sulla strada giusta),
+ma se il tempo è una grandezza fissa, valutare di inserirlo in uno step
+successivo non è una cattiva idea.</p>
+
+<p> </p>
+
+<p>Come dicevo, in questo sprint mi volevo concentrare sul TDD per verificarne
+l’efficacia ed ho fatto qualche passo avanti, li elenco e poi li approfondisco:</p>
+
+<ul>
+  <li>backend-less development: mocking dei servizi
+   di back-end (sempre per essere coerente ai principi del <a href="/2014/01/14/discitur-sprint_planning">Ciclo di Raffinazione</a></li>
+  <li>Condivisione dei mocks tra sviluppo e test</li>
+  <li>reale TDD (hurra!!)</li>
+</ul>
+
+<p> </p>
+
+<p>Per i primi due punti faccio un approfondimento in seguito. Adesso vorrei
+far vedere i primi risultati ottenuti con il TDD. Cominciamo dal test che
+fallisce. Sul <a href="https://github.com/williamverdolini/discitur-web" target="_blank">repository</a> c’è tutto il codice, ma qui vorrei concentrarmi su un
+paio di test.</p>
+
+<p>Lo scenario in cui sono è uno scenario del tutto comune in progetti reali,
+per moltissimi aspetti. Ad es. quasi sempre capita di sviluppare componenti
+nuovi di una applicazione esistente e quindi per lo sviluppo dell’applicazione
+ci può far comodo utilizzare i servizi veri (qualora stabili) e mockare solo i
+servizi in via di sviluppo per poter separare gli sviluppi in maniera semplice.
+Penso possa essere utile descrivere la sequenza degli step che ho seguito nel
+mio sviluppo:</p>
+
+<ol>
+  <li>Creare il mock dei dati restituiti dal
+  servizio. Si parte dai dati e dal loro modello quindi. Questo è un altro
+  aspetto comune, soprattutto nella system integration. Infatti quando siete
+  chiamati ad integrare servizi esterni, di terze parti, aldilà degli
+  aspetti tecnici dell’invocazione, la cosa principale è gestire i dati
+  scambiati con il servizio e quindi comprenderne e gestirne l’interfaccia e
+  creare i mock per lavorare in autonomia. Avendo già i dati di una lezione
+  è stato abbastanza semplice definire il <a href="https://github.com/williamverdolini/discitur-web/blob/sprint2/mock/modules/lesson/mocks.js#L6" target="_blank">mock iniziale</a></li>
+  <li>A questo punto creo il test per l’invocazione
+  del servizio. Lo <a href="https://github.com/williamverdolini/discitur-web/blob/sprint2/test/unit/modules/jservicesSpec.js#L285" target="_blank">unit test</a> utilizza il mock dei dati creato e tutte le
+  altre impostazioni comuni alle chiamate reali (ad es. URL di base delle
+  api per i servizi già integrati)</li>
+  <li>nel test cerco di individuare ed <a href="https://github.com/williamverdolini/discitur-web/blob/sprint2/test/unit/modules/jservicesSpec.js#L287" target="_blank">isolare il
+  codice da produrre</a> nell’applicazione reale</li>
+  <li>Eseguo il test per ottenere il “RED”</li>
+  <li>sviluppo il codice applicativo per soddisfare
+  il test. In questa fase, dal mio punto di vista, è importante fare in modo
+  che i dati mockati siano gli stessi sia per il test sia per
+  l’applicazione. Questo consente di andare più spediti nello sviluppo e nel
+  test senza avere a che fare con duplicazione del codice. In questa fase
+  c’è spesso attività di refactoring del codice sia per quello
+  dell’applicazione, sia per quello del test</li>
+  <li>Rieseguo il test per ottenere il “GREEN”</li>
+  <li>Si riparte da 1 o 2 a seconda dell’esigenza</li>
+</ol>
+
+<p> </p>
+
+<p> </p>
+
+<p>La struttura delle cartelle del mio progetto è diventata quindi la
+seguente:</p>
+
+<p><img src="/images/discitur/mock_folder.png" /></p>
+
+<p>Mock contiene le impostazioni di mock (al momento un solo file .js) ed è in
+comune ai due ambienti. Ovviamente resterà nell’ambiente dell’applicazione solo
+nella fase di sviluppo. Ecco cosa c’è in questo momento nel file di mock.js</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">angular</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">'Lesson'</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">config</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">$provide</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">$provide</span><span class="p">.</span><span class="nx">decorator</span><span class="p">(</span><span class="s1">'$httpBackend'</span><span class="p">,</span> <span class="nx">angular</span><span class="p">.</span><span class="nx">mock</span><span class="p">.</span><span class="nx">e2e</span><span class="p">.</span><span class="nx">$httpBackendDecorator</span><span class="p">);</span>
+    <span class="p">})</span>
+    <span class="p">.</span><span class="nx">constant</span><span class="p">(</span><span class="s1">'MockedData'</span><span class="p">,</span> <span class="p">{</span>
+        <span class="na">lessons</span><span class="p">:</span> <span class="p">[</span>
+          <span class="p">{</span> <span class="s2">"Author"</span><span class="p">:</span> <span class="p">{</span> <span class="s2">"UserId"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"Name"</span><span class="p">:</span> <span class="s2">"Federica-MOCK"</span><span class="p">,</span> <span class="s2">"Surname"</span><span class="p">:</span> <span class="s2">"Giampaoletti"</span><span class="p">,</span> <span class="s2">"Email"</span><span class="p">:</span> <span class="s2">"chiarestelle@virgilio.it"</span><span class="p">,</span> <span class="s2">"UserName"</span><span class="p">:</span> <span class="s2">"Fede"</span> <span class="p">},</span> <span class="s2">"FeedBacks"</span><span class="p">:</span> <span class="p">[{</span> <span class="s2">"LessonFeedbackId"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"LessonId"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"Nature"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"Feedback"</span><span class="p">:</span> <span class="s2">"Ampia partecipazione degli alunni"</span> <span class="p">},</span> <span class="p">{</span> <span class="s2">"LessonFeedbackId"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">"LessonId"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"Nature"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"Feedback"</span><span class="p">:</span> <span class="s2">"Semplice da spiegare"</span> <span class="p">},</span> <span class="p">{</span> <span class="s2">"LessonFeedbackId"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">"LessonId"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"Nature"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"Feedback"</span><span class="p">:</span> <span class="s2">"consente collegamenti interdisciplinari"</span> <span class="p">},</span> <span class="p">{</span> <span class="s2">"LessonFeedbackId"</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">"LessonId"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"Nature"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"Feedback"</span><span class="p">:</span> <span class="s2">"utilizza media che catturano l'attenzione"</span> <span class="p">},</span> <span class="p">{</span> <span class="s2">"LessonFeedbackId"</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s2">"LessonId"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"Nature"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">"Feedback"</span><span class="p">:</span> <span class="s2">"un po' lunga, rischia di non chiudersi in lezioni interrotte frequentemente"</span> <span class="p">},</span> <span class="p">{</span> <span class="s2">"LessonFeedbackId"</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span> <span class="s2">"LessonId"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"Nature"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">"Feedback"</span><span class="p">:</span> <span class="s2">"poco fruttuosa se negli orari finali"</span> <span class="p">}],</span> <span class="s2">"Tags"</span><span class="p">:</span> <span class="p">[{</span> <span class="s2">"LessonTagName"</span><span class="p">:</span> <span class="s2">"classe multi-etnica"</span><span class="p">,</span> <span class="s2">"LessonId"</span><span class="p">:</span> <span class="mi">1</span> <span class="p">},</span> <span class="p">{</span> <span class="s2">"LessonTagName"</span><span class="p">:</span> <span class="s2">"Classe numerosa"</span><span class="p">,</span> <span class="s2">"LessonId"</span><span class="p">:</span> <span class="mi">1</span> <span class="p">},</span> <span class="p">{</span> <span class="s2">"LessonTagName"</span><span class="p">:</span> <span class="s2">"DSA"</span><span class="p">,</span> <span class="s2">"LessonId"</span><span class="p">:</span> <span class="mi">1</span> <span class="p">},</span> <span class="p">{</span> <span class="s2">"LessonTagName"</span><span class="p">:</span> <span class="s2">"Rivoluzione Francese"</span><span class="p">,</span> <span class="s2">"LessonId"</span><span class="p">:</span> <span class="mi">1</span> <span class="p">}],</span> <span class="s2">"LessonId"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"Title"</span><span class="p">:</span> <span class="s2">"La rivoluzione Francese secondo Robespierre"</span><span class="p">,</span> <span class="s2">"Discipline"</span><span class="p">:</span> <span class="s2">"Storia"</span><span class="p">,</span> <span class="s2">"School"</span><span class="p">:</span> <span class="s2">"Scuola Secondaria"</span><span class="p">,</span> <span class="s2">"Classroom"</span><span class="p">:</span> <span class="s2">"II Media"</span><span class="p">,</span> <span class="s2">"Rate"</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">"UserId"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"PublishDate"</span><span class="p">:</span> <span class="s2">"2013-12-08T00:00:00"</span><span class="p">,</span> <span class="s2">"Content"</span><span class="p">:</span> <span class="s2">"…"</span><span class="p">,</span> <span class="s2">"Conclusion"</span><span class="p">:</span> <span class="s2">"…"</span> <span class="p">},</span>
+          <span class="p">{</span> <span class="s2">"Author"</span><span class="p">:</span> <span class="p">{</span> <span class="s2">"UserId"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">"Name"</span><span class="p">:</span> <span class="s2">"William-MOCK"</span><span class="p">,</span> <span class="s2">"Surname"</span><span class="p">:</span> <span class="s2">"Verdolini"</span><span class="p">,</span> <span class="s2">"Email"</span><span class="p">:</span> <span class="s2">"william.verdolini@gmail.com"</span><span class="p">,</span> <span class="s2">"UserName"</span><span class="p">:</span> <span class="s2">"Willy"</span> <span class="p">},</span> <span class="s2">"FeedBacks"</span><span class="p">:</span> <span class="p">[{</span> <span class="s2">"LessonFeedbackId"</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span> <span class="s2">"LessonId"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">"Nature"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"Feedback"</span><span class="p">:</span> <span class="s2">"Collegamenti a video e film di interesse"</span> <span class="p">},</span> <span class="p">{</span> <span class="s2">"LessonFeedbackId"</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span> <span class="s2">"LessonId"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">"Nature"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"Feedback"</span><span class="p">:</span> <span class="s2">"Concreti riferimenti ad esempi carismatici"</span> <span class="p">},</span> <span class="p">{</span> <span class="s2">"LessonFeedbackId"</span><span class="p">:</span> <span class="mi">9</span><span class="p">,</span> <span class="s2">"LessonId"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">"Nature"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">"Feedback"</span><span class="p">:</span> <span class="s2">"Scarsa partecipazione degli alunni"</span> <span class="p">},</span> <span class="p">{</span> <span class="s2">"LessonFeedbackId"</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s2">"LessonId"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">"Nature"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">"Feedback"</span><span class="p">:</span> <span class="s2">"Personaggio non conosciuto in Italia"</span> <span class="p">},</span> <span class="p">{</span> <span class="s2">"LessonFeedbackId"</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span> <span class="s2">"LessonId"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">"Nature"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">"Feedback"</span><span class="p">:</span> <span class="s2">"Riferimenti a fatti non di stretta attualità"</span> <span class="p">},</span> <span class="p">{</span> <span class="s2">"LessonFeedbackId"</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span> <span class="s2">"LessonId"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">"Nature"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">"Feedback"</span><span class="p">:</span> <span class="s2">"Film scarsamente conosciuti. Per usare dei riferimenti occorre verificare che questi siano veri riferimenti per gli alunni"</span> <span class="p">}],</span> <span class="s2">"Tags"</span><span class="p">:</span> <span class="p">[{</span> <span class="s2">"LessonTagName"</span><span class="p">:</span> <span class="s2">"Attualità"</span><span class="p">,</span> <span class="s2">"LessonId"</span><span class="p">:</span> <span class="mi">2</span> <span class="p">},</span> <span class="p">{</span> <span class="s2">"LessonTagName"</span><span class="p">:</span> <span class="s2">"Classe multi-etnica"</span><span class="p">,</span> <span class="s2">"LessonId"</span><span class="p">:</span> <span class="mi">2</span> <span class="p">},</span> <span class="p">{</span> <span class="s2">"LessonTagName"</span><span class="p">:</span> <span class="s2">"Razzismo"</span><span class="p">,</span> <span class="s2">"LessonId"</span><span class="p">:</span> <span class="mi">2</span> <span class="p">}],</span> <span class="s2">"LessonId"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">"Title"</span><span class="p">:</span> <span class="s2">"Impegno Civile"</span><span class="p">,</span> <span class="s2">"Discipline"</span><span class="p">:</span> <span class="s2">"Educazione Civica"</span><span class="p">,</span> <span class="s2">"School"</span><span class="p">:</span> <span class="s2">"Scuola Secondaria"</span><span class="p">,</span> <span class="s2">"Classroom"</span><span class="p">:</span> <span class="s2">"III Media"</span><span class="p">,</span> <span class="s2">"Rate"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">"UserId"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">"PublishDate"</span><span class="p">:</span> <span class="s2">"2014-01-02T00:00:00"</span><span class="p">,</span> <span class="s2">"Content"</span><span class="p">:</span> <span class="s2">"…"</span><span class="p">,</span> <span class="s2">"Conclusion"</span><span class="p">:</span> <span class="s2">"…"</span> <span class="p">},</span>
+          <span class="p">{</span> <span class="s2">"Author"</span><span class="p">:</span> <span class="p">{</span> <span class="s2">"UserId"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"Name"</span><span class="p">:</span> <span class="s2">"Federica-MOCK"</span><span class="p">,</span> <span class="s2">"Surname"</span><span class="p">:</span> <span class="s2">"Giampaoletti"</span><span class="p">,</span> <span class="s2">"Email"</span><span class="p">:</span> <span class="s2">"chiarestelle@virgilio.it"</span><span class="p">,</span> <span class="s2">"UserName"</span><span class="p">:</span> <span class="s2">"Fede"</span> <span class="p">},</span> <span class="s2">"FeedBacks"</span><span class="p">:</span> <span class="p">[{</span> <span class="s2">"LessonFeedbackId"</span><span class="p">:</span> <span class="mi">13</span><span class="p">,</span> <span class="s2">"LessonId"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">"Nature"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"Feedback"</span><span class="p">:</span> <span class="s2">"Si apprende velocemente grazie alla creazione di un manufatto fisico"</span> <span class="p">},</span> <span class="p">{</span> <span class="s2">"LessonFeedbackId"</span><span class="p">:</span> <span class="mi">14</span><span class="p">,</span> <span class="s2">"LessonId"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">"Nature"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"Feedback"</span><span class="p">:</span> <span class="s2">"Gli obiettivi sono raggiunti indipendentemente dal livello di partenza e dalla presenza di DSA"</span> <span class="p">}],</span> <span class="s2">"Tags"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"LessonId"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">"Title"</span><span class="p">:</span> <span class="s2">"La Carta Geografica"</span><span class="p">,</span> <span class="s2">"Discipline"</span><span class="p">:</span> <span class="s2">"Geografia"</span><span class="p">,</span> <span class="s2">"School"</span><span class="p">:</span> <span class="s2">"Scuola Secondaria"</span><span class="p">,</span> <span class="s2">"Classroom"</span><span class="p">:</span> <span class="s2">"I Media"</span><span class="p">,</span> <span class="s2">"Rate"</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s2">"UserId"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"PublishDate"</span><span class="p">:</span> <span class="s2">"2014-01-04T00:00:00"</span><span class="p">,</span> <span class="s2">"Content"</span><span class="p">:</span> <span class="err">…</span><span class="s2">" }
+        ]
+    })
+    .run(function ($httpBackend, DisciturSettings, MockedData) {
+      // define responses for requests here as usual
+        $httpBackend.whenGET(DisciturSettings.apiUrl + 'lesson/').respond(MockedData.lessons);
+        $httpBackend.whenGET(DisciturSettings.apiUrl + 'lesson/1').respond(MockedData.lessons[0]);
+        
+        // Don't mock GET on modules
+        $httpBackend.whenGET(/modules</span><span class="err">\</span><span class="s2">/</span><span class="err">\</span><span class="s2">w+.*/).passThrough();
+
+        // For everything else, don't mock
+        $httpBackend.whenGET(/^</span><span class="err">\</span><span class="s2">w+.*/).passThrough();
+        $httpBackend.whenPOST(/^</span><span class="err">\</span><span class="s2">w+.*/).passThrough();
+    });
+</span></code></pre></div></div>
+
+<p>mostro il codice di due cicli per mostrare i risultati.</p>
+
+<p><strong>CICLO 1</strong></p>
+
+<p>test</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nx">describe</span><span class="p">(</span><span class="s2">"LessonService [invoke]"</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">_MockedData</span><span class="p">,</span>
+        <span class="nx">_httpBackend</span><span class="p">,</span>
+        <span class="nx">_LessonService</span><span class="p">,</span>
+        <span class="nx">_DisciturSettings</span><span class="p">;</span>
+
+    <span class="c1">// Before each test in the suite I inject the modules needed</span>
+    <span class="nx">beforeEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="c1">//load the module.</span>
+      <span class="nx">module</span><span class="p">(</span><span class="s1">'Lesson'</span><span class="p">);</span>
+
+      <span class="c1">//get your service, also get $httpBackend</span>
+      <span class="c1">//$httpBackend will be a mock, thanks to angular-mocks.js</span>
+      <span class="nx">inject</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">MockedData</span><span class="p">,</span> <span class="nx">$httpBackend</span><span class="p">,</span> <span class="nx">LessonService</span><span class="p">,</span> <span class="nx">DisciturSettings</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">_MockedData</span> <span class="o">=</span> <span class="nx">MockedData</span><span class="p">;</span>
+        <span class="nx">_httpBackend</span> <span class="o">=</span> <span class="nx">$httpBackend</span><span class="p">;</span>      
+        <span class="nx">_LessonService</span> <span class="o">=</span> <span class="nx">LessonService</span><span class="p">;</span>
+        <span class="nx">_DisciturSettings</span> <span class="o">=</span> <span class="nx">DisciturSettings</span><span class="p">;</span>
+      <span class="p">});</span>
+    <span class="p">})</span>
+    
+    <span class="c1">//make sure no expectations were missed in your tests.</span>
+    <span class="c1">//(e.g. expectGET or expectPOST)</span>
+    <span class="nx">afterEach</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="nx">_httpBackend</span><span class="p">.</span><span class="nx">verifyNoOutstandingExpectation</span><span class="p">();</span>
+      <span class="nx">_httpBackend</span><span class="p">.</span><span class="nx">verifyNoOutstandingRequest</span><span class="p">();</span>
+    <span class="p">});</span>
+ 
+    <span class="c1">//-------- TEST CASES:</span>
+    <span class="nx">it</span><span class="p">(</span><span class="s1">'Should the LessonService.search() return all the lessons'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+      <span class="c1">//create an object with a function to spy on.</span>
+      <span class="kd">var</span> <span class="nx">_test</span> <span class="o">=</span> <span class="p">{</span>
+          <span class="na">successCB</span><span class="p">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{}</span>
+      <span class="p">};</span>
+      <span class="c1">//set up a spy for the callback handler.</span>
+      <span class="nx">spyOn</span><span class="p">(</span><span class="nx">_test</span><span class="p">,</span> <span class="s1">'successCB'</span><span class="p">);</span>
+
+      <span class="c1">// Create mocked api route.</span>
+      <span class="c1">// I want to emulate what I will do in real app code, </span>
+      <span class="c1">// so I use the same config as in the real code</span>
+      <span class="nx">_httpBackend</span><span class="p">.</span><span class="nx">expectGET</span><span class="p">(</span><span class="nx">_DisciturSettings</span><span class="p">.</span><span class="nx">apiUrl</span> <span class="o">+</span> <span class="s1">'lesson/'</span><span class="p">).</span><span class="nx">respond</span><span class="p">(</span><span class="nx">_MockedData</span><span class="p">.</span><span class="nx">lessons</span><span class="p">)</span>
+
+      <span class="c1">//--------------------- TEST CODE TO DRIVE THE DEVELOPMENT [START] -------------------------</span>
+      <span class="c1">//make the call.</span>
+      <span class="kd">var</span> <span class="nx">returnedPromise</span> <span class="o">=</span> <span class="nx">_LessonService</span><span class="p">.</span><span class="nx">search</span><span class="p">();</span>
+      
+      <span class="c1">//use the handler you're spying on to handle the resolution of the promise.</span>
+      <span class="nx">returnedPromise</span><span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">_test</span><span class="p">.</span><span class="nx">successCB</span><span class="p">);</span>
+      
+      <span class="c1">//--------------------- TEST CODE TO DRIVE THE DEVELOPMENT [END] ---------------------------</span>
+
+      <span class="c1">//flush the backend to "execute" the request to do the expectedGET assertion.</span>
+      <span class="nx">_httpBackend</span><span class="p">.</span><span class="nx">flush</span><span class="p">();</span>      
+      
+      <span class="c1">//check your spy to see if it's been called with the returned value.  </span>
+      <span class="nx">expect</span><span class="p">(</span><span class="nx">_test</span><span class="p">.</span><span class="nx">successCB</span><span class="p">).</span><span class="nx">toHaveBeenCalledWith</span><span class="p">(</span><span class="nx">_MockedData</span><span class="p">.</span><span class="nx">lessons</span><span class="p">);</span>
+    <span class="p">});</span>
+</code></pre></div></div>
+
+<p>sviluppo</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">angular</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">'Lesson'</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">factory</span><span class="p">(</span><span class="s1">'LessonDTO'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="kd">function</span> <span class="nx">LessonDTO</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">lessonId</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">title</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">discipline</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">school</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">classroom</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">rate</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">author</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">publishedOn</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">goods</span> <span class="o">=</span> <span class="p">[];</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">bads</span> <span class="o">=</span> <span class="p">[];</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">tags</span> <span class="o">=</span> <span class="p">[];</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">content</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">conclusion</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="p">(</span><span class="nx">LessonDTO</span><span class="p">);</span>
+    <span class="p">})</span>
+    <span class="p">.</span><span class="nx">factory</span><span class="p">(</span><span class="s1">'LessonService'</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">'$resource'</span><span class="p">,</span>
+        <span class="s1">'$http'</span><span class="p">,</span>
+        <span class="s1">'$q'</span><span class="p">,</span>
+        <span class="s1">'LessonDTO'</span><span class="p">,</span>
+        <span class="s1">'DisciturSettings'</span><span class="p">,</span>
+        <span class="kd">function</span> <span class="p">(</span><span class="nx">$resource</span><span class="p">,</span> <span class="nx">$http</span><span class="p">,</span> <span class="nx">$q</span><span class="p">,</span> <span class="nx">LessonDTO</span><span class="p">,</span> <span class="nx">DisciturSettings</span><span class="p">)</span> <span class="p">{</span>
+          <span class="kd">var</span> <span class="nx">_dataTransfer</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">lessonData</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">_dto</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">LessonDTO</span><span class="p">();</span>
+
+            <span class="k">return</span> <span class="nx">_dto</span><span class="p">;</span>          
+          <span class="p">}</span>
+
+
+          <span class="k">return</span> <span class="p">{</span>
+              <span class="c1">// Retrieve Async data for lesson id in input </span>
+              <span class="c1">// and return a LessonDTO instance</span>
+              <span class="na">get</span><span class="p">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">inputParams</span><span class="p">)</span> <span class="p">{</span>
+                  <span class="c1">// create deferring result</span>
+                  <span class="kd">var</span> <span class="nx">deferred</span> <span class="o">=</span> <span class="nx">$q</span><span class="p">.</span><span class="nx">defer</span><span class="p">();</span>
+
+                  <span class="c1">// Retrieve Async data for lesson id in input        </span>
+                    
+                  <span class="c1">//$http.get('../api/lesson/' + inputParams.id)</span>
+                  <span class="nx">$http</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="nx">DisciturSettings</span><span class="p">.</span><span class="nx">apiUrl</span> <span class="o">+</span> <span class="s1">'lesson/'</span> <span class="o">+</span> <span class="nx">inputParams</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span>
+                      <span class="p">.</span><span class="nx">success</span><span class="p">(</span>
+                          <span class="c1">// Success Callback: Data Transfer Object Creation</span>
+                          <span class="kd">function</span> <span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
+                              <span class="kd">var</span> <span class="nx">lesson</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">LessonDTO</span><span class="p">();</span>
+                              <span class="nx">lesson</span><span class="p">.</span><span class="nx">lessondId</span> <span class="o">=</span> <span class="nx">result</span><span class="p">.</span><span class="nx">lessondId</span><span class="p">;</span>
+                              <span class="nx">lesson</span><span class="p">.</span><span class="nx">title</span> <span class="o">=</span> <span class="nx">result</span><span class="p">.</span><span class="nx">Title</span><span class="p">;</span>
+                              <span class="nx">lesson</span><span class="p">.</span><span class="nx">discipline</span> <span class="o">=</span> <span class="nx">result</span><span class="p">.</span><span class="nx">Discipline</span><span class="p">;</span>
+                              <span class="nx">lesson</span><span class="p">.</span><span class="nx">school</span> <span class="o">=</span> <span class="nx">result</span><span class="p">.</span><span class="nx">School</span><span class="p">;</span>
+                              <span class="nx">lesson</span><span class="p">.</span><span class="nx">classroom</span> <span class="o">=</span> <span class="nx">result</span><span class="p">.</span><span class="nx">Classroom</span><span class="p">;</span>
+                              <span class="nx">lesson</span><span class="p">.</span><span class="nx">author</span> <span class="o">=</span> <span class="p">{</span>
+                                  <span class="na">name</span><span class="p">:</span> <span class="nx">result</span><span class="p">.</span><span class="nx">Author</span><span class="p">.</span><span class="nx">Name</span><span class="p">,</span>
+                                  <span class="na">surname</span><span class="p">:</span> <span class="nx">result</span><span class="p">.</span><span class="nx">Author</span><span class="p">.</span><span class="nx">Surname</span>
+                              <span class="p">}</span>
+                              <span class="nx">lesson</span><span class="p">.</span><span class="nx">publishedOn</span> <span class="o">=</span> <span class="nx">result</span><span class="p">.</span><span class="nx">PublishDate</span><span class="p">;</span>
+                              <span class="nx">lesson</span><span class="p">.</span><span class="nx">rate</span> <span class="o">=</span> <span class="nx">result</span><span class="p">.</span><span class="nx">Rate</span><span class="p">;</span>
+                              <span class="nx">angular</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">result</span><span class="p">.</span><span class="nx">FeedBacks</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">feedBack</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+                                  <span class="k">if</span> <span class="p">(</span><span class="nx">feedBack</span><span class="p">.</span><span class="nx">Nature</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nx">goods</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">feedBack</span><span class="p">.</span><span class="nx">Feedback</span><span class="p">)</span>
+                                  <span class="k">if</span> <span class="p">(</span><span class="nx">feedBack</span><span class="p">.</span><span class="nx">Nature</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nx">bads</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">feedBack</span><span class="p">.</span><span class="nx">Feedback</span><span class="p">)</span>
+                              <span class="p">},</span> <span class="nx">lesson</span><span class="p">);</span>
+                              <span class="nx">angular</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">result</span><span class="p">.</span><span class="nx">Tags</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">tag</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+                                  <span class="k">this</span><span class="p">.</span><span class="nx">tags</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">tag</span><span class="p">.</span><span class="nx">LessonTagName</span><span class="p">)</span>
+                              <span class="p">},</span> <span class="nx">lesson</span><span class="p">);</span>
+                              <span class="nx">lesson</span><span class="p">.</span><span class="nx">content</span> <span class="o">=</span> <span class="nx">result</span><span class="p">.</span><span class="nx">Content</span><span class="p">;</span>
+                              <span class="nx">lesson</span><span class="p">.</span><span class="nx">conclusion</span> <span class="o">=</span> <span class="nx">result</span><span class="p">.</span><span class="nx">Conclusion</span><span class="p">;</span>
+
+                              <span class="nx">deferred</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">lesson</span><span class="p">)</span>
+                          <span class="p">})</span>
+                      <span class="p">.</span><span class="nx">error</span><span class="p">(</span>
+                          <span class="c1">// Error Callback</span>
+                          <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+                              <span class="nx">deferred</span><span class="p">.</span><span class="nx">reject</span><span class="p">(</span><span class="s2">"no Lesson for id:"</span> <span class="o">+</span> <span class="nx">inputParams</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
+                          <span class="p">});</span>
+
+                  <span class="k">return</span> <span class="nx">deferred</span><span class="p">.</span><span class="nx">promise</span><span class="p">;</span>
+              <span class="p">},</span>
+              <span class="na">search</span><span class="p">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">inputParams</span><span class="p">)</span> <span class="p">{</span>
+                  <span class="c1">// create deferring result</span>
+                  <span class="kd">var</span> <span class="nx">deferred</span> <span class="o">=</span> <span class="nx">$q</span><span class="p">.</span><span class="nx">defer</span><span class="p">();</span>
+                    
+                  <span class="c1">// Retrieve Async data for lesson id in input        </span>
+                  <span class="nx">$http</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="nx">DisciturSettings</span><span class="p">.</span><span class="nx">apiUrl</span> <span class="o">+</span> <span class="s1">'lesson/'</span> <span class="p">)</span>
+                      <span class="p">.</span><span class="nx">success</span><span class="p">(</span>
+                          <span class="c1">// Success Callback: Data Transfer Object Creation</span>
+                          <span class="kd">function</span> <span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
+                              <span class="nx">deferred</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span>
+                          <span class="p">})</span>
+                      <span class="p">.</span><span class="nx">error</span><span class="p">(</span>
+                          <span class="c1">// Error Callback</span>
+                          <span class="kd">function</span> <span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+                              <span class="nx">deferred</span><span class="p">.</span><span class="nx">reject</span><span class="p">(</span><span class="s2">"Error for search:"</span> <span class="o">+</span> <span class="nx">data</span><span class="p">);</span>
+                          <span class="p">});</span>
+                    
+                  <span class="c1">//deferred.resolve(mockedLessonData);</span>
+                  <span class="k">return</span> <span class="nx">deferred</span><span class="p">.</span><span class="nx">promise</span><span class="p">;</span>
+              <span class="p">}</span>
+          <span class="p">};</span>
+      <span class="p">}]);</span>
+</code></pre></div></div>
+
+<p><strong>CICLO 2</strong></p>
+
+<p> </p>
+
+<p>test</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="nx">it</span><span class="p">(</span><span class="s1">'Should the LessonService.search() return all the lessons in DT Object Model'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+      <span class="c1">// Create a test client to explore returned data</span>
+      <span class="c1">// DO NOT USE Spy (It prevents to callback in promise chain)</span>
+      <span class="kd">var</span> <span class="nx">_test</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="c1">//--------------------- TEST CODE TO DRIVE THE DEVELOPMENT [START] -------------------------</span>
+        <span class="na">successCB</span><span class="p">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">data</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+              <span class="nx">expect</span><span class="p">(</span><span class="nx">data</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">author</span><span class="p">,</span> <span class="s1">'proprieta</span><span class="se">\'</span><span class="s1"> author'</span><span class="p">).</span><span class="nx">toBeDefined</span><span class="p">();</span>
+              <span class="nx">expect</span><span class="p">(</span><span class="nx">data</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">tags</span><span class="p">,</span> <span class="s1">'proprieta</span><span class="se">\'</span><span class="s1"> tags'</span><span class="p">).</span><span class="nx">toBeDefined</span><span class="p">();</span>
+              <span class="nx">expect</span><span class="p">(</span><span class="nx">data</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">title</span><span class="p">,</span> <span class="s1">'proprieta</span><span class="se">\'</span><span class="s1"> title'</span><span class="p">).</span><span class="nx">toBeDefined</span><span class="p">();</span>
+              <span class="nx">expect</span><span class="p">(</span><span class="nx">data</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">goods</span><span class="p">,</span> <span class="s1">'proprieta</span><span class="se">\'</span><span class="s1"> goods'</span><span class="p">).</span><span class="nx">toBeDefined</span><span class="p">();</span>
+              <span class="nx">expect</span><span class="p">(</span><span class="nx">data</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">bads</span><span class="p">,</span> <span class="s1">'proprieta</span><span class="se">\'</span><span class="s1"> bads'</span><span class="p">).</span><span class="nx">toBeDefined</span><span class="p">();</span>
+
+              <span class="nx">expect</span><span class="p">(</span><span class="nx">data</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">Author</span><span class="p">,</span> <span class="s1">'proprieta</span><span class="se">\'</span><span class="s1"> Author'</span><span class="p">).</span><span class="nx">not</span><span class="p">.</span><span class="nx">toBeDefined</span><span class="p">();</span>
+              <span class="nx">expect</span><span class="p">(</span><span class="nx">data</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">Tags</span><span class="p">,</span> <span class="s1">'proprieta</span><span class="se">\'</span><span class="s1"> Tags'</span><span class="p">).</span><span class="nx">not</span><span class="p">.</span><span class="nx">toBeDefined</span><span class="p">();</span>
+              <span class="nx">expect</span><span class="p">(</span><span class="nx">data</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">Title</span><span class="p">,</span> <span class="s1">'proprieta</span><span class="se">\'</span><span class="s1"> Title'</span><span class="p">).</span><span class="nx">not</span><span class="p">.</span><span class="nx">toBeDefined</span><span class="p">();</span>
+              <span class="nx">expect</span><span class="p">(</span><span class="nx">data</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">FeedBacks</span><span class="p">,</span> <span class="s1">'proprieta</span><span class="se">\'</span><span class="s1"> FeedBacks'</span><span class="p">).</span><span class="nx">not</span><span class="p">.</span><span class="nx">toBeDefined</span><span class="p">();</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="c1">//--------------------- TEST CODE TO DRIVE THE DEVELOPMENT [END] ---------------------------</span>
+      <span class="p">};</span>
+
+      <span class="c1">// Create mocked api route.</span>
+      <span class="c1">// I want to emulate what I will do in real app code, </span>
+      <span class="c1">// so I use the same config as in the real code</span>
+      <span class="nx">_httpBackend</span><span class="p">.</span><span class="nx">expectGET</span><span class="p">(</span><span class="nx">_DisciturSettings</span><span class="p">.</span><span class="nx">apiUrl</span> <span class="o">+</span> <span class="s1">'lesson/'</span><span class="p">).</span><span class="nx">respond</span><span class="p">(</span><span class="nx">_MockedData</span><span class="p">.</span><span class="nx">lessons</span><span class="p">)</span>
+
+      <span class="c1">//make the call.</span>
+      <span class="kd">var</span> <span class="nx">returnedPromise</span> <span class="o">=</span> <span class="nx">_LessonService</span><span class="p">.</span><span class="nx">search</span><span class="p">();</span>
+
+      <span class="c1">//use the handler you're spying on to handle the resolution of the promise.</span>
+      <span class="nx">returnedPromise</span><span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">_test</span><span class="p">.</span><span class="nx">successCB</span><span class="p">);</span>
+
+      <span class="c1">//flush the backend to "execute" the request to do the expectedGET assertion.</span>
+      <span class="nx">_httpBackend</span><span class="p">.</span><span class="nx">flush</span><span class="p">();</span>
+    <span class="p">});</span>
+
+  <span class="p">})</span>
+</code></pre></div></div>
+
+<p>sviluppo</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">angular</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">'Lesson'</span><span class="p">)</span>
+    <span class="cm">/*-------------------------------------------------------------------------------
+    Vantaggi del DTO:
+    - disaccoppiamento tra i dati restituite dal BE e quelli gestiti dal FE
+    - presenza di un (Client) Object Model distinto dal (Server( Object e/o Entity Model
+    - possibilità di verificare il reale contenuto delle classi a codice (non a runtime)
+
+    riferimenti: http://www.bennadel.com/blog/2527-Defining-Instantiatable-Classes-In-The-AngularJS-Dependency-Injection-Framework.htm
+    ---------------------------------------------------------------------------------*/</span>
+    <span class="p">.</span><span class="nx">factory</span><span class="p">(</span><span class="s1">'LessonDTO'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="kd">function</span> <span class="nx">LessonDTO</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">lessonId</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">title</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">discipline</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">school</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">classroom</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">rate</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">author</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">publishedOn</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">goods</span> <span class="o">=</span> <span class="p">[];</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">bads</span> <span class="o">=</span> <span class="p">[];</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">tags</span> <span class="o">=</span> <span class="p">[];</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">content</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">conclusion</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="p">(</span><span class="nx">LessonDTO</span><span class="p">);</span>
+    <span class="p">})</span>
+    <span class="p">.</span><span class="nx">factory</span><span class="p">(</span><span class="s1">'LessonService'</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">'$resource'</span><span class="p">,</span>
+        <span class="s1">'$http'</span><span class="p">,</span>
+        <span class="s1">'$q'</span><span class="p">,</span>
+        <span class="s1">'LessonDTO'</span><span class="p">,</span>
+        <span class="s1">'DisciturSettings'</span><span class="p">,</span>
+        <span class="kd">function</span> <span class="p">(</span><span class="nx">$resource</span><span class="p">,</span> <span class="nx">$http</span><span class="p">,</span> <span class="nx">$q</span><span class="p">,</span> <span class="nx">LessonDTO</span><span class="p">,</span> <span class="nx">DisciturSettings</span><span class="p">)</span> <span class="p">{</span>
+          <span class="c1">// Private methods for DTO purposes</span>
+          <span class="kd">var</span> <span class="nx">_dataTransfer</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">lessonData</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">lesson</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">LessonDTO</span><span class="p">();</span>
+            <span class="nx">lesson</span><span class="p">.</span><span class="nx">lessondId</span> <span class="o">=</span> <span class="nx">lessonData</span><span class="p">.</span><span class="nx">lessondId</span><span class="p">;</span>
+            <span class="nx">lesson</span><span class="p">.</span><span class="nx">title</span> <span class="o">=</span> <span class="nx">lessonData</span><span class="p">.</span><span class="nx">Title</span><span class="p">;</span>
+            <span class="nx">lesson</span><span class="p">.</span><span class="nx">discipline</span> <span class="o">=</span> <span class="nx">lessonData</span><span class="p">.</span><span class="nx">Discipline</span><span class="p">;</span>
+            <span class="nx">lesson</span><span class="p">.</span><span class="nx">school</span> <span class="o">=</span> <span class="nx">lessonData</span><span class="p">.</span><span class="nx">School</span><span class="p">;</span>
+            <span class="nx">lesson</span><span class="p">.</span><span class="nx">classroom</span> <span class="o">=</span> <span class="nx">lessonData</span><span class="p">.</span><span class="nx">Classroom</span><span class="p">;</span>
+            <span class="nx">lesson</span><span class="p">.</span><span class="nx">author</span> <span class="o">=</span> <span class="p">{</span>
+              <span class="na">name</span><span class="p">:</span> <span class="nx">lessonData</span><span class="p">.</span><span class="nx">Author</span><span class="p">.</span><span class="nx">Name</span><span class="p">,</span>
+              <span class="na">surname</span><span class="p">:</span> <span class="nx">lessonData</span><span class="p">.</span><span class="nx">Author</span><span class="p">.</span><span class="nx">Surname</span>
+            <span class="p">}</span>
+            <span class="nx">lesson</span><span class="p">.</span><span class="nx">publishedOn</span> <span class="o">=</span> <span class="nx">lessonData</span><span class="p">.</span><span class="nx">PublishDate</span><span class="p">;</span>
+            <span class="nx">lesson</span><span class="p">.</span><span class="nx">rate</span> <span class="o">=</span> <span class="nx">lessonData</span><span class="p">.</span><span class="nx">Rate</span><span class="p">;</span>
+            <span class="nx">angular</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">lessonData</span><span class="p">.</span><span class="nx">FeedBacks</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">feedBack</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+              <span class="k">if</span> <span class="p">(</span><span class="nx">feedBack</span><span class="p">.</span><span class="nx">Nature</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nx">goods</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">feedBack</span><span class="p">.</span><span class="nx">Feedback</span><span class="p">)</span>
+              <span class="k">if</span> <span class="p">(</span><span class="nx">feedBack</span><span class="p">.</span><span class="nx">Nature</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nx">bads</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">feedBack</span><span class="p">.</span><span class="nx">Feedback</span><span class="p">)</span>
+            <span class="p">},</span> <span class="nx">lesson</span><span class="p">);</span>
+            <span class="nx">angular</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">lessonData</span><span class="p">.</span><span class="nx">Tags</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">tag</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+              <span class="k">this</span><span class="p">.</span><span class="nx">tags</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">tag</span><span class="p">.</span><span class="nx">LessonTagName</span><span class="p">)</span>
+            <span class="p">},</span> <span class="nx">lesson</span><span class="p">);</span>
+            <span class="nx">lesson</span><span class="p">.</span><span class="nx">content</span> <span class="o">=</span> <span class="nx">lessonData</span><span class="p">.</span><span class="nx">Content</span><span class="p">;</span>
+            <span class="nx">lesson</span><span class="p">.</span><span class="nx">conclusion</span> <span class="o">=</span> <span class="nx">lessonData</span><span class="p">.</span><span class="nx">Conclusion</span><span class="p">;</span>
+            <span class="k">return</span> <span class="nx">lesson</span><span class="p">;</span>
+          <span class="p">}</span>
+          <span class="kd">var</span> <span class="nx">_arrayDataTransfer</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">resultArray</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">lessons</span> <span class="o">=</span> <span class="p">[];</span>
+            <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">resultArray</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+              <span class="nx">lessons</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">_dataTransfer</span><span class="p">(</span><span class="nx">resultArray</span><span class="p">[</span><span class="nx">i</span><span class="p">]));</span>
+            <span class="p">}</span>
+            <span class="k">return</span> <span class="nx">lessons</span><span class="p">;</span>
+          <span class="p">}</span>
+
+          <span class="k">return</span> <span class="p">{</span>
+              <span class="c1">// Retrieve Async data for lesson id in input </span>
+              <span class="c1">// and return a LessonDTO instance</span>
+              <span class="na">get</span><span class="p">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">inputParams</span><span class="p">)</span> <span class="p">{</span>
+                  <span class="c1">// create deferring result</span>
+                  <span class="kd">var</span> <span class="nx">deferred</span> <span class="o">=</span> <span class="nx">$q</span><span class="p">.</span><span class="nx">defer</span><span class="p">();</span>
+
+                  <span class="c1">// Retrieve Async data for lesson id in input        </span>
+                  <span class="c1">//$http.get('../api/lesson/' + inputParams.id)</span>
+                  <span class="nx">$http</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="nx">DisciturSettings</span><span class="p">.</span><span class="nx">apiUrl</span> <span class="o">+</span> <span class="s1">'lesson/'</span> <span class="o">+</span> <span class="nx">inputParams</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span>
+                      <span class="p">.</span><span class="nx">success</span><span class="p">(</span>
+                          <span class="c1">// Success Callback: Data Transfer Object Creation</span>
+                          <span class="kd">function</span> <span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
+                              <span class="nx">deferred</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">_dataTransfer</span><span class="p">(</span><span class="nx">result</span><span class="p">));</span>
+                          <span class="p">})</span>
+                      <span class="p">.</span><span class="nx">error</span><span class="p">(</span>
+                          <span class="c1">// Error Callback</span>
+                          <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+                              <span class="nx">deferred</span><span class="p">.</span><span class="nx">reject</span><span class="p">(</span><span class="s2">"no Lesson for id:"</span> <span class="o">+</span> <span class="nx">inputParams</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
+                          <span class="p">});</span>
+
+                  <span class="k">return</span> <span class="nx">deferred</span><span class="p">.</span><span class="nx">promise</span><span class="p">;</span>
+              <span class="p">},</span>
+              <span class="na">search</span><span class="p">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">inputParams</span><span class="p">)</span> <span class="p">{</span>
+                  <span class="c1">// create deferring result</span>
+                  <span class="kd">var</span> <span class="nx">deferred</span> <span class="o">=</span> <span class="nx">$q</span><span class="p">.</span><span class="nx">defer</span><span class="p">();</span>
+                    
+                  <span class="c1">// Retrieve Async data for lesson id in input        </span>
+                  <span class="nx">$http</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="nx">DisciturSettings</span><span class="p">.</span><span class="nx">apiUrl</span> <span class="o">+</span> <span class="s1">'lesson/'</span> <span class="p">)</span>
+                      <span class="p">.</span><span class="nx">success</span><span class="p">(</span>
+                          <span class="c1">// Success Callback: Data Transfer Object Creation</span>
+                          <span class="kd">function</span> <span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="nx">deferred</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">_arrayDataTransfer</span><span class="p">(</span><span class="nx">result</span><span class="p">))</span>
+                          <span class="p">})</span>
+                      <span class="p">.</span><span class="nx">error</span><span class="p">(</span>
+                          <span class="c1">// Error Callback</span>
+                          <span class="kd">function</span> <span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+                              <span class="nx">deferred</span><span class="p">.</span><span class="nx">reject</span><span class="p">(</span><span class="s2">"Error for search:"</span> <span class="o">+</span> <span class="nx">data</span><span class="p">);</span>
+                          <span class="p">});</span>
+                    
+                  <span class="c1">//deferred.resolve(mockedLessonData);</span>
+                  <span class="k">return</span> <span class="nx">deferred</span><span class="p">.</span><span class="nx">promise</span><span class="p">;</span>
+              <span class="p">}</span>
+          <span class="p">};</span>
+      <span class="p">}]);</span>
+</code></pre></div></div>
+
+<p>Sviluppare il codice è stato semplice e mi sembra evidente l’operazione di
+refactoring fatta, inserendo i metodi privati per il transfer sull’Object Model
+di Front-end.</p>
+
+<p>Dopo un veloce refactoring anche dei test, i miei test ora passano tutti!
+Ed una veloce chiamata sulla console della mia applicazione lo dimostra:</p>
+
+<p><img src="/images/discitur/DTO_console.png" /></p>
+
+<p>A questo punto sono galvanizzato dai risultati, ma devo dormirci sopra, perché
+non ho capito se l’entusiasmo nasca dal fatto che il TDD sia effettivamente
+efficace o perché, dopo tanti tentativi, sono riuscito a far funzionare
+qualcosa…quindi…buonanotte!</p>

@@ -1,0 +1,80 @@
+<h2 id="mvc-4-solutions-for-di">MVC (4) solutions for DI</h2>
+<p>Dependency Injection is a must for a <a href="http://en.wikipedia.org/wiki/SOLID_%28object-oriented_design%29" target="_blank">S.O.L.I.D. code</a> and, for that, 
+you should use a DI container. Using Umbraco is not a problem about that and it’s possible to exploit some feature to initialize the DI Container.
+About the DI Container, there’s a lot out there and I choose <a href="http://docs.castleproject.org/Default.aspx" target="_blank">Castle Windsor</a>.</p>
+
+<p>IMHO Asp.NET MVC 4 has a partial support for dependency injection; indeed it offers two ways:</p>
+
+<ul>
+  <li>define a <a href="https://msdn.microsoft.com/en-us/library/system.web.mvc.defaultcontrollerfactory%28v=vs.118%29.aspx" target="_blank">Controller Factory</a></li>
+  <li>define different services locators, throughout the implementation of <a href="https://msdn.microsoft.com/en-us/library/system.web.mvc.idependencyresolver(v=vs.118).aspx" target="_blank">IDependencyResolver</a></li>
+</ul>
+
+<p>but none of them are complete. In fact the first one is good for using DI in Controllers, but not allow to inject dependencies out of the controller’s boundaries.
+The second one gives a wider spectrum of usage, but works as a service locator, not allowing to manage the releases of injected dependencies, that could cause annoying memory leak problems…</p>
+
+<p>With Castle Windsor is preferable to adopt the first solution, ‘cause Windsor seems to have some problems with objects not properly released.
+Let’s see how to do that in an Umbraco application.</p>
+
+<h3 id="mvc-controller-factory">MVC Controller Factory</h3>
+<p>The code for the factory is very simple and it could be taken from <a href="http://docs.castleproject.org/Windsor.Windsor-tutorial-part-two-plugging-Windsor-in.ashx" target="_blank">Castle Windsor documentation</a></p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">WindsorControllerFactory</span> <span class="p">:</span> <span class="n">DefaultControllerFactory</span>
+<span class="p">{</span>
+	<span class="k">private</span> <span class="k">readonly</span> <span class="n">IKernel</span> <span class="n">kernel</span><span class="p">;</span>
+
+	<span class="k">public</span> <span class="nf">WindsorControllerFactory</span><span class="p">(</span><span class="n">IKernel</span> <span class="n">kernel</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="k">this</span><span class="p">.</span><span class="n">kernel</span> <span class="p">=</span> <span class="n">kernel</span><span class="p">;</span>
+	<span class="p">}</span>
+
+	<span class="k">public</span> <span class="k">override</span> <span class="k">void</span> <span class="nf">ReleaseController</span><span class="p">(</span><span class="n">IController</span> <span class="n">controller</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="n">kernel</span><span class="p">.</span><span class="nf">ReleaseComponent</span><span class="p">(</span><span class="n">controller</span><span class="p">);</span>
+	<span class="p">}</span>
+
+	<span class="k">protected</span> <span class="k">override</span> <span class="n">IController</span> <span class="nf">GetControllerInstance</span><span class="p">(</span><span class="n">RequestContext</span> <span class="n">requestContext</span><span class="p">,</span> <span class="n">Type</span> <span class="n">controllerType</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="k">if</span> <span class="p">(</span><span class="n">controllerType</span> <span class="p">==</span> <span class="k">null</span><span class="p">)</span>
+		<span class="p">{</span>
+			<span class="k">throw</span> <span class="k">new</span> <span class="nf">HttpException</span><span class="p">(</span><span class="m">404</span><span class="p">,</span> <span class="kt">string</span><span class="p">.</span><span class="nf">Format</span><span class="p">(</span><span class="s">"The controller for path '{0}' could not be found."</span><span class="p">,</span> <span class="n">requestContext</span><span class="p">.</span><span class="n">HttpContext</span><span class="p">.</span><span class="n">Request</span><span class="p">.</span><span class="n">Path</span><span class="p">));</span>
+		<span class="p">}</span>
+		<span class="k">return</span> <span class="p">(</span><span class="n">IController</span><span class="p">)</span><span class="n">kernel</span><span class="p">.</span><span class="nf">Resolve</span><span class="p">(</span><span class="n">controllerType</span><span class="p">);</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>As you can see, there’s not only code for controller creation, but also for its release.</p>
+
+<h3 id="umbracos-instrumentation">Umbraco’s instrumentation</h3>
+<p>Now that we have a WindsorControllerFactory, we have to use it as new MVC Controller factory. That could be done using Umbraco’s Application event, as show below:</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">BootstrapUmbracoAppEvent</span> <span class="p">:</span> <span class="n">ApplicationEventHandler</span>
+<span class="p">{</span>
+	<span class="k">private</span> <span class="k">static</span> <span class="n">IWindsorContainer</span> <span class="n">container</span><span class="p">;</span>
+
+	<span class="k">protected</span> <span class="k">override</span> <span class="k">void</span> <span class="nf">ApplicationStarted</span><span class="p">(</span><span class="n">UmbracoApplicationBase</span> <span class="n">umbracoApplication</span><span class="p">,</span> <span class="n">ApplicationContext</span> <span class="n">applicationContext</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="c1">// see: http://our.umbraco.org/documentation/reference/Templating/Mvc/using-ioc</span>
+		<span class="n">container</span> <span class="p">=</span> <span class="nf">BootstrapDIContainer</span><span class="p">();</span>
+		
+		<span class="c1">// DI Container's Dispose at the end of the Umbraco Application</span>
+		<span class="n">umbracoApplication</span><span class="p">.</span><span class="n">Disposed</span> <span class="p">+=</span> <span class="k">new</span> <span class="nf">EventHandler</span><span class="p">((</span><span class="kt">object</span> <span class="n">sender</span><span class="p">,</span> <span class="n">EventArgs</span> <span class="n">e</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span> <span class="n">container</span><span class="p">.</span><span class="nf">Dispose</span><span class="p">();</span> <span class="p">});</span>
+	<span class="p">}</span>
+
+	<span class="k">private</span> <span class="n">IWindsorContainer</span> <span class="nf">BootstrapDIContainer</span><span class="p">()</span>
+	<span class="p">{</span>
+		<span class="n">IWindsorContainer</span> <span class="n">container</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">WindsorContainer</span><span class="p">()</span>
+			<span class="p">.</span><span class="nf">Install</span><span class="p">(</span><span class="n">FromAssembly</span><span class="p">.</span><span class="nf">InDirectory</span><span class="p">(</span><span class="k">new</span> <span class="nf">AssemblyFilter</span><span class="p">(</span><span class="n">AssemblyDirectory</span><span class="p">)));</span>
+
+		<span class="kt">var</span> <span class="n">controllerFactory</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">WindsorControllerFactory</span><span class="p">(</span><span class="n">container</span><span class="p">.</span><span class="n">Kernel</span><span class="p">);</span>
+		<span class="n">ControllerBuilder</span><span class="p">.</span><span class="n">Current</span><span class="p">.</span><span class="nf">SetControllerFactory</span><span class="p">(</span><span class="n">controllerFactory</span><span class="p">);</span>
+
+		<span class="k">return</span> <span class="n">container</span><span class="p">;</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>As you can see, the DI container is created, used to create a WindsorControllerFactory and then disposed.
+Complete code <a href="https://github.com/williamverdolini/Umbraco-CustomMacros/blob/master/CustomMacros/App_Start/BootstrapUmbracoAppEvent.cs" target="_blank">here</a>.</p>
+

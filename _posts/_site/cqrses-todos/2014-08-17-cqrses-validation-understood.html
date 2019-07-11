@@ -1,0 +1,83 @@
+<p>That’s THE problem of every analyst and programmer in the world. That’s Domain, for sure.</p>
+
+<p>But why this question at this point? Because validation is strictly related to domain rules and the validation logic can determine which is the best Domain model. So it’s always better to spend some time to deepen the validation rules in the different contexts.</p>
+
+<p>An example of validation rule (and some consideration about it): <em>“the importance property of a Todo-Item must be a unique value in its own Todo-List”</em></p>
+
+<h2 id="solution-1-separate-aggregateroots-ar">Solution #1: Separate AggregateRoots (AR)</h2>
+
+<p>Having two distinct AR (ToDoList and ToDoItem) implies:</p>
+
+<ul>
+  <li><strong>Do an eventual consistent set validation</strong>: that’s because, in the ES, we can access only to ARs in a consistent state. SO when the command comes, the validator has to retrieve the list and it’s components from a read model and validate the importance property among these eventual consistent data</li>
+  <li><strong>The UI could send just the ToDoItemId</strong> to perform the command: that’s because the TodoItem IS an AggregateRoot, then it’s sufficient to send the ToDoItemId to perfom some action</li>
+  <li><strong>ToDoItem is accessible from outside the bounded context</strong>: that’s the same concept of previous point, but in DDD terms.If ToDoItem is an AR, it is possibile to access to its methods directly and manage its own events and compensation logic. But what this means? In other words, the client (a user, a web application, etc) could send commands to TodoItem without references to its List. This is quite straightforward when I want to change description or due date, but it’s not the same with Importance properties. If the web app should be a very intensive collaborative tool, it could happen that more users should add or change ToDoItem’s importance in the same time and that could cause collisions on the uniqueness validation rule and, consequentely, should require some compensation logic to notify or correct the domain error</li>
+</ul>
+
+<p>The following is the code for (eventual consistent) validation rule:</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">ChangeToDoItemImportanceCommandValidator</span> <span class="p">:</span> <span class="n">AbstractValidator</span><span class="p">&lt;</span><span class="n">ChangeToDoItemImportanceCommand</span><span class="p">&gt;</span>
+<span class="p">{</span>
+	<span class="k">private</span> <span class="k">readonly</span> <span class="n">IDatabase</span> <span class="n">database</span><span class="p">;</span>
+
+	<span class="k">public</span> <span class="nf">ChangeToDoItemImportanceCommandValidator</span><span class="p">(</span><span class="n">IDatabase</span> <span class="n">db</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="n">Contract</span><span class="p">.</span><span class="n">Requires</span><span class="p">&lt;</span><span class="n">ArgumentNullException</span><span class="p">&gt;(</span><span class="n">db</span> <span class="p">!=</span> <span class="k">null</span><span class="p">,</span> <span class="s">"db"</span><span class="p">);</span>
+		<span class="n">database</span> <span class="p">=</span> <span class="n">db</span><span class="p">;</span>
+
+		<span class="nf">RuleFor</span><span class="p">(</span><span class="n">command</span> <span class="p">=&gt;</span> <span class="n">command</span><span class="p">.</span><span class="n">Importance</span><span class="p">).</span><span class="nf">NotEmpty</span><span class="p">().</span><span class="nf">GreaterThanOrEqualTo</span><span class="p">(</span><span class="m">0</span><span class="p">);</span>
+		<span class="c1">// Importance must be &gt;=0 and unique among other item's importance</span>
+		<span class="nf">RuleFor</span><span class="p">(</span><span class="n">command</span> <span class="p">=&gt;</span> <span class="n">command</span><span class="p">.</span><span class="n">Importance</span><span class="p">).</span><span class="nf">Must</span><span class="p">(</span><span class="n">BeUniqueAmongItemsImportance</span><span class="p">).</span><span class="nf">WithMessage</span><span class="p">(</span><span class="s">"{PropertyName} must be unique in the List"</span><span class="p">);</span>
+	<span class="p">}</span>
+
+	<span class="k">private</span> <span class="kt">bool</span> <span class="nf">BeUniqueAmongItemsImportance</span><span class="p">(</span><span class="n">ChangeToDoItemImportanceCommand</span> <span class="n">command</span><span class="p">,</span> <span class="kt">int</span> <span class="n">importance</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="k">return</span>  <span class="p">(</span><span class="k">from</span> <span class="n">todo</span> <span class="k">in</span> <span class="n">database</span><span class="p">.</span><span class="n">ToDoItems</span>
+							   <span class="k">join</span> <span class="n">list</span> <span class="k">in</span> <span class="n">database</span><span class="p">.</span><span class="n">ToDoLists</span> <span class="k">on</span> <span class="n">todo</span><span class="p">.</span><span class="n">ToDoListId</span> <span class="k">equals</span> <span class="n">list</span><span class="p">.</span><span class="n">Id</span>
+							   <span class="k">where</span> <span class="n">todo</span><span class="p">.</span><span class="n">Importance</span> <span class="p">==</span> <span class="n">importance</span>
+							   <span class="k">select</span> <span class="n">todo</span><span class="p">).</span><span class="nf">Count</span><span class="p">()</span> <span class="p">==</span> <span class="m">0</span><span class="p">;</span>		
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>This version of code is present in public repository, in branch <a href="https://github.com/williamverdolini/CQRS-ES-Todos/tree/master" target="_blank">master</a>.</p>
+
+<h2 id="solution-2-one-aggregateroot-ar-with-composition">Solution #2: One AggregateRoot (AR) with composition</h2>
+
+<p>Having just an AR (ToDoList) with a list of TodoItem implies:</p>
+
+<ul>
+  <li><strong>Doing a consistent set validation</strong>: it’s possible to access to the entire list of ToDoItem from ToDoList Aggregate and, then, it’s possible to do a consistent set validation for importance uniqueness</li>
+  <li><strong>The UI has to send ToDoItemId and ToDoListId</strong> to perform a command: that’s because the TodoItem IS NOT accessible from outside the context and then we have to send the right coordinates to find the specific ToDoItem in the repository (obviously it’s should be possibile to read the ToDoListId from read-model having the ToDoItemId, but I don’t like this solution for performance reasons)</li>
+  <li><strong>ToDoItem is NOT accessible from outside the bounded context</strong>: in this context, no one could create conflicts about the Importance validation rule because, every command is checked against the Domain Model (real consistent) and, then, there’s no more need to implement some compensation logic.</li>
+  <li><strong>Performances</strong>: I’ve not made yet some complete performance test, but having an AR with lists of items should create more performance issues, I think. That’ because every time we retrieve the list from repo, the ES reconstruct the entire list retracing the sequence of the committed events, and it could become a long process. In this context some snapshooing policies could be a need.</li>
+</ul>
+
+<p>The following is the code for (consistent) validation rule:</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">ChangeToDoItemImportanceCommandValidator</span> <span class="p">:</span> <span class="n">AbstractValidator</span><span class="p">&lt;</span><span class="n">ChangeToDoItemImportanceCommand</span><span class="p">&gt;</span>
+<span class="p">{</span>
+	<span class="k">private</span> <span class="k">readonly</span> <span class="n">IRepository</span> <span class="n">repository</span><span class="p">;</span>
+
+	<span class="k">public</span> <span class="nf">ChangeToDoItemImportanceCommandValidator</span><span class="p">(</span><span class="n">IRepository</span> <span class="n">repo</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="n">Contract</span><span class="p">.</span><span class="n">Requires</span><span class="p">&lt;</span><span class="n">ArgumentNullException</span><span class="p">&gt;(</span><span class="n">repo</span> <span class="p">!=</span> <span class="k">null</span><span class="p">,</span> <span class="s">"repo"</span><span class="p">);</span>
+		<span class="n">repository</span> <span class="p">=</span> <span class="n">repo</span><span class="p">;</span>
+
+		<span class="nf">RuleFor</span><span class="p">(</span><span class="n">command</span> <span class="p">=&gt;</span> <span class="n">command</span><span class="p">.</span><span class="n">Importance</span><span class="p">).</span><span class="nf">NotEmpty</span><span class="p">().</span><span class="nf">GreaterThanOrEqualTo</span><span class="p">(</span><span class="m">0</span><span class="p">);</span>
+		<span class="c1">// Importance must be &gt;=0 and unique among other item's importance</span>
+		<span class="nf">RuleFor</span><span class="p">(</span><span class="n">command</span> <span class="p">=&gt;</span> <span class="n">command</span><span class="p">.</span><span class="n">Importance</span><span class="p">).</span><span class="nf">Must</span><span class="p">(</span><span class="n">BeUniqueAmongItemsImportance</span><span class="p">).</span><span class="nf">WithMessage</span><span class="p">(</span><span class="s">"{PropertyName} must be unique in the List"</span><span class="p">);</span>
+
+	<span class="p">}</span>
+
+	<span class="k">private</span> <span class="kt">bool</span> <span class="nf">BeUniqueAmongItemsImportance</span><span class="p">(</span><span class="n">ChangeToDoItemImportanceCommand</span> <span class="n">command</span><span class="p">,</span> <span class="kt">int</span> <span class="n">importance</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="n">ToDoList</span> <span class="n">list</span> <span class="p">=</span> <span class="n">repository</span><span class="p">.</span><span class="n">GetById</span><span class="p">&lt;</span><span class="n">ToDoList</span><span class="p">&gt;(</span><span class="n">command</span><span class="p">.</span><span class="n">ToDoListId</span><span class="p">);</span>
+		<span class="k">return</span> <span class="p">!</span><span class="n">list</span><span class="p">.</span><span class="n">Items</span><span class="p">.</span><span class="n">Any</span><span class="p">&lt;</span><span class="n">ToDoItem</span><span class="p">&gt;(</span><span class="n">todo</span> <span class="p">=&gt;</span> <span class="n">todo</span><span class="p">.</span><span class="n">Importance</span><span class="p">.</span><span class="nf">Equals</span><span class="p">(</span><span class="n">importance</span><span class="p">));</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>So, a validation based on repository (consistent write model) rather than database (eventual consistent read-model). But not always a consistent validation is consistent indeed: think if I’ve used MSMQ for my bus; in that case it could be possible that some previous command, put in the bus but not yet processed, could change the repository state. So? We come back to the need of having some compensation logic…anyhow…</p>
+
+<p>This version of code has required some re-factoring of model and command handlers and is present in public repository, in branch <a href="https://github.com/williamverdolini/CQRS-ES-Todos/tree/OneAggregateRoot" target="_blank">OneAggregateRoot</a>.</p>

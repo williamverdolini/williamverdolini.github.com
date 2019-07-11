@@ -1,0 +1,157 @@
+<!-- Markup JSON-LD generato da Assistente per il markup dei dati strutturati di Google. -->
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Article",
+  "name" : "Angular.js Autocomplete",
+  "author" : {
+    "@type" : "Person",
+    "name" : "williamverdolini"
+  },
+  "datePublished" : "2014-01-30",
+  "articleSection" : [ "autocomplete", "Angular.js" ],
+  "url" : "http://williamverdolini.github.io/2014/01/30/discitur-Autocomplete_en/"
+}
+</script>
+
+<p>Among the many positive aspects of this sprint, one of those that has increased my appreciation of Angular framework more than others
+was the creation of a textbox with autocomplete feature. Schematizing brutally the feature flow, I can identify four main steps:</p>
+
+<p><img src="/images/discitur/Autocomplete_en.png" /></p>
+
+<ol>
+  <li>
+    <p>The user begins to type the letters of the required field</p>
+  </li>
+  <li>
+    <p>to each letter entered a request is made to a search service</p>
+  </li>
+  <li>
+    <p>the search service returns the JSON object values ​​that contain the letters entered</p>
+  </li>
+  <li>
+    <p>the array of returned data values ​​is rendered as a combobox</p>
+  </li>
+</ol>
+
+<p> </p>
+
+<p>The functionality, even if small, is a vertical component that runs through all layers of the architecture. 
+In the framework with which we normally work (ASP.NET Web Forms, Custom Web Architectures, or in the past JSP, JSF), 
+this component can be quite complicated to implement. This type of functionality, seemingly simple and quite complex in practice, 
+are the typical “traitor” features: they are usually underestimaded because we do not enter so deep in detail, in the estimation phase (at least the first few times ) 
+and punctually the “burned” is definitely higher than the “earned”.</p>
+
+<p>In Angular + WebAPI , realize the feature was instead very simple. Here are the steps in detail:
+ </p>
+
+<p><strong>1) Use of <a href="http://angular-ui.github.io/bootstrap/" target="_blank">Angular-ui Bootstrap</a></strong></p>
+
+<p>In Angular Bootstrap library exists a component (directive) for 
+rendering this feature: the <a href="http://angular-ui.github.io/bootstrap/#/typeahead" target="_blank">Typeahead</a>.</p>
+
+<p>the component can be configured for binding promises, as result of backend service (common $http or $resource). here an example:</p>
+
+<script type="syntaxhighlighter" class="brush: javascript">
+<![CDATA[
+<input class="form-control input-sm" type="text"
+       name="school"
+       ng-model="local.school"
+       typeahead-wait-ms="300"
+       typeahead="k for k in getSchools($viewValue) | filter:$viewValue"
+       typeahead-on-select="select('school')"
+       typeahead-editable='false'>
+
+]]></script>
+<p> </p>
+
+<p>The controller contains the fields for linked object model and the methods to call server-side service:</p>
+
+<script type="syntaxhighlighter" class="brush: javascript">
+<![CDATA[
+
+$scope.local = {
+    school: null,
+};
+
+$scope.getSchools = function (q) {
+    return LessonService.getDistinctValues('school', { schoolQ: q });
+}
+]]></script>
+<p> </p>
+
+<p><strong>2) Use of standard Angular Service for calling server-side service</strong></p>
+
+<p>Nothing new. Cleaning the code, remains:</p>
+
+<script type="syntaxhighlighter" class="brush: javascript">
+<![CDATA[
+
+.factory('LessonService', [
+'$resource',
+'$http',
+'$q',
+'LessonDTO',
+'DisciturSettings',
+'DiscUtil',
+function ($resource, $http, $q, LessonDTO, DisciturSettings, DiscUtil) {
+  return {
+    // Get Async list of disciplines
+    getDistinctValues: function (type, inputParams) {
+      switch (type) {
+        case ('school'):
+          DiscUtil.validateInput('LessonService.getDistinctValues.school', 
+               { schoolQ: null }, 
+               inputParams);
+          break;
+        default:
+          throw { 
+               code: 20003, 
+               message: 'invalid type string for LessonService.getDistinctValues :' + type 
+          }
+    }
+
+    // create deferring result
+    var deferred = $q.defer();
+
+    // Retrieve Async data for lesson id in input        
+    $http({ method: 'GET', url: DisciturSettings.apiUrl + 'lesson', params: inputParams })
+      .success(function (result) {deferred.resolve(result) })
+      .error(function (data) {deferred.reject("Error for LessonService.getDistinctValues:" + data); });
+    // create deferring result
+    return deferred.promise;
+    }
+  };
+}]);
+]]></script>
+<p> </p>
+
+<p><strong>2) WebApi 2 + Entity Framework 6</strong></p>
+
+<p>The realization of this service was … simple:</p>
+
+<script type="syntaxhighlighter" class="brush: csharp">
+<![CDATA[
+ [HttpGet]
+public async Task<List<string>> FindSchool(string schoolQ)
+{
+   IQueryable<string> schools = db.Lessons
+                                  .Where(l => l.School.Contains(schoolQ))
+                                  .Select(l => l.School).Distinct();
+
+   return await schools.ToListAsync();
+}
+
+]]></script>
+
+<p><strong>4) Bootstrap Theming (to complete)</strong></p>
+
+<p>For rendering and the final effect I’m leaning to one of the available themes Bootstrap 3. The effect is very pleasant:</p>
+
+<p><img src="/images/discitur/Autocomplete-screenshot.png" /></p>
+
+<p>In this component everything was pretty easy (unsurprisingly). 
+Surely the Angular Bootstrap directive has the most important role because it does most of the work. 
+Who develops a bit knows that it is better to try to find what we need, if someone else has already done it (better) before us.</p>
+
+<p><em><a href="http://www.codinghorror.com/blog/2009/02/dont-reinvent-the-wheel-unless-you-plan-on-learning-more-about-wheels.html" target="_blank">Don’t reinvent the wheel</a></em> Americans say. </p>

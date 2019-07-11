@@ -1,0 +1,165 @@
+<p>At the moment the project is a sort of “Lab <a href="https://it.wikipedia.org/wiki/Proof_of_concept" target="_blank">PoC</a>” for a CQRS+ES application and it’s have a lot of short-cuts (for the sake of simplicity) that in a real project should be reviewed. One of this is the “implicit synchronism” of the UI. Let’s see one of the front-end calls to the server.</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">changeDescription</span><span class="p">:</span> <span class="nf">function</span> <span class="p">(</span><span class="n">_item</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">var</span> <span class="n">_input</span> <span class="p">=</span> <span class="p">{</span>
+        <span class="n">id</span><span class="p">:</span> <span class="n">_item</span><span class="p">.</span><span class="n">Id</span><span class="p">,</span>
+        <span class="n">description</span><span class="p">:</span> <span class="n">_item</span><span class="p">.</span><span class="n">Description</span>
+    <span class="p">}</span>
+
+    <span class="err">$</span><span class="n">http</span><span class="p">.</span><span class="nf">post</span><span class="p">(</span><span class="n">w</span><span class="err">$</span><span class="n">settings</span><span class="p">.</span><span class="n">apiUrl</span> <span class="p">+</span> <span class="err">'</span><span class="n">TodoItems</span><span class="p">/</span><span class="n">ChangeDescription</span><span class="err">'</span><span class="p">,</span> <span class="n">_input</span><span class="p">)</span>
+        <span class="p">.</span><span class="nf">success</span><span class="p">(</span><span class="nf">function</span> <span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">status</span><span class="p">)</span> <span class="p">{</span>
+            <span class="err">$</span><span class="n">scope</span><span class="p">.</span><span class="n">local</span><span class="p">.</span><span class="n">todoItemsError</span><span class="p">.</span><span class="n">message</span> <span class="p">=</span> <span class="err">''</span><span class="p">;</span>
+            <span class="err">$</span><span class="n">scope</span><span class="p">.</span><span class="n">local</span><span class="p">.</span><span class="n">todoItemsError</span><span class="p">.</span><span class="n">show</span> <span class="p">=</span> <span class="k">false</span><span class="p">;</span>
+            <span class="n">_item</span><span class="p">.</span><span class="n">_Description</span> <span class="p">=</span> <span class="n">_item</span><span class="p">.</span><span class="n">Description</span>
+        <span class="p">})</span>
+        <span class="p">.</span><span class="nf">error</span><span class="p">(</span><span class="nf">function</span> <span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span> <span class="p">{</span>
+            <span class="err">$</span><span class="n">scope</span><span class="p">.</span><span class="n">local</span><span class="p">.</span><span class="n">todoItemsError</span><span class="p">.</span><span class="n">message</span> <span class="p">=</span> <span class="n">w</span><span class="err">$</span><span class="n">utils</span><span class="p">.</span><span class="nf">getFluentValidationMessage</span><span class="p">(</span><span class="n">data</span><span class="p">.</span><span class="n">Message</span><span class="p">);</span>
+            <span class="err">$</span><span class="n">scope</span><span class="p">.</span><span class="n">local</span><span class="p">.</span><span class="n">todoItemsError</span><span class="p">.</span><span class="n">show</span> <span class="p">=</span> <span class="k">true</span><span class="p">;</span>
+            <span class="n">_item</span><span class="p">.</span><span class="n">Description</span> <span class="p">=</span> <span class="n">_item</span><span class="p">.</span><span class="n">_Description</span>
+        <span class="p">});</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>And the server API related:</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">[Route("api/TodoItems/ChangeDescription")]</span>
+<span class="na">[HttpPost]</span>
+<span class="k">public</span> <span class="n">IHttpActionResult</span> <span class="nf">ChangeDescription</span><span class="p">(</span><span class="n">ChangeToDoItemDescriptionModel</span> <span class="n">model</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(!</span><span class="n">ModelState</span><span class="p">.</span><span class="n">IsValid</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nf">BadRequest</span><span class="p">(</span><span class="n">ModelState</span><span class="p">);</span>
+
+    <span class="k">try</span>
+    <span class="p">{</span>
+        <span class="n">Worker</span><span class="p">.</span><span class="nf">ChangeDescription</span><span class="p">(</span><span class="n">model</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nf">Ok</span><span class="p">();</span>
+    <span class="p">}</span>
+    <span class="k">catch</span> <span class="p">(</span><span class="n">Exception</span> <span class="n">ex</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nf">BadRequest</span><span class="p">(</span><span class="n">ex</span><span class="p">.</span><span class="n">Message</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>This code is perfectly consistent, because the actions (send command, manage it, store events, dispatch events, update read model) are all in-process. This is true even if I don’t use anything from the result data in the success callback, but, again, it’s correct for the same reason: because in the CQRS we have separated Commands from Queries, so this command will not have any result (but the httpResult) and because, being all actions in-process, if we have an “Ok” as result, it means that the read model has been correctly updated with the data passed in front-end call.</p>
+
+<p>Let’s go a step forward.</p>
+
+<p>Let’s imagine now that there is a <strong>real asynchronism</strong> between, let’s say, the storage of the events and the dispatching and the processing of the events. This is quite common in a real CQRS+ES application; very often also the commands are stored in queues and their processing is delegated to a subsequent async process (in this case you could use solution like a <a href="http://blog.sapiensworks.com/post/2015/07/20/CQRS-Immediate-Feedback-Web-App/" target="_blank">polling mediator</a>).</p>
+
+<p>How can we notify the user about the changes introduced by his command in a common web application? It depends on the scenario obviously, some options are:</p>
+
+<ul>
+  <li>Trick the user that the command was successfully sent and elaborated. This is a good option in a lot of real cases; generally speaking, it’s good everytime there is little chance that an error will happen (e.g. in a e-commerce where the aggregates are changed rarely by more than a user concurrently)</li>
+  <li>Notify the UI when the read model is correctly updated, saying something like “data is updating…” in the meanwhile</li>
+</ul>
+
+<p>There are <a href="https://www.google.it/webhp?sourceid=chrome-instant&amp;ion=1&amp;espv=2&amp;ie=UTF-8#q=CQRS+eventual+consistency+ui" target="_blank">some other valuable options and variants</a> depending on the requirements.
+I want to explore the second option, using <a href="http://signalr.net/" target="_blank">SignalR</a> to notify the clients of the server-side changes to the read-model. Very useful for me was read and deepen the code of <a href="https://github.com/andyhoyle/Crucial-CQRS" target="_blank">Crucial.CQRS project</a>.</p>
+
+<p>First Question: in which project is it preferable to put the SignalR hub? This hub will born to notify the users that the read-model has changed in someway, so, it seems to be a part of the query-stack. But the query-stack project is a class-library, with no awareness about the “environmental context”. But SignalR introduce references to Owin and web and this is a bad smell…other options could be to create a different project for SignalR hub, or, even better, keep the owin/signalR references in the API project and activate the hub with some notification mechanism…maybe I’ll return on this after.</p>
+
+<p>Keeping it simple at first, I call an event notifier (dependant on Hub) at the end of the denormalizer methods in the QueryStack project. But first I’ve to set-up SignlR Hub</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">NotifierHub</span> <span class="p">:</span> <span class="n">Hub</span>
+<span class="p">{</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>As you see, very simple, because, in this scenario, SignalR has just to notify the clients of server-side events and there are no actions callable from UI. Now that we have the channel between server and clients, we need to define the notification logic:</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">EventNotifier</span> <span class="p">:</span> <span class="n">IEventNotifier</span>
+<span class="p">{</span>
+    <span class="k">private</span> <span class="k">readonly</span> <span class="n">IHubConnectionContext</span><span class="p">&lt;</span><span class="kt">dynamic</span><span class="p">&gt;</span> <span class="n">clients</span><span class="p">;</span>
+    <span class="k">private</span> <span class="k">readonly</span> <span class="n">IMappingEngine</span> <span class="n">mapper</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="nf">EventNotifier</span><span class="p">(</span><span class="n">IHubConnectionContext</span><span class="p">&lt;</span><span class="kt">dynamic</span><span class="p">&gt;</span> <span class="n">clients</span><span class="p">,</span> <span class="n">IMappingEngine</span> <span class="n">mapper</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">Contract</span><span class="p">.</span><span class="n">Requires</span><span class="p">&lt;</span><span class="n">ArgumentNullException</span><span class="p">&gt;(</span><span class="n">clients</span> <span class="p">!=</span> <span class="k">null</span><span class="p">,</span> <span class="s">"clients"</span><span class="p">);</span>
+        <span class="n">Contract</span><span class="p">.</span><span class="n">Requires</span><span class="p">&lt;</span><span class="n">ArgumentNullException</span><span class="p">&gt;(</span><span class="n">mapper</span> <span class="p">!=</span> <span class="k">null</span><span class="p">,</span> <span class="s">"mapper"</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="n">clients</span> <span class="p">=</span> <span class="n">clients</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="n">mapper</span> <span class="p">=</span> <span class="n">mapper</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">async</span> <span class="n">Task</span> <span class="nf">ChangedToDoListDescriptionEventNotify</span><span class="p">(</span><span class="n">ToDoList</span> <span class="n">list</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">await</span> <span class="n">clients</span><span class="p">.</span><span class="n">All</span><span class="p">.</span><span class="nf">changedToDoListDescription</span><span class="p">(</span><span class="n">mapper</span><span class="p">.</span><span class="n">Map</span><span class="p">&lt;</span><span class="n">NotifiedToDoList</span><span class="p">&gt;(</span><span class="n">list</span><span class="p">));</span>
+    <span class="p">}</span>
+
+    <span class="p">...</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>As you can see, I use:</p>
+
+<ul>
+  <li><a href="http://martinfowler.com/eaaCatalog/dataTransferObject.html" target="_blank">DTO pattern</a> to encapsulate and keep the serialization for SignalR channel out of the rest of the code.</li>
+  <li><a href="http://automapper.org/" target="_blank">AutoMapper</a> to simplify object-to-object mapping and, in this case, <a href="https://github.com/williamverdolini/CQRS-ES-Todos/blob/master/Todo.QueryStack/Mappers/NotifierMapperProfile.cs" target="_blank">it’s very easy</a></li>
+</ul>
+
+<p>At the end, I call the notifier’s methods at the end of the read-model updates:</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">ToDoEventHandlers</span> <span class="p">:</span> 
+	<span class="n">IEventHandler</span><span class="p">&lt;</span><span class="n">ChangedToDoListDescriptionEvent</span><span class="p">&gt;,</span>
+	<span class="p">...</span>
+<span class="p">{</span>
+	<span class="k">private</span> <span class="k">readonly</span> <span class="n">IIdentityMapper</span> <span class="n">_identityMapper</span><span class="p">;</span>
+	<span class="k">private</span> <span class="k">readonly</span> <span class="n">IEventNotifier</span> <span class="n">notifier</span><span class="p">;</span>
+
+	<span class="k">public</span> <span class="nf">ToDoEventHandlers</span><span class="p">(</span><span class="n">IIdentityMapper</span> <span class="n">identityMapper</span><span class="p">,</span> <span class="n">IEventNotifier</span> <span class="n">notifier</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="n">Contract</span><span class="p">.</span><span class="n">Requires</span><span class="p">&lt;</span><span class="n">ArgumentNullException</span><span class="p">&gt;(</span><span class="n">identityMapper</span> <span class="p">!=</span> <span class="k">null</span><span class="p">,</span> <span class="s">"identityMapper"</span><span class="p">);</span>
+		<span class="n">Contract</span><span class="p">.</span><span class="n">Requires</span><span class="p">&lt;</span><span class="n">ArgumentNullException</span><span class="p">&gt;(</span><span class="n">notifier</span> <span class="p">!=</span> <span class="k">null</span><span class="p">,</span> <span class="s">"notifier"</span><span class="p">);</span>
+		<span class="n">_identityMapper</span> <span class="p">=</span> <span class="n">identityMapper</span><span class="p">;</span>
+		<span class="k">this</span><span class="p">.</span><span class="n">notifier</span> <span class="p">=</span> <span class="n">notifier</span><span class="p">;</span>
+	<span class="p">}</span>
+
+	<span class="k">public</span> <span class="k">void</span> <span class="nf">Handle</span><span class="p">(</span><span class="n">ChangedToDoListDescriptionEvent</span> <span class="n">@event</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="k">using</span> <span class="p">(</span><span class="kt">var</span> <span class="n">db</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">ToDoContext</span><span class="p">())</span>
+		<span class="p">{</span>
+			<span class="kt">int</span> <span class="n">modelId</span> <span class="p">=</span> <span class="n">_identityMapper</span><span class="p">.</span><span class="n">GetModelId</span><span class="p">&lt;</span><span class="n">ToDoList</span><span class="p">&gt;(</span><span class="n">@event</span><span class="p">.</span><span class="n">ToDoListId</span><span class="p">);</span>
+			<span class="n">ToDoList</span> <span class="n">list</span> <span class="p">=</span> <span class="n">db</span><span class="p">.</span><span class="n">Lists</span><span class="p">.</span><span class="nf">First</span><span class="p">(</span><span class="n">t</span> <span class="p">=&gt;</span> <span class="n">t</span><span class="p">.</span><span class="n">Id</span><span class="p">.</span><span class="nf">Equals</span><span class="p">(</span><span class="n">modelId</span><span class="p">));</span>
+			<span class="k">if</span> <span class="p">(</span><span class="n">list</span> <span class="p">!=</span> <span class="k">null</span><span class="p">)</span>
+			<span class="p">{</span>
+				<span class="n">list</span><span class="p">.</span><span class="n">Description</span> <span class="p">=</span> <span class="n">@event</span><span class="p">.</span><span class="n">Description</span><span class="p">;</span>
+				<span class="n">db</span><span class="p">.</span><span class="nf">Entry</span><span class="p">(</span><span class="n">list</span><span class="p">).</span><span class="n">State</span> <span class="p">=</span> <span class="n">EntityState</span><span class="p">.</span><span class="n">Modified</span><span class="p">;</span>
+				<span class="n">db</span><span class="p">.</span><span class="nf">SaveChanges</span><span class="p">();</span>
+
+				<span class="n">Task</span><span class="p">.</span><span class="nf">Run</span><span class="p">(()</span> <span class="p">=&gt;</span> <span class="n">notifier</span><span class="p">.</span><span class="nf">ChangedToDoListDescriptionEventNotify</span><span class="p">(</span><span class="n">list</span><span class="p">)).</span><span class="nf">ConfigureAwait</span><span class="p">(</span><span class="k">false</span><span class="p">);</span>
+			<span class="p">}</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+
+	<span class="p">...</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>In the front-end side we need the code to establish the connection with the hub</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">var</span> <span class="n">notifierHubProxy</span> <span class="p">=</span> <span class="err">$</span><span class="p">.</span><span class="n">connection</span><span class="p">.</span><span class="n">notifierHub</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>and to listen for server-side notifications. I did that using Angular.js global events that can be handled in every controller</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// setup of global notification events </span>
+<span class="n">notifierHubProxy</span><span class="p">.</span><span class="n">client</span><span class="p">.</span><span class="n">changedToDoListDescription</span> <span class="p">=</span> <span class="nf">broadcastEvent</span><span class="p">(</span><span class="err">'</span><span class="n">changedToDoListDescription</span><span class="err">'</span><span class="p">);</span>
+<span class="n">notifierHubProxy</span><span class="p">.</span><span class="n">client</span><span class="p">.</span><span class="n">createdToDoListEvent</span> <span class="p">=</span> <span class="nf">broadcastEvent</span><span class="p">(</span><span class="err">'</span><span class="n">createdToDoListEvent</span><span class="err">'</span><span class="p">);</span>
+<span class="n">notifierHubProxy</span><span class="p">.</span><span class="n">client</span><span class="p">.</span><span class="n">addedNewToDoItemEvent</span> <span class="p">=</span> <span class="nf">broadcastEvent</span><span class="p">(</span><span class="err">'</span><span class="n">addedNewToDoItemEvent</span><span class="err">'</span><span class="p">);</span>
+<span class="n">notifierHubProxy</span><span class="p">.</span><span class="n">client</span><span class="p">.</span><span class="n">markedToDoItemAsCompletedEvent</span> <span class="p">=</span> <span class="nf">broadcastEvent</span><span class="p">(</span><span class="err">'</span><span class="n">markedToDoItemAsCompletedEvent</span><span class="err">'</span><span class="p">);</span>
+<span class="n">notifierHubProxy</span><span class="p">.</span><span class="n">client</span><span class="p">.</span><span class="n">reOpenedToDoItemEvent</span> <span class="p">=</span> <span class="nf">broadcastEvent</span><span class="p">(</span><span class="err">'</span><span class="n">reOpenedToDoItemEvent</span><span class="err">'</span><span class="p">);</span>
+<span class="n">notifierHubProxy</span><span class="p">.</span><span class="n">client</span><span class="p">.</span><span class="n">changedToDoItemImportanceEvent</span> <span class="p">=</span> <span class="nf">broadcastEvent</span><span class="p">(</span><span class="err">'</span><span class="n">changedToDoItemImportanceEvent</span><span class="err">'</span><span class="p">);</span>
+<span class="n">notifierHubProxy</span><span class="p">.</span><span class="n">client</span><span class="p">.</span><span class="n">changedToDoItemDescriptionEvent</span> <span class="p">=</span> <span class="nf">broadcastEvent</span><span class="p">(</span><span class="err">'</span><span class="n">changedToDoItemDescriptionEvent</span><span class="err">'</span><span class="p">);</span>
+<span class="n">notifierHubProxy</span><span class="p">.</span><span class="n">client</span><span class="p">.</span><span class="n">changedToDoItemDueDateEvent</span> <span class="p">=</span> <span class="nf">broadcastEvent</span><span class="p">(</span><span class="err">'</span><span class="n">changedToDoItemDueDateEvent</span><span class="err">'</span><span class="p">);</span>
+
+<span class="kt">var</span> <span class="n">broadcastEvent</span> <span class="p">=</span> <span class="nf">function</span> <span class="p">(</span><span class="n">eventName</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nf">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="n">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="s">"event:"</span> <span class="p">+</span> <span class="n">eventName</span><span class="p">);</span>
+        <span class="n">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="n">arguments</span><span class="p">);</span>
+        <span class="err">$</span><span class="n">rootScope</span><span class="p">.</span><span class="err">$</span><span class="nf">broadcast</span><span class="p">(</span><span class="n">eventName</span><span class="p">,</span> <span class="n">arguments</span><span class="p">.</span><span class="n">length</span><span class="p">==</span><span class="m">1</span> <span class="p">?</span> <span class="n">arguments</span><span class="p">[</span><span class="m">0</span><span class="p">]</span> <span class="p">:</span> <span class="n">arguments</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>How and if manage these events could be an opportunity matter. Sometimes it’s ok to give an explicit notification to the user that something is changed, sometimes it’s ok to “trick” the user with the input data without waiting the notification.
+It’s all about the domain requirements.</p>

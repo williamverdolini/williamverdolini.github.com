@@ -1,0 +1,48 @@
+<p>As said in the <a href="/2015/02/03/umbmacro-architecture/" target="_blank">introduction article</a>, one and the most important component of this basic architecture 
+is <strong>MacroController</strong> which is used as base class for all the Custom Macros. Before explore this component let’s see how a final Custom Macro looks like.</p>
+
+<p>From administrator’s point of view, the anatomy of a Custom Macros has defined by:</p>
+
+<ol>
+  <li><strong>which commands the macro can provide</strong>. This information could be used to configure commands to be forwarded to specific page, for example</li>
+  <li><strong>which command the macro can handle</strong>. This information could be used to configure specific command’s consuming rules depending on the specific context</li>
+  <li><strong>which properties the macro offers</strong>. These are the Umbraco Macro’s properties that can be configured by administrator during the page design phase</li>
+</ol>
+
+<p>These same information are very important also from the developer’s point of view. In fact, if the developer can easily translate these concepts into code, 
+he/she has definitely more chances to easily maintain and improve the code.
+Let’s see how the sample macro’s controller appears:</p>
+
+<p><img src="/images/umbracomacros/Anatomy1.png" class="img-rounded" /><br /><br /></p>
+
+<p>as you can see, in the class declaration is possible to recognize all the three parts of the Custom Macro’s anatomy.</p>
+
+<ol>
+  <li><strong>ICommandProvider</strong>: with this generic interface we can declare which commands the Macro can provide. Under the carpet (aka in the base class: <a href="https://github.com/williamverdolini/Umbraco-CustomMacros/blob/master/CustomMacros/Areas/Infrastructure/Controllers/MacroController.cs" target="_blank">MacroController</a>) 
+there is code to assure that the macro can provide just commands declared with this interface</li>
+  <li><strong>ICommandHandler</strong>: with this generic interface we can declare which commands the Macro can handle.</li>
+  <li><strong>MacroProperties</strong>: here the public properties exposed by the macro</li>
+</ol>
+
+<p>Let’s dive into the Command Handling part, where the business logic resides.
+<br /></p>
+
+<h2 id="command-handling">Command Handling</h2>
+<p>The <a href="https://github.com/williamverdolini/Umbraco-CustomMacros/blob/master/CustomMacros/Areas/Infrastructure/Commands/ICommandHandler.cs" target="_blank">ICommandHandler</a> Interface 
+requires the implementation of <em>“pseduo-action”</em> depending on the concrete command class.</p>
+
+<p><img src="/images/umbracomacros/Anatomy2.png" class="img-rounded" /><br /><br /></p>
+
+<p>These are <em>NOT</em> real MVC actions, but methods invoked by <a href="https://github.com/williamverdolini/Umbraco-CustomMacros/blob/master/CustomMacros/Areas/Infrastructure/Controllers/MacroController.cs#L69-L81" target="_blank">the real MVC Action from the base controller</a>. What I’m trying to do is to have a <strong>parameter based routing</strong>,
+so that I can have specific actions for specific commands, keeping the same action name. In this way the <a href="https://github.com/williamverdolini/Umbraco-CustomMacros/blob/master/CustomMacros/Areas/Framework/Scripts/Command.Engine.js" target="_blank">Command.Engine.js</a> can dispatch a command to different controllers keeping quite the same invocation, 
+without that any Custom macros should know about any other macros in the page.</p>
+
+<p>The “magic” happens into MacroController, where <a href="https://github.com/williamverdolini/Umbraco-CustomMacros/blob/master/CustomMacros/Areas/Infrastructure/Controllers/MacroController.cs#L87-L98" target="_blank">the user command is retrieved from the request and dispatched to the correct command handler</a> (in the derived class).</p>
+
+<p>Besides that, I can guide developers through the Controller’s development process in a more natural and domain-driven way (that is very important for quality and time-to-market!).</p>
+
+<p>Note: <strong>NoCommand</strong> is a <em>particular</em> command used to managed not handled commands. It’s important because every Custom Macro is a partial view, called by Umbraco page. When a user calls a page in GET or POST, 
+all the partial views in the page will be invoked and rendered; in this case the Custom Macro will be called with passing NoCommand.</p>
+
+<p>At this point I’ve to spend few words about Custom Macro’s structure of the views.</p>
+

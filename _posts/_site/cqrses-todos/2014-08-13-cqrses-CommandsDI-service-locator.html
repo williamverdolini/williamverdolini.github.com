@@ -1,0 +1,196 @@
+<p>There are several tutorials on the web and the <a href="http://docs.castleproject.org/Windsor.Windsor-tutorial-ASP-NET-MVC-3-application-To-be-Seen.ashx" target="_blank">same project’s site presents well-made material</a>, showing how integrate Castle Windsor in .NET MVC architectures. I intentionally wanted to recreate my own learning process “step-by-step”, which was the more disconnected from the used framework as possible, because it is my intention to apply it in different contexts and projects (WebAPI, MVC, WebForms), and then I needed to understand the Castle Windsor (CW) library as isolated as possible. This is the path I followed.</p>
+
+<p>The use of CW goes through three steps always present:</p>
+
+<ol>
+  <li><strong>Configuring the container with the components to be resolved</strong>. Conceptually, the whole thing can be summed up with the creation of a map of the resolution rules of the classes to be created that the container will use. This map can be created in different ways (by component, via configuration files, with mechanisms for self-registration or by rules and naming conventions)</li>
+  <li><strong>Resolution of the components by the container</strong>. Once you have configured the container, can be used to create classes by Injection</li>
+  <li><strong>Container disposing</strong></li>
+</ol>
+
+<p>What I wanted to achieve was a Message Dispatcher, which aims to get a Command from outside (any user action that arrives at the Controller) and invoke the respective CommandHandler, kept decoupled and retrieved thanks to the power of the DI Container. Here is the first version done:</p>
+
+<ol>
+  <li>At first an example of Command and a couple of his CommandHandler. The aspect that I kept in mind is the use of interfaces and abstract classes from which to derive, so you can easily identify the contract (i.e., the rule) to indicate to CW how to resolve my map of dependencies. This obviously makes the code clearer to read and maintain.
+    <div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">namespace</span> <span class="nn">FirstTry.Commands</span>
+<span class="p">{</span>
+ <span class="k">public</span> <span class="k">interface</span> <span class="nc">ICommand</span>
+ <span class="p">{</span>
+     <span class="n">Guid</span> <span class="n">AggregateId</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+     <span class="kt">int</span> <span class="n">Version</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+ <span class="p">}</span>
+ <span class="p">[</span><span class="n">Serializable</span><span class="p">]</span>
+ <span class="k">public</span> <span class="k">abstract</span> <span class="k">class</span> <span class="nc">Command</span> <span class="p">:</span> <span class="n">ICommand</span>
+ <span class="p">{</span>
+     <span class="k">public</span> <span class="n">Guid</span> <span class="n">AggregateId</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+     <span class="k">public</span> <span class="kt">int</span> <span class="n">Version</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+ <span class="p">}</span>
+ <span class="k">public</span> <span class="k">class</span> <span class="nc">RegisterCommand</span> <span class="p">:</span> <span class="n">Command</span>
+ <span class="p">{</span>
+     <span class="k">public</span> <span class="kt">string</span> <span class="n">SampleData</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+ <span class="p">}</span>
+<span class="p">}</span>
+<span class="k">namespace</span> <span class="nn">FirstTry.CommandsHandlers</span>
+<span class="p">{</span>
+ <span class="k">public</span> <span class="k">interface</span> <span class="nc">ICommandHandler</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;</span> <span class="k">where</span> <span class="n">T</span> <span class="p">:</span> <span class="n">ICommand</span>
+ <span class="p">{</span>
+     <span class="k">void</span> <span class="nf">Handle</span><span class="p">(</span><span class="n">T</span> <span class="n">command</span><span class="p">);</span>
+ <span class="p">}</span>
+ <span class="k">public</span> <span class="k">class</span> <span class="nc">RegisterCommandHandler</span> <span class="p">:</span> <span class="n">ICommandHandler</span><span class="p">&lt;</span><span class="n">RegisterCommand</span><span class="p">&gt;</span>
+ <span class="p">{</span>
+     <span class="k">public</span> <span class="k">void</span> <span class="nf">Handle</span><span class="p">(</span><span class="n">RegisterCommand</span> <span class="n">command</span><span class="p">)</span>
+     <span class="p">{</span>
+         <span class="n">System</span><span class="p">.</span><span class="n">Diagnostics</span><span class="p">.</span><span class="n">Debug</span><span class="p">.</span><span class="nf">WriteLine</span><span class="p">(</span><span class="s">"RegisterCommandHanlder --&gt; data: "</span> <span class="p">+</span> <span class="n">command</span><span class="p">.</span><span class="n">SampleData</span><span class="p">);</span>
+     <span class="p">}</span>
+ <span class="p">}</span>
+ <span class="k">public</span> <span class="k">class</span> <span class="nc">SecondRegisterCommandHandler</span> <span class="p">:</span> <span class="n">ICommandHandler</span><span class="p">&lt;</span><span class="n">RegisterCommand</span><span class="p">&gt;</span>
+ <span class="p">{</span>
+     <span class="k">public</span> <span class="k">void</span> <span class="nf">Handle</span><span class="p">(</span><span class="n">RegisterCommand</span> <span class="n">command</span><span class="p">)</span>
+     <span class="p">{</span>
+         <span class="n">System</span><span class="p">.</span><span class="n">Diagnostics</span><span class="p">.</span><span class="n">Debug</span><span class="p">.</span><span class="nf">WriteLine</span><span class="p">(</span><span class="s">"SecondRegisterCommandHandler --&gt; data: "</span> <span class="p">+</span> <span class="n">command</span><span class="p">.</span><span class="n">SampleData</span><span class="p">);</span>
+     <span class="p">}</span>
+ <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>    </div>
+  </li>
+  <li>Then I have instantiated the DI container and configured to map these resolutions. I placed the code for the creation and installation of the container in a Controller (I know that is not the most suitable place to insert this in MVC, but I wanted to get out a bit from the schema of the tutorial, to fully understand the Castle.Windsor API)
+    <div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">HomeController</span> <span class="p">:</span> <span class="n">Controller</span>
+<span class="p">{</span>
+ <span class="k">private</span> <span class="k">readonly</span> <span class="n">IWindsorContainer</span> <span class="n">_container</span><span class="p">;</span>
+ <span class="k">public</span> <span class="nf">HomeController</span><span class="p">()</span>
+     <span class="p">:</span> <span class="k">base</span><span class="p">()</span>
+ <span class="p">{</span>
+     <span class="c1">//DI Configuration for Castle.Windsor</span>
+     <span class="c1">// Create the DI container</span>
+     <span class="n">_container</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">WindsorContainer</span><span class="p">();</span>
+     <span class="c1">// Install the packaged configurations</span>
+     <span class="n">_container</span><span class="p">.</span><span class="nf">Install</span><span class="p">(</span><span class="k">new</span> <span class="nf">MessagesWindsorInstaller</span><span class="p">());</span>
+ <span class="p">}</span>
+ <span class="k">protected</span> <span class="k">override</span> <span class="k">void</span> <span class="nf">Dispose</span><span class="p">(</span><span class="kt">bool</span> <span class="n">disposing</span><span class="p">)</span>
+ <span class="p">{</span>
+     <span class="k">if</span> <span class="p">(</span><span class="n">disposing</span><span class="p">)</span>
+     <span class="p">{</span>
+         <span class="n">_container</span><span class="p">.</span><span class="nf">Dispose</span><span class="p">();</span>
+     <span class="p">}</span>
+     <span class="k">base</span><span class="p">.</span><span class="nf">Dispose</span><span class="p">(</span><span class="n">disposing</span><span class="p">);</span>
+ <span class="p">}</span>
+<span class="p">}</span>
+<span class="k">public</span> <span class="k">class</span> <span class="nc">MessagesWindsorInstaller</span> <span class="p">:</span> <span class="n">IWindsorInstaller</span>
+<span class="p">{</span>
+ <span class="k">public</span> <span class="k">void</span> <span class="nf">Install</span><span class="p">(</span><span class="n">IWindsorContainer</span> <span class="n">container</span><span class="p">,</span> <span class="n">IConfigurationStore</span> <span class="n">store</span><span class="p">)</span>
+ <span class="p">{</span>            
+     <span class="n">container</span><span class="p">.</span><span class="nf">Register</span><span class="p">(</span>
+         <span class="n">Classes</span>                             
+         <span class="p">.</span><span class="nf">FromThisAssembly</span><span class="p">()</span>
+         <span class="p">.</span><span class="nf">BasedOn</span><span class="p">(</span><span class="k">typeof</span><span class="p">(</span><span class="n">ICommandHandler</span><span class="p">&lt;&gt;))</span> <span class="c1">// That implement ICommandHandler Interface</span>
+         <span class="p">.</span><span class="n">WithService</span><span class="p">.</span><span class="nf">Base</span><span class="p">()</span>                 <span class="c1">// and its implemented with base class</span>
+         <span class="p">.</span><span class="nf">LifestyleSingleton</span><span class="p">()</span>
+         <span class="p">);</span>
+ <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>    </div>
+  </li>
+  <li>At this point lacks the dispatcher that uses the containers to solve handlers at run-time depending on the command that arrives from the UI. To do this we need a component that takes advantage of the DI container to resolve the map just made. Here is the code written
+    <div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">namespace</span> <span class="nn">FirstTry.CommandsHandlers</span>
+<span class="p">{</span>
+ <span class="k">interface</span> <span class="nc">ICommandDispatcher</span>
+ <span class="p">{</span>
+     <span class="k">void</span> <span class="n">Dispatch</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;(</span><span class="n">T</span> <span class="n">command</span><span class="p">)</span> <span class="k">where</span> <span class="n">T</span> <span class="p">:</span> <span class="n">ICommand</span><span class="p">;</span>
+ <span class="p">}</span>
+ <span class="k">public</span> <span class="k">class</span> <span class="nc">CommandDispatcher</span> <span class="p">:</span> <span class="n">ICommandDispatcher</span>
+ <span class="p">{</span>
+     <span class="k">private</span> <span class="n">IWindsorContainer</span> <span class="n">_container</span><span class="p">;</span>
+     <span class="k">public</span> <span class="nf">CommandDispatcher</span><span class="p">(</span><span class="n">IWindsorContainer</span> <span class="n">container</span><span class="p">)</span>
+     <span class="p">{</span>
+         <span class="n">_container</span> <span class="p">=</span> <span class="n">container</span><span class="p">;</span>
+     <span class="p">}</span>
+     <span class="k">public</span> <span class="k">void</span> <span class="n">Dispatch</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;(</span><span class="n">T</span> <span class="n">command</span><span class="p">)</span> <span class="k">where</span> <span class="n">T</span> <span class="p">:</span> <span class="n">ICommand</span>
+     <span class="p">{</span>
+         <span class="n">ICommandHandler</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;[]</span> <span class="n">handlers</span> <span class="p">=</span> <span class="n">_container</span><span class="p">.</span><span class="n">ResolveAll</span><span class="p">&lt;</span><span class="n">ICommandHandler</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;&gt;();</span>
+         <span class="k">foreach</span> <span class="p">(</span><span class="kt">var</span> <span class="n">handler</span> <span class="k">in</span> <span class="n">handlers</span><span class="p">)</span>
+         <span class="p">{</span>
+             <span class="n">handler</span><span class="p">.</span><span class="nf">Handle</span><span class="p">(</span><span class="n">command</span><span class="p">);</span>
+         <span class="p">}</span>
+     <span class="p">}</span>
+ <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>    </div>
+  </li>
+  <li>The dispatcher seems clear, but at this point we need to include it in the “Consumer part” of the handlers, ie in the controller and say to the CW container how to resolve the map during the initialization of the controller itself
+    <div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">HomeController</span> <span class="p">:</span> <span class="n">Controller</span>
+<span class="p">{</span>
+ <span class="k">private</span> <span class="k">readonly</span> <span class="n">ICommandDispatcher</span> <span class="n">_commandDispatcher</span><span class="p">;</span>
+ <span class="k">private</span> <span class="k">readonly</span> <span class="n">IWindsorContainer</span> <span class="n">_container</span><span class="p">;</span>
+ <span class="k">public</span> <span class="nf">HomeController</span><span class="p">()</span>
+     <span class="p">:</span> <span class="k">base</span><span class="p">()</span>
+ <span class="p">{</span>
+     <span class="c1">//DI Configuration for Castle.Windsor</span>
+     <span class="c1">// Create the DI container</span>
+     <span class="n">_container</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">WindsorContainer</span><span class="p">();</span>
+     <span class="c1">// Install the packaged configurations</span>
+     <span class="n">_container</span><span class="p">.</span><span class="nf">Install</span><span class="p">(</span><span class="k">new</span> <span class="nf">MessagesWindsorInstaller</span><span class="p">());</span>
+     <span class="c1">// Resolve the commandDispatcher</span>
+     <span class="n">_commandDispatcher</span> <span class="p">=</span> <span class="n">_container</span><span class="p">.</span><span class="n">Resolve</span><span class="p">&lt;</span><span class="n">ICommandDispatcher</span><span class="p">&gt;(</span><span class="k">new</span> <span class="nf">Arguments</span><span class="p">(</span><span class="k">new</span> <span class="p">{</span> <span class="n">container</span> <span class="p">=</span> <span class="n">_container</span> <span class="p">}));</span>
+ <span class="p">}</span>
+ <span class="k">protected</span> <span class="k">override</span> <span class="k">void</span> <span class="nf">Dispose</span><span class="p">(</span><span class="kt">bool</span> <span class="n">disposing</span><span class="p">)</span>
+ <span class="p">{</span>
+     <span class="k">if</span> <span class="p">(</span><span class="n">disposing</span><span class="p">)</span>
+     <span class="p">{</span>
+         <span class="n">_container</span><span class="p">.</span><span class="nf">Dispose</span><span class="p">();</span>
+     <span class="p">}</span>
+     <span class="k">base</span><span class="p">.</span><span class="nf">Dispose</span><span class="p">(</span><span class="n">disposing</span><span class="p">);</span>
+ <span class="p">}</span>
+<span class="p">}</span>
+<span class="k">public</span> <span class="k">class</span> <span class="nc">MessagesWindsorInstaller</span> <span class="p">:</span> <span class="n">IWindsorInstaller</span>
+<span class="p">{</span>
+ <span class="k">public</span> <span class="k">void</span> <span class="nf">Install</span><span class="p">(</span><span class="n">IWindsorContainer</span> <span class="n">container</span><span class="p">,</span> <span class="n">IConfigurationStore</span> <span class="n">store</span><span class="p">)</span>
+ <span class="p">{</span>
+     <span class="n">container</span><span class="p">.</span><span class="nf">Register</span><span class="p">(</span>
+         <span class="n">Classes</span>
+         <span class="p">.</span><span class="nf">FromThisAssembly</span><span class="p">()</span>
+         <span class="p">.</span><span class="nf">BasedOn</span><span class="p">(</span><span class="k">typeof</span><span class="p">(</span><span class="n">ICommandDispatcher</span><span class="p">))</span> <span class="c1">// That implement ICommandDispatcher Interface</span>
+         <span class="p">.</span><span class="n">WithService</span><span class="p">.</span><span class="nf">DefaultInterfaces</span><span class="p">()</span>    <span class="c1">// and its name contain "CommandDispatcher"</span>
+         <span class="p">.</span><span class="nf">LifestyleSingleton</span><span class="p">()</span>
+         <span class="p">.</span><span class="nf">AllowMultipleMatches</span><span class="p">()</span>
+         <span class="p">);</span>		
+     <span class="n">container</span><span class="p">.</span><span class="nf">Register</span><span class="p">(</span>
+         <span class="n">Classes</span>                             
+         <span class="p">.</span><span class="nf">FromThisAssembly</span><span class="p">()</span>
+         <span class="p">.</span><span class="nf">BasedOn</span><span class="p">(</span><span class="k">typeof</span><span class="p">(</span><span class="n">ICommandHandler</span><span class="p">&lt;&gt;))</span> <span class="c1">// That implement ICommandHandler Interface</span>
+         <span class="p">.</span><span class="n">WithService</span><span class="p">.</span><span class="nf">Base</span><span class="p">()</span>    <span class="c1">// and its name contain "CommandHandler"</span>
+         <span class="p">.</span><span class="nf">LifestyleSingleton</span><span class="p">()</span>
+         <span class="p">);</span>           
+ <span class="p">}</span>
+<span class="p">}</span>       
+</code></pre></div>    </div>
+    <p>Doing the last step, I came across something that was supposed to make me turn on some warning light: that the passage of the container to my dispatcher, in particular in the documentation castle.windsor you can (and should) read: <img src="/images/cqrses/DI-passing-args.png" class="img-rounded" />
+I feel like I was a little…watched. But I ignore it and go on in the experiment.</p>
+  </li>
+  <li>Last step is to simulate a user action and create my own Command in the Controller to pass to my dispatcher:
+    <div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="n">ActionResult</span> <span class="nf">Index</span><span class="p">()</span>
+<span class="p">{</span>
+ <span class="n">_commandDispatcher</span><span class="p">.</span><span class="n">Dispatch</span><span class="p">&lt;</span><span class="n">RegisterCommand</span><span class="p">&gt;(</span><span class="k">new</span> <span class="nf">RegisterCommand</span><span class="p">()</span> <span class="p">{</span> <span class="n">SampleData</span> <span class="p">=</span> <span class="s">"ciao from RegisterCommand!!!!"</span> <span class="p">});</span>
+ <span class="k">return</span> <span class="nf">View</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div>    </div>
+    <p>The result? Everything works great and in the log I see the strings generated from my classes. Very well: I have dispatcher decoupled from Command and from their provider (the Controller) and is left to the dispatcher to work as Service Locator and dispatching my commands properly, thanks to the DI container.</p>
+  </li>
+</ol>
+
+<p>Is well done?</p>
+
+<p>NO.</p>
+
+<p>Why is that?</p>
+
+<p>Here is a number of reasons related to <a href="http://blog.ploeh.dk/2010/02/03/ServiceLocatorisanAnti-Pattern/" target="_blank">Service Locator anti-pattern</a> (to be read several times). It is not to add more. 
+CW has also an excellent tool for debugging the container, capable of showing the classes that have been mapped and able to provide indications on the state of the container. 
+In particular debugging the container shows yet another “yellow light” that indicates the possible presence of a Service Locator (just the CommandDispatcher…what a surprise…).</p>
+
+<p><img src="/images/cqrses/DI-service-locator.png" class="img-rounded" /></p>
+
+<p>There is also to say that in the CW documentation there is the solution to this issue: the use of Typed Factory. Just in this documentation can be read:</p>
+
+<blockquote>An example of a component like that would be a message dispatcher which waits for a message to arrive, then when that happens it pulls appropriate message handler and delegates the handling of the message to it. Using a typed factory the dispatcher can easily pull message handlers from the container, without having to explicitly use it. This gives you full power of the container and keeps your code expressive and free from service location.</blockquote>
+
+<p>Just what I was trying to do!! (the feeling of being watched there’s even more…).</p>

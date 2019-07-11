@@ -1,0 +1,61 @@
+<!-- Markup JSON-LD generato da Assistente per il markup dei dati strutturati di Google. -->
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Article",
+  "name" : "Angular.js $chacheFactory",
+  "author" : {
+    "@type" : "Person",
+    "name" : "William Verdolini"
+  },
+  "datePublished" : "2014-02-22",
+  "articleSection" : [ "Angular.js", "$chacheFactory", "Performance" ],
+  "url" : "http://williamverdolini.github.io/2014/02/22/discitur-Angular_chacheFactory"
+}
+</script>
+
+<p>La $chacheFactory è utile per memorizzare i dati nel primo livello di
+cache, quello presente sul client dell’utente.</p>
+
+<p>Grazie all’uso del servizio $http, è possibile gestire questo livello di
+caching in maniera molto semplice.</p>
+
+<p>Ad es., poiché la singola lezione ha politiche di aggiornamento molto poco
+frequenti, è un buon candidato per essere inserita in cache. Il codice per
+poterlo fare è più che intuitivo:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">$http</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="nx">DisciturSettings</span><span class="p">.</span><span class="nx">apiUrl</span> <span class="o">+</span> <span class="s1">'lesson/'</span> <span class="o">+</span> <span class="nx">inputParams</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="p">{</span><span class="na">cache</span><span class="p">:</span> <span class="kc">true</span><span class="p">})</span>
+</code></pre></div></div>
+
+<p>in questa modalità si utilizza il cacheFactory di default, secondo quanto
+riportato dalla <a href="http://docs.angularjs.org/api/ng/service/$http" target="_blank">documentazione ufficiale</a>.</p>
+
+<p>Con questa impostazione, dopo la prima volta, tutte le chiamate successive
+all’api di ricerca con i medesimi parametri di ricerca non produrrà
+un’invocazione lato server, ma verrà risolta dal cache manager di Angular, che
+restituirà i dati relativi alla prima invocazione. Questo consente di
+ottimizzare notevolmente le performance dell’applicazione</p>
+
+<p>Ogni volta che l’utente esegue operazioni sui dati che richiedono che la
+cache sia rinfrescata è possibile svuotare la cache della specifica chiave, in
+modo che il servizio $http esegua nuovamente una richiesta al server alla
+successiva chiamata del servizio</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Retrieve Async data for lesson id in input        </span>
+<span class="nx">$http</span><span class="p">({</span> <span class="na">method</span><span class="p">:</span> <span class="s1">'PUT'</span><span class="p">,</span> <span class="na">url</span><span class="p">:</span> <span class="nx">DisciturSettings</span><span class="p">.</span><span class="nx">apiUrl</span> <span class="o">+</span> <span class="s1">'lesson/'</span> <span class="o">+</span> <span class="nx">_lesson</span><span class="p">.</span><span class="nx">LessonId</span><span class="p">,</span> <span class="na">data</span><span class="p">:</span> <span class="nx">_lesson</span> <span class="p">})</span>
+  <span class="p">.</span><span class="nx">success</span><span class="p">(</span>
+    <span class="c1">// Success Callback: Data Transfer Object Creation</span>
+    <span class="kd">function</span> <span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// if success, clear cache </span>
+    <span class="nx">$cacheFactory</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="s1">'$http'</span><span class="p">).</span><span class="nx">remove</span><span class="p">(</span><span class="nx">DisciturSettings</span><span class="p">.</span><span class="nx">apiUrl</span> <span class="o">+</span> <span class="s1">'lesson/'</span> <span class="o">+</span> <span class="nx">_lesson</span><span class="p">.</span><span class="nx">LessonId</span><span class="p">)</span>
+    <span class="nx">deferred</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">_dataTransfer</span><span class="p">(</span><span class="nx">result</span><span class="p">))</span>
+  <span class="p">})</span>
+  <span class="p">.</span><span class="nx">error</span><span class="p">(</span>
+    <span class="c1">// Error Callback</span>
+    <span class="kd">function</span> <span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">deferred</span><span class="p">.</span><span class="nx">reject</span><span class="p">(</span><span class="s2">"Error updating lesson id:"</span> <span class="o">+</span> <span class="nx">_lesson</span><span class="p">.</span><span class="nx">lessonId</span> <span class="o">+</span> <span class="s2">" -&gt; "</span> <span class="o">+</span> <span class="nx">data</span><span class="p">);</span>
+  <span class="p">});</span>
+</code></pre></div></div>
+
+<p>Un buon articolo che dettaglia le possibilità di caching e che presenta un
+modulo per definire politiche di refresh della cache angular è il seguente: <a href="https://coderwall.com/p/40axlq" target="_blank">https://coderwall.com/p/40axlq</a>. </p>

@@ -9,6 +9,13 @@ header:
 excerpt: "<br/><br/><br/><br/>A volte guardo gli alberi, a volte la foresta.<br/>Da vicino, per i dettagli.<br/>Dall'alto, per la visione d'insieme.<br/><br/>E c'è sempre qualcosa da imparare.<br/>{::nomarkdown}{:/nomarkdown}"
 feature_row_posts: 3
 feature_row:
+#  - image_path: "/assets/images/Pille-Riin-Priske-DM-KD1_fZrg.jpg"
+#    alt: "Angular Schematics"
+#    title: "Angular Schematics"
+#    excerpt: "My journey into the Angular Schematics<br/><small>Because every second doing the front-end takes two #seconds.</small>"
+#    url: "/2019/03/16/ngschematics-intro"
+#    btn_class: "btn--primary"
+#    btn_label: "Learn More"
   - image_path: "/assets/images/markus-spiske-207946.jpg"
     alt: "CQRS + ES Todo List"
     title: "CQRS + ES Todo List"

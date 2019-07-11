@@ -1,0 +1,178 @@
+<!-- Markup JSON-LD generato da Assistente per il markup dei dati strutturati di Google. -->
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Article",
+  "name" : "Authentication,Routing",
+  "author" : {
+    "@type" : "Person",
+    "name" : "William Verdolini"
+  },
+  "datePublished" : "2014-02-28",
+  "articleSection" : [ "Angular.js", "Authentication", "Routing" ],
+  "url" : "http://williamverdolini.github.io/2014/02/28/discitur-Authorized_Routing"
+}
+</script>
+
+<p>Nello sprint in esame ho dovuto gestire il controllo di accessi a pagine
+che richiedono l’autenticazione dell’utente. I possibili scenari che ho
+valutato sono due:</p>
+
+<ol>
+  <li>In caso di accesso non autenticato a pagine
+  con autorizzazione si reinderizza verso una pagina di login</li>
+  <li>In caso di accesso non autenticato a pagine
+  con autorizzazione si reindereizza verso una route custom</li>
+</ol>
+
+<h2 id="redirect-verso-login-page">Redirect verso Login Page</h2>
+
+<p>Il primo caso rappresenta uno scenario semplice, ma abbastanza comune e
+quindi ho fatto delle prove di implementazione. Il risultato è abbastanza
+pulito e consiste di pochi passi:</p>
+
+<ol>
+  <li>Si imposta una <strong>proprietà custom</strong> sullo stato che richiede autenticazione</li>
+  <li>Si verifica che l’utente sia autenticato ed
+  in caso contrario si esegue un <strong>redirect</strong>
+  allo stato di default</li>
+</ol>
+
+<p>di seguito il codice:</p>
+
+<h3 id="proprietà-custom">Proprietà custom</h3>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">$stateProvider</span>
+    <span class="p">.</span><span class="nx">state</span><span class="p">(</span><span class="s1">'userProfile'</span><span class="p">,</span> <span class="p">{</span>
+        <span class="na">url</span><span class="p">:</span> <span class="s1">'userProfile'</span><span class="p">,</span>
+        <span class="na">parent</span><span class="p">:</span> <span class="s1">'master.1cl'</span><span class="p">,</span>
+        <span class="na">authorized</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+        <span class="na">templateUrl</span><span class="p">:</span> <span class="s1">'modules/user/UserProfile.html'</span><span class="p">,</span>
+        <span class="na">controller</span><span class="p">:</span> <span class="s1">'UserProfileCtrl'</span><span class="p">,</span>
+        <span class="na">resolve</span><span class="p">:</span> <span class="p">{</span>
+            <span class="na">user</span><span class="p">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">AuthService</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">AuthService</span><span class="p">.</span><span class="nx">user</span><span class="p">;</span> <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">})</span>
+</code></pre></div></div>
+
+<h3 id="redirect">Redirect</h3>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">$rootScope</span><span class="p">.</span><span class="nx">$on</span><span class="p">(</span><span class="s1">'$stateChangeStart'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">toState</span><span class="p">,</span> <span class="nx">toParams</span><span class="p">,</span> <span class="nx">fromState</span><span class="p">,</span> <span class="nx">fromParams</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// Default behaviour for authorized states: redirect to login page (in this app to the lesson list page)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">toState</span><span class="p">.</span><span class="nx">authorized</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">AuthService</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">isLogged</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">event</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+        <span class="nx">$state</span><span class="p">.</span><span class="nx">go</span><span class="p">(</span><span class="s1">'lessonSearch'</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</code></pre></div></div>
+<p> </p>
+
+<h2 id="redirect-con-logiche-custom">Redirect con logiche Custom</h2>
+
+<p>Questa casistica è stata quella richiesta in questo sprint nella gestione
+della modifica dei dati di una lezione. Il requisito era che solo l’utente
+autore della lezione avesse i privilegi di modificare la lezione. A fronte di
+questo requisito, avevo bisogno di realizzare un redirect verso un altro stato
+nel caso in cui l’utente era loggato, ma non coincideva con l’autore della
+lezione.</p>
+
+<p>Fondamentalmente questa logica permette di mettersi al riparo da
+comportamenti di “sabotaggio” per cui, conoscendo l’URL delle funzionalità di
+editing di una lezione, un utente possa modificare le lezioni di altri.</p>
+
+<p> </p>
+
+<p>Per realizzare questa logica custom (differente dal comportamento di
+default presentato prima), ho sfruttato l’evento <strong>onEnter</strong> dello $state. Ecco come:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">.</span><span class="nx">state</span><span class="p">(</span><span class="s1">'lessonEdit'</span><span class="p">,</span> <span class="p">{</span>
+    <span class="na">url</span><span class="p">:</span> <span class="s1">'edit/lesson/:lessonId'</span><span class="p">,</span>
+    <span class="na">parent</span><span class="p">:</span> <span class="s1">'master.1cl'</span><span class="p">,</span>
+    <span class="na">onEnter</span><span class="p">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">AuthService</span><span class="p">,</span> <span class="nx">lessonData</span><span class="p">,</span> <span class="nx">$location</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// the controller can be accessed only if authenticated</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">AuthService</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">isLogged</span> <span class="o">||</span>
+            <span class="p">(</span><span class="nx">lessonData</span><span class="p">.</span><span class="nx">lessonId</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="nx">lessonData</span><span class="p">.</span><span class="nx">author</span><span class="p">.</span><span class="nx">userid</span> <span class="o">!=</span> <span class="nx">AuthService</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">userid</span><span class="p">))</span>
+            <span class="c1">// use location due to $state.go land on blank page...</span>
+            <span class="nx">$location</span><span class="p">.</span><span class="nx">path</span><span class="p">(</span><span class="s1">'lesson'</span><span class="p">);</span>
+    <span class="p">},</span>
+    <span class="na">templateUrl</span><span class="p">:</span> <span class="s1">'modules/lesson/LessonEdit.html'</span><span class="p">,</span>
+    <span class="na">controller</span><span class="p">:</span> <span class="s1">'LessonEditCtrl'</span><span class="p">,</span>
+    <span class="na">resolve</span><span class="p">:{</span> 
+       <span class="na">lessonData</span><span class="p">:</span> <span class="kd">function</span> <span class="p">(...)</span> <span class="p">{...}</span>
+      <span class="p">}</span>
+  <span class="p">}</span>
+</code></pre></div></div>
+
+<p>Nell’evento onEnter è possibile accedere agli oggetti di resolve dello
+stato e quindi implementare logiche come quella descritta.</p>
+
+<p> </p>
+
+<h2 id="gestione-avanzata-del-routing-autenticato">Gestione avanzata del routing autenticato</h2>
+
+<p>Le due soluzioni descritte sopra funzionano, ma non sono complete perché
+non tengono conto del caso in cui qualcuno digiti l’url direttamente (o perché
+magari ha salvato l’indirizzo tra i propri preferiti). Questo, in una SPA, è
+equivalente ad un riavvio dell’applicazione e può avere dei side-effect se le
+inizializzazioni dell’applicazione non sono pensate per gestire questa
+casistica.</p>
+
+<p>Ad es., nel caso sopra descritto, l’oggetto AuthService.user (se non
+opportunamente inizializzato) risulterà sempre NON loggato, con lo spiacevole
+effetto di essere reinderizzati anche quando non sarebbe necessario.</p>
+
+<p>Per far fronte a questa casistica ho riscritto il codice nella seguente
+maniera:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// dynamic callback for change start event</span>
+<span class="kd">var</span> <span class="nx">changeStartCallbacks</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="c1">// 1. Initialize Authentication Data e delete itself</span>
+  <span class="kd">function</span> <span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">event</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+    <span class="nx">AuthService</span><span class="p">.</span><span class="nx">resolveAuth</span><span class="p">()[</span><span class="s1">'finally'</span><span class="p">](</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+      <span class="c1">// http://angular-ui.github.io/ui-router/site/#/api/ui.router.router.$urlRouter</span>
+      <span class="c1">// Continue with the update and state transition if logic allows</span>
+      <span class="nx">$urlRouter</span><span class="p">.</span><span class="nx">sync</span><span class="p">();</span>
+    <span class="p">});</span>
+    <span class="nx">changeStartCallbacks</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+
+  <span class="p">},</span>
+  <span class="c1">// 2. Manage authorized states</span>
+  <span class="kd">function</span> <span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">toState</span><span class="p">,</span> <span class="nx">toParams</span><span class="p">,</span> <span class="nx">fromState</span><span class="p">,</span> <span class="nx">fromParams</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">toState</span><span class="p">.</span><span class="nx">authorized</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">AuthService</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">isLogged</span><span class="p">)</span> <span class="p">{</span>
+      <span class="c1">// event preventDefault to stop the flow and redirect</span>
+      <span class="nx">event</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+      <span class="nx">$state</span><span class="p">.</span><span class="nx">go</span><span class="p">(</span><span class="s1">'lessonSearch'</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">]</span>
+
+<span class="c1">//------- Global Event Management -------//</span>
+<span class="nx">$rootScope</span><span class="p">.</span><span class="nx">$on</span><span class="p">(</span><span class="s1">'$stateChangeStart'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">toState</span><span class="p">,</span> <span class="nx">toParams</span><span class="p">,</span> <span class="nx">fromState</span><span class="p">,</span> <span class="nx">fromParams</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">//console.log("$stateChangeStart")</span>
+  <span class="nx">changeStartCallbacks</span><span class="p">[</span><span class="mi">0</span><span class="p">](</span><span class="nx">event</span><span class="p">,</span> <span class="nx">toState</span><span class="p">,</span> <span class="nx">toParams</span><span class="p">,</span> <span class="nx">fromState</span><span class="p">,</span> <span class="nx">fromParams</span><span class="p">);</span>
+<span class="p">});</span>
+</code></pre></div></div>
+
+<p>Ovvero, scorrendolo punto per punto:</p>
+
+<ol>
+  <li>viene definito un array di “callback
+  intelligente”. Questo l’ho fatto per lasciare il codice della gestione
+  dell’evento di $rootScope quanto più leggero possibile</li>
+  <li>la logica di gestione è quindi contenuto
+  tutta in questo array, che ha 2 functions:
+    <ul>
+      <li>la prima ha lo scopo di bloccare la
+transizione di stato e garantire l’inizializzazione dell’oggetto AuthService.user,
+dopo di che, riavvia il flusso della transizione di stato e si auto
+elimina dall’array di callback. Per garantire che la transizione di stato
+riparta solo dopo che l’inizializzazione fosse completata ho sfruttato le
+caratteristiche degli oggetti <a href="http://docs.angularjs.org/api/ng/service/$q">promise</a> ed in
+particolare l’evento <em>finally</em>
+che viene richiamato a prescindere dall’esito della promise.</li>
+      <li>la seconda è la callback effettivamente
+richiamata da questo momento in poi ed è quella descritta precedentemente  </li>
+    </ul>
+  </li>
+</ol>

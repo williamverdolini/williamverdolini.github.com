@@ -1,0 +1,101 @@
+<p>Un altro aspetto legato alla gestione degli stati e del routing che ho
+dovuto gestire è quella legata alla gestione di ricerche paginate. Lo scenario
+è abbastanza semplice e comune:</p>
+
+<ul>
+  <li>form di ricerca che lancia una ricerca
+   server-side</li>
+  <li>viene presentata una lista di risultati
+   paginata</li>
+  <li>si scorrono alcune pagine (con ricerche
+   server-side)</li>
+  <li>si entra nel dettaglio di uno dei risultati</li>
+  <li>si torna indietro (back)…(boom!)</li>
+</ul>
+
+<p> </p>
+
+<p>Il comportamento che mi aspetto da utente è quello di tornare alla pagina
+da cui sono partito. Fare questo non è stato immediato per il fatto che non
+avevo ben compreso il legame tra lo stato “Ui-Router” e l’URL. Fondamentalmente
+è un legame 1:1. Uno stato implica un URL diverso. Solo definendo una sequenza
+di stati è possibile sfruttare il back del browser per fare quanto descritto.</p>
+
+<p> </p>
+
+<p>Quindi, cercando di ricostruire i passi logici che ho seguito:</p>
+
+<ul>
+  <li>1) si parte dal servizio: cosa si aspetta in
+   input? Nel mio caso ipotizzando di avere una ricerca in querystring per
+   keyword, un tipico oggetto di input può essere di questo tipo:</li>
+</ul>
+
+<p>  </p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span> 
+ <span class="nl">keyword</span><span class="p">:</span> <span class="s2">"example"</span><span class="p">,</span>
+ <span class="nx">startRow</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+ <span class="nx">pageSize</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+ <span class="nx">orderBy</span><span class="p">:</span> <span class="s2">"PublishDate"</span><span class="p">,</span>
+ <span class="nx">orderDir</span><span class="p">:</span> <span class="s2">"DESC"</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<ul>
+  <li>2) Ogni ricerca differente deve ricaricare una
+   lista di risultati che deve rimanere nella history di navigazione</li>
+  <li>3) quindi ogni variabile deve essere
+   intercettata dall’URL-stato. Per far questo sono tornato sulla
+   configurazione delle route-stati inserendo nell’URL dello stato tutte le
+   variabili in gioco</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">.</span><span class="nx">state</span><span class="p">(</span><span class="s1">'lessonSearch'</span><span class="p">,</span> <span class="p">{</span>
+    <span class="na">url</span><span class="p">:</span> <span class="s1">'/lesson?keyword?startRow?pageSize?orderBy?orderDir'</span><span class="p">,</span>
+    <span class="na">parent</span><span class="p">:</span> <span class="s1">'master.2cl'</span><span class="p">,</span>
+    <span class="na">views</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">'sidebar'</span><span class="p">:</span> <span class="p">{</span>
+            <span class="na">templateUrl</span><span class="p">:</span> <span class="s1">'modules/lesson/sidebar.html'</span>
+        <span class="p">},</span>
+        <span class="s1">'main'</span><span class="p">:</span> <span class="p">{</span>
+            <span class="na">templateUrl</span><span class="p">:</span> <span class="s1">'modules/lesson/LessonNews.html'</span><span class="p">,</span>
+            <span class="na">controller</span><span class="p">:</span> <span class="s1">'LessonNewsCtrl'</span><span class="p">,</span>
+            <span class="na">resolve</span><span class="p">:</span> <span class="p">{</span>
+                <span class="na">lessonNewsData</span><span class="p">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">LessonService</span><span class="p">,</span> <span class="nx">$stateParams</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">return</span> <span class="nx">LessonService</span><span class="p">.</span><span class="nx">search</span><span class="p">(</span><span class="nx">$stateParams</span><span class="p">);</span>
+                <span class="p">}</span>
+
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<ul>
+  <li>4) A questo punto, ovunque possa essere lanciata
+   una ricerca (cioè dalla form di ricerca e dalla paginazione) si procede
+   alla transizione di stato, alla quale vanno passati i parametri necessari
+   alla ricerca. Per assicurarsi che il cambio di stato venga registrato è
+   preferibile inserire l’opzione di reload 
+   (altrimenti potrebbe capitare che la navigazione avanti/indietro
+   dei pulsanti di navigazione ripropongano le stesse variabili e quindi gli
+   stessi stati già navigati, impedendo di tracciare ogni reale cambio di stato)</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Invoke search service for paging through state transition to preserve paging history</span>
+<span class="c1">// the state transition is forced cause the same params could be used in previous navigations</span>
+<span class="nx">$scope</span><span class="p">.</span><span class="nx">getPage</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">pager</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">$state</span><span class="p">.</span><span class="nx">go</span><span class="p">(</span><span class="s1">'lessonSearch'</span><span class="p">,</span> <span class="nx">LessonService</span><span class="p">.</span><span class="nx">getPage</span><span class="p">(</span><span class="nx">pager</span><span class="p">),</span> <span class="p">{</span> <span class="na">reload</span><span class="p">:</span> <span class="kc">true</span> <span class="p">})</span>               
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Questo è il “core” della gestione degli stati. Ovviamente c’è dell’altro
+legato strettamente al servizio di ricerca, come il preservare sul singleton
+del servizio i dati della ultima ricerca/pagina visitata. Per questo rimando al
+repository su github.</p>
+
+<p>Un aspetto che esteticamente non mi piace è il vedere in query string tutti
+quei parametri di ricerca. E’ inestetico secondo me, ma non ho approfondito se
+si riesca a mantenere questa gestione degli stati, lasciando come URL
+visualizzato qualcosa di più elegante. Qualcuno c’ha provato?</p>

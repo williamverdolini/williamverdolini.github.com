@@ -11,6 +11,9 @@ highlighter: rouge
 #    Accept: application/json
 #    Accept: application/vnd.github+json
 
+env:
+  global:
+  - ASSET_HOST_URL : "https://github.githubassets.com"
 
 # Themes are encouraged to use these universal variables 
 # so be sure to set them if your theme uses them.

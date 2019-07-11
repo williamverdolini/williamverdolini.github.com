@@ -1,0 +1,51 @@
+<p>These few articles born to share some thoughts about common functionality in e-commerce: multi-attribute catalog search. Something like the followings:</p>
+
+<p><img src="/images/fastcatalog/fastcatalog1.png" class="img-rounded" /><br />
+<img src="/images/fastcatalog/fastcatalog2.png" class="img-rounded" /><br /><br /></p>
+
+<p>Generally speaking it’s quite easy to implement this feature, but there are some situation where the size of product catalog could be huge (in terms of number of products) and so the performance could be a very strategic and vital key point to analyze.</p>
+
+<p>All began with an our customer who works on Electronic components market. This market is characterized by an enormous number of product, because a product often differs from the other just for little variations on tolerance or whatever. So under a single category, it could be hundreds of thousands or millions of different products…that a user should be able to search and filter by the product’s properties.</p>
+
+<p>Our (traditional) approach was with relational database: MSSQL, in particular. As always, you could define different implementation logic, but ours is a very common way to realize that. Here are the main (simplified) tables involved:</p>
+
+<p><img src="/images/fastcatalog/fastcatalog_tables.png" class="img-rounded" /><br /><br /></p>
+
+<ul>
+  <li><strong>Properties &amp; PropertyValues</strong>: are the dictionaries of all possible attribute/values</li>
+  <li><strong>Products</strong>: (very simple) product entity table</li>
+  <li><strong>ProductProperties</strong>: are the links between products and their attribute values</li>
+</ul>
+
+<p>Note: names and structure of tables from public repository are not exactly the same (because of original “italian” DB).</p>
+
+<p>We actually use T-SQL Stored Procedure to improve performance (using temp tables and caching), but the basic query performs the following logic to get all the properties.</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">select</span> <span class="n">IDProperty</span><span class="p">,</span> <span class="n">ProprietyDesc</span><span class="p">,</span> <span class="n">IDValue</span><span class="p">,</span> <span class="n">ValueDesc</span><span class="p">,</span> <span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">as</span> <span class="k">COUNT</span>
+<span class="k">from</span> <span class="p">(</span>
+	<span class="k">select</span> <span class="n">P</span><span class="p">.</span><span class="n">IDProperty</span><span class="p">,</span>
+		   <span class="n">P</span><span class="p">.</span><span class="n">description</span> <span class="k">as</span> <span class="n">ProprietyDesc</span><span class="p">,</span>
+			 <span class="n">P</span><span class="p">.</span><span class="n">IdCategory</span><span class="p">,</span>
+		   <span class="n">PV</span><span class="p">.</span><span class="n">IDValue</span><span class="p">,</span>
+		   <span class="n">PV</span><span class="p">.</span><span class="n">description</span> <span class="k">as</span> <span class="n">ValueDesc</span> 			 
+	<span class="k">from</span> <span class="n">eice</span><span class="p">.</span><span class="n">ProductProperties</span> <span class="n">PP</span> 
+	<span class="k">inner</span> <span class="k">join</span> <span class="n">eice</span><span class="p">.</span><span class="n">Products</span> <span class="n">P</span> <span class="k">on</span> <span class="n">PP</span><span class="p">.</span><span class="n">idprodotto</span> <span class="o">=</span> <span class="n">P</span><span class="p">.</span><span class="n">IDProdotto</span>
+	<span class="k">inner</span> <span class="k">join</span> <span class="n">PropertyValues</span> <span class="n">PV</span> <span class="k">on</span> <span class="n">PP</span><span class="p">.</span><span class="n">IDValue</span> <span class="o">=</span> <span class="n">PV</span><span class="p">.</span><span class="n">IDValue</span>
+	<span class="k">inner</span> <span class="k">join</span> <span class="n">Properties</span> <span class="n">PR</span> <span class="k">on</span> <span class="n">PR</span><span class="p">.</span><span class="n">IDProperty</span> <span class="o">=</span> <span class="n">PV</span><span class="p">.</span><span class="n">IDProperty</span>
+	<span class="k">where</span> <span class="n">P</span><span class="p">.</span><span class="n">IdCategory</span> <span class="o">=</span> <span class="o">@</span><span class="n">IdCategory</span>
+<span class="p">)</span>  <span class="n">T</span>
+<span class="k">group</span> <span class="k">by</span> <span class="n">IDProprieta</span><span class="p">,</span><span class="n">ProprietaDesc</span><span class="p">,</span><span class="n">IDValore</span><span class="p">,</span><span class="n">ValoreDesc</span>
+<span class="k">order</span> <span class="k">by</span> <span class="n">IDProprieta</span><span class="p">,</span><span class="n">ProprietaDesc</span><span class="p">,</span><span class="n">IDValore</span><span class="p">,</span><span class="n">ValoreDesc</span>
+</code></pre></div></div>
+
+<p>When the user makes some selection, things become more complex because we first have to populate a temp-table with the product Ids 
+that match the selection criteria and, after that, we make grouping. 
+That’s why we’ve used Store Procedures, because it’s hard to do that with a simple query and to improve general performance.</p>
+
+<p>Starting from this, I tried to move this scenario into <a href="https://en.wikipedia.org/wiki/NoSQL" target="_blank">NoSQL</a> realm, 
+prototyping simple migration procedures to move from SQL to <a href="https://www.mongodb.org/" target="_blank">MongoDB</a> and from SQL 
+to <a href="https://www.elastic.co/" target="_blank">ElasticSearch</a> and tried to figure out pros and cons of different solutions, 
+in order to scale out to high volumes.</p>
+
+<p><strong>Disclaimer</strong>: these are my first experimentations with MongoDB and ElasticSearch and, of course, there could be a better way to do what I did. 
+I will thank anyone who wants to share his/her insights and let me grow.</p>

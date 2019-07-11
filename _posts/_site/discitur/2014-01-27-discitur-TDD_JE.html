@@ -1,0 +1,278 @@
+<!-- Markup JSON-LD generato da Assistente per il markup dei dati strutturati di Google. -->
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Article",
+  "name" : "Angular.js TDD, QB (Quanto Basta)",
+  "author" : {
+    "@type" : "Person",
+    "name" : "william verdolini"
+  },
+  "datePublished" : "2014-01-27",
+  "articleSection" : [ "Angular.js", "TDD" ],
+  "url" : "http://williamverdolini.github.io/2014/01/27/discitur-TDD_JE/"
+}
+</script>
+
+<p><a href="/2014/01/27/discitur-TDD_JE_EN"><em>english</em></a></p>
+
+<p>C’ho dormito sopra più notti e lavorato ancora un po’. Mi sono imbattuto in qualche caso significativo. Parto dal codice che è più semplice.</p>
+
+<p><strong>1° TDD Cycle (ripulito del codice iniettato)</strong></p>
+
+<p><em>il test: </em></p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">it</span><span class="p">(</span><span class="s2">"Should the ControllerX controller exists"</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">_ctrl</span> <span class="o">=</span> <span class="nx">_$controller</span><span class="p">(</span><span class="s1">'ControllerX'</span><span class="p">,</span> <span class="p">{</span> <span class="na">$scope</span><span class="p">:</span> <span class="nx">_scope</span> <span class="p">});</span> <span class="c1">// &lt;-- _scope = {}</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">_ctrl</span><span class="p">).</span><span class="nx">toBeDefined</span><span class="p">();</span>
+<span class="p">});</span>
+</code></pre></div></div>
+
+<p><em>il codice: </em></p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">angular</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">'App'</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">controller</span><span class="p">(</span><span class="s1">'ControllerX'</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">'$scope'</span><span class="p">,</span>
+        <span class="kd">function</span> <span class="p">(</span>
+            <span class="nx">$scope</span>
+            <span class="p">)</span> <span class="p">{</span>
+        <span class="p">}</span>
+    <span class="p">]);</span>
+</code></pre></div></div>
+
+<p>Simple.</p>
+
+<p><strong>2° TDD Cycle</strong></p>
+
+<p><em>il test: </em></p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">it</span><span class="p">(</span><span class="s2">"Should ControllerX have propertyY in its $scope"</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">_ctrl</span> <span class="o">=</span> <span class="nx">_$controller</span><span class="p">(</span><span class="s1">'ControllerX'</span><span class="p">,</span> <span class="p">{</span> <span class="na">$scope</span><span class="p">:</span> <span class="nx">_scope</span> <span class="p">});</span> <span class="c1">// &lt;-- _scope = {}</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">_scope</span><span class="p">.</span><span class="nx">propertyY</span><span class="p">).</span><span class="nx">toBeDefined</span><span class="p">();</span>
+<span class="p">});</span>
+</code></pre></div></div>
+
+<p><em>il codice: </em></p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">angular</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">'App'</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">controller</span><span class="p">(</span><span class="s1">'ControllerX'</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">'$scope'</span><span class="p">,</span>
+        <span class="kd">function</span> <span class="p">(</span>
+            <span class="nx">$scope</span>
+            <span class="p">)</span> <span class="p">{</span>
+            <span class="nx">$scope</span><span class="p">.</span><span class="nx">propertyY</span> <span class="o">=</span> <span class="p">{};</span>
+        <span class="p">}</span>
+    <span class="p">]);</span>
+</code></pre></div></div>
+
+<p>bene.</p>
+
+<p><strong>3° TDD Cycle</strong></p>
+
+<p><em>il test: </em></p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">it</span><span class="p">(</span><span class="s2">"Should ControllerX.propertyY be populated with propertyYData in input"</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="nx">_ctrl</span> <span class="o">=</span> <span class="nx">_$controller</span><span class="p">(</span><span class="s1">'LessonNewsCtrl'</span><span class="p">,</span> <span class="p">{</span> <span class="na">$scope</span><span class="p">:</span> <span class="nx">_scope</span><span class="p">,</span> <span class="na">propertyYData</span><span class="p">:</span> <span class="p">{}</span> <span class="p">});</span>
+
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">_scope</span><span class="p">.</span><span class="nx">propertyY</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">({})</span>
+
+<span class="p">});</span>
+</code></pre></div></div>
+
+<p><em>il codice: </em></p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">angular</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">'App'</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">controller</span><span class="p">(</span><span class="s1">'ControllerX'</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">'$scope'</span><span class="p">,</span>
+        <span class="s1">'propertyYData'</span><span class="p">,</span>
+        <span class="kd">function</span> <span class="p">(</span>
+            <span class="nx">$scope</span><span class="p">,</span>
+            <span class="nx">propertyYData</span>
+            <span class="p">)</span> <span class="p">{</span>
+            <span class="nx">$scope</span> <span class="o">=</span> <span class="nx">propertyYData</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">]);</span>
+</code></pre></div></div>
+
+<p>Con questo step ho creato un servizio per passare i dati iniziali nel controller e funziona,
+ma questo step mi obbliga ad aggiornare il codice dei test precedenti, perchè propertyYData non è iniettato…
+il che significa che la terza iterazione TDD rompe i precedenti casi di test!!!
+Senza una ragione funzionale…</p>
+
+<p>L’esempio sopra  ha fatto un po’ vacillare la mia fiducia nel TDD in Angular.js, 
+anche se nel metodo TDD ci sta che si debba re-ingegnerizzare il codice del test…anche 
+se mi sarei aspettato un comportamento diverso (soprattutto in js).</p>
+
+<p>Poi ho continuato ancora, nel TDD di Angular services. Il codice lo pubblicherò e quindi, 
+volendo sarà possibile vedere tutti i dettagli, ma fondamentalmente vorrei concentrare l’esperienza su un dettaglio. 
+Stavo realizzando il servizio di ricerca (uno dei principali dell’applicazione) e continuavo nell’applicare il TDD. 
+Nello scrivere il test dopo poco sono arrivato all’esigenza di realizzare l’interfaccia di input che, 
+nella mia testa DDD ( <em>Development-Driven Development</em> ) suonava così:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">.</span><span class="nx">factory</span><span class="p">(</span><span class="s1">'LessonService'</span><span class="p">,</span> <span class="p">[</span>
+        <span class="err">…</span><span class="p">,</span>
+        <span class="kd">function</span> <span class="p">(</span><span class="nx">$resource</span><span class="p">,</span> <span class="nx">$http</span><span class="p">,</span> <span class="nx">$q</span><span class="p">)</span> <span class="p">{</span>
+            <span class="err">…</span>
+            <span class="nx">search</span><span class="p">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">inputParams</span><span class="p">)</span> <span class="p">{</span><span class="err">…</span><span class="p">}</span>
+        <span class="p">}]);</span>
+</code></pre></div></div>
+
+<p>dove</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">inputParams</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">discipline</span><span class="p">:</span> <span class="s1">'...'</span><span class="p">,</span>
+    <span class="na">school</span><span class="p">:</span> <span class="s1">'...'</span><span class="p">,</span>
+    <span class="p">...</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Dopo diversi approfondimenti e ragionate (non tutti immediati come mi sarei aspettato), 
+arrivo alla scrittura del seguente set di test (nella solita prassi Red-Dev-Green). 
+Scorreteli tutti perché penso siano significativi:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code>      <span class="nx">describe</span><span class="p">(</span><span class="s1">'LessonService [signature-parameters]'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+          <span class="nx">it</span><span class="p">(</span><span class="s1">'Should LessonService.search() accept no strings, throw exception otherwise'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+              <span class="kd">var</span> <span class="nx">invalidParamEx</span><span class="p">;</span>
+              <span class="c1">//make the call.</span>
+              <span class="k">try</span> <span class="p">{</span>
+                  <span class="kd">var</span> <span class="nx">returnedPromise</span> <span class="o">=</span> <span class="nx">_LessonService</span><span class="p">.</span><span class="nx">search</span><span class="p">(</span><span class="s1">'stringa'</span><span class="p">);</span>
+              <span class="p">}</span>
+              <span class="k">catch</span> <span class="p">(</span><span class="nx">ex</span><span class="p">)</span> <span class="p">{</span>
+                  <span class="nx">invalidParamEx</span> <span class="o">=</span> <span class="nx">ex</span><span class="p">;</span>
+              <span class="p">}</span>
+              <span class="nx">expect</span><span class="p">(</span><span class="nx">invalidParamEx</span><span class="p">).</span><span class="nx">toBeDefined</span><span class="p">();</span>
+              <span class="nx">expect</span><span class="p">(</span><span class="nx">invalidParamEx</span><span class="p">.</span><span class="nx">code</span><span class="p">).</span><span class="nx">toBeDefined</span><span class="p">();</span>
+              <span class="nx">expect</span><span class="p">(</span><span class="nx">invalidParamEx</span><span class="p">.</span><span class="nx">code</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="mi">20001</span><span class="p">);</span>
+          <span class="p">})</span>
+          <span class="nx">it</span><span class="p">(</span><span class="s1">'Should LessonService.search() accept no Array, throw exception otherwise'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+              <span class="kd">var</span> <span class="nx">invalidParamEx</span><span class="p">;</span>
+              <span class="c1">//make the call.</span>
+              <span class="k">try</span> <span class="p">{</span>
+                  <span class="kd">var</span> <span class="nx">returnedPromise</span> <span class="o">=</span> <span class="nx">_LessonService</span><span class="p">.</span><span class="nx">search</span><span class="p">([]);</span>
+              <span class="p">}</span>
+              <span class="k">catch</span> <span class="p">(</span><span class="nx">ex</span><span class="p">)</span> <span class="p">{</span>
+                  <span class="nx">invalidParamEx</span> <span class="o">=</span> <span class="nx">ex</span><span class="p">;</span>
+              <span class="p">}</span>
+              <span class="nx">expect</span><span class="p">(</span><span class="nx">invalidParamEx</span><span class="p">).</span><span class="nx">toBeDefined</span><span class="p">();</span>
+              <span class="nx">expect</span><span class="p">(</span><span class="nx">invalidParamEx</span><span class="p">.</span><span class="nx">code</span><span class="p">).</span><span class="nx">toBeDefined</span><span class="p">();</span>
+              <span class="nx">expect</span><span class="p">(</span><span class="nx">invalidParamEx</span><span class="p">.</span><span class="nx">code</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="mi">20001</span><span class="p">);</span>
+          <span class="p">})</span>
+          <span class="nx">it</span><span class="p">(</span><span class="s1">'Should LessonService.search() accept no Function, throw exception otherwise'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+              <span class="kd">var</span> <span class="nx">invalidParamEx</span><span class="p">;</span>
+
+              <span class="c1">//make the call.</span>
+              <span class="k">try</span> <span class="p">{</span>
+                  <span class="kd">var</span> <span class="nx">returnedPromise</span> <span class="o">=</span> <span class="nx">_LessonService</span><span class="p">.</span><span class="nx">search</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span> <span class="p">});</span>
+              <span class="p">}</span>
+              <span class="k">catch</span> <span class="p">(</span><span class="nx">ex</span><span class="p">)</span> <span class="p">{</span>
+                  <span class="nx">invalidParamEx</span> <span class="o">=</span> <span class="nx">ex</span><span class="p">;</span>
+              <span class="p">}</span>
+              <span class="nx">expect</span><span class="p">(</span><span class="nx">invalidParamEx</span><span class="p">).</span><span class="nx">toBeDefined</span><span class="p">();</span>
+              <span class="nx">expect</span><span class="p">(</span><span class="nx">invalidParamEx</span><span class="p">.</span><span class="nx">code</span><span class="p">).</span><span class="nx">toBeDefined</span><span class="p">();</span>
+              <span class="nx">expect</span><span class="p">(</span><span class="nx">invalidParamEx</span><span class="p">.</span><span class="nx">code</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="mi">20001</span><span class="p">);</span>
+          <span class="p">})</span>
+          <span class="nx">it</span><span class="p">(</span><span class="s1">'Should LessonService.search() accept Object instance'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+              <span class="kd">var</span> <span class="nx">invalidParamEx</span><span class="p">;</span>
+
+              <span class="c1">//make the call.</span>
+              <span class="k">try</span> <span class="p">{</span>
+                  <span class="kd">var</span> <span class="nx">returnedPromise</span> <span class="o">=</span> <span class="nx">_LessonService</span><span class="p">.</span><span class="nx">search</span><span class="p">({</span> <span class="p">});</span>
+              <span class="p">}</span>
+              <span class="k">catch</span> <span class="p">(</span><span class="nx">ex</span><span class="p">)</span> <span class="p">{</span>
+                  <span class="nx">invalidParamEx</span> <span class="o">=</span> <span class="nx">ex</span><span class="p">;</span>
+              <span class="p">}</span>
+              <span class="nx">expect</span><span class="p">(</span><span class="nx">invalidParamEx</span><span class="p">).</span><span class="nx">not</span><span class="p">.</span><span class="nx">toBeDefined</span><span class="p">();</span>
+          <span class="p">})</span>
+          <span class="nx">it</span><span class="p">(</span><span class="s1">'Should LessonService.search() not accept Object with uncorrect parameters, and throws exception'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+              <span class="kd">var</span> <span class="nx">invalidParamEx</span><span class="p">;</span>
+              <span class="kd">var</span> <span class="nx">inputParams</span> <span class="o">=</span> <span class="p">{</span>
+                  <span class="na">color</span> <span class="p">:</span> <span class="s1">'blue'</span>
+              <span class="p">}</span>
+              <span class="kd">var</span> <span class="nx">invalidParamEx</span><span class="p">;</span>
+              <span class="c1">//make the call.</span>
+              <span class="k">try</span> <span class="p">{</span>
+                  <span class="kd">var</span> <span class="nx">returnedPromise</span> <span class="o">=</span> <span class="nx">_LessonService</span><span class="p">.</span><span class="nx">search</span><span class="p">(</span><span class="nx">inputParams</span><span class="p">);</span>
+              <span class="p">}</span>
+              <span class="k">catch</span> <span class="p">(</span><span class="nx">ex</span><span class="p">)</span> <span class="p">{</span>
+                  <span class="nx">invalidParamEx</span> <span class="o">=</span> <span class="nx">ex</span><span class="p">;</span>
+              <span class="p">}</span>
+              <span class="nx">expect</span><span class="p">(</span><span class="nx">invalidParamEx</span><span class="p">).</span><span class="nx">toBeDefined</span><span class="p">();</span>
+              <span class="nx">expect</span><span class="p">(</span><span class="nx">invalidParamEx</span><span class="p">.</span><span class="nx">code</span><span class="p">).</span><span class="nx">toBeDefined</span><span class="p">();</span>
+              <span class="nx">expect</span><span class="p">(</span><span class="nx">invalidParamEx</span><span class="p">.</span><span class="nx">code</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="mi">20002</span><span class="p">);</span>
+          <span class="p">})</span>
+      <span class="p">})</span>
+</code></pre></div></div>
+
+<p>Ricordiamoci che la mia intenzione era definire come input del mio servizio un oggetto le cui proprietà potessero essere  usate come parametro del servizio REST.
+Il codice che ne è venuto fuori è stato il seguente:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">.</span><span class="nx">factory</span><span class="p">(</span><span class="s1">'LessonService'</span><span class="p">,</span> <span class="p">[</span>
+        <span class="err">…</span><span class="p">,</span>
+        <span class="kd">function</span> <span class="p">(</span><span class="nx">$resource</span><span class="p">,</span> <span class="nx">$http</span><span class="p">,</span> <span class="nx">$q</span><span class="p">)</span> <span class="p">{</span>
+            <span class="err">…</span>
+            <span class="nx">search</span><span class="p">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">inputParams</span><span class="p">)</span> <span class="p">{</span>    
+                <span class="kd">var</span> <span class="nx">validInput</span> <span class="o">=</span> <span class="p">{</span> <span class="na">discipline</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="na">school</span><span class="p">:</span> <span class="mi">2</span> <span class="p">}</span>
+
+                <span class="c1">// accept or no params or Object (for searching parameters)</span>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">angular</span><span class="p">.</span><span class="nx">isUndefined</span><span class="p">(</span><span class="nx">inputParams</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="p">(</span><span class="nx">inputParams</span><span class="p">.</span><span class="kd">constructor</span> <span class="o">===</span> <span class="nb">Object</span><span class="p">))</span>
+                    <span class="k">throw</span> <span class="p">{</span> <span class="na">code</span><span class="p">:</span> <span class="mi">20001</span><span class="p">,</span> <span class="na">message</span><span class="p">:</span> <span class="s1">'invalid Input Type for LessonService.search :'</span> <span class="o">+</span> <span class="nx">inputParams</span> <span class="p">}</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">angular</span><span class="p">.</span><span class="nx">isDefined</span><span class="p">(</span><span class="nx">inputParams</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="k">for</span> <span class="p">(</span><span class="nx">key</span> <span class="k">in</span> <span class="nx">inputParams</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">validInput</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">key</span><span class="p">))</span>
+                            <span class="k">throw</span> <span class="p">{</span> <span class="na">code</span><span class="p">:</span> <span class="mi">20002</span><span class="p">,</span> <span class="na">message</span><span class="p">:</span> <span class="s1">'invalid Input Parameter for LessonService.search :'</span> <span class="o">+</span> <span class="nx">inputParams</span> <span class="p">}</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+                <span class="err">…</span>
+
+        <span class="p">}]);</span>
+</code></pre></div></div>
+
+<p>poi rifattorizzato in:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">.</span><span class="nx">factory</span><span class="p">(</span><span class="s1">'LessonService'</span><span class="p">,</span> <span class="p">[</span>
+        <span class="nx">DiscUtil</span><span class="p">,</span>
+        <span class="err">…</span><span class="p">,</span>
+        <span class="kd">function</span> <span class="p">(</span><span class="nx">$resource</span><span class="p">,</span> <span class="nx">$http</span><span class="p">,</span> <span class="nx">$q</span><span class="p">,</span> <span class="nx">DiscUtil</span><span class="p">)</span> <span class="p">{</span>
+            <span class="err">…</span>
+            <span class="nx">search</span><span class="p">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">inputParams</span><span class="p">)</span> <span class="p">{</span>                  
+                  <span class="nx">DiscUtil</span><span class="p">.</span><span class="nx">checkInputObj</span><span class="p">(</span>
+                      <span class="s1">'LessonService.search'</span><span class="p">,</span>       <span class="c1">// function name for logging purposes</span>
+                      <span class="p">{</span> <span class="na">discipline</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="na">school</span><span class="p">:</span> <span class="mi">2</span> <span class="p">},</span> <span class="c1">// hashmap to check inputParameters</span>
+                      <span class="nx">inputParams</span>                   <span class="c1">// actual input params</span>
+                      <span class="p">);</span>
+                  <span class="err">…</span>
+
+        <span class="p">}]);</span>
+</code></pre></div></div>
+
+<p>Con la creazione di un servizio di Utility da riutilizzare nel resto dei servizi.</p>
+
+<p>La domanda è: <strong>è stata una scelta giusta quella di seguire questo processo?</strong></p>
+
+<p>La mia risposta abbastanza convinta è: <strong>NO</strong>.</p>
+
+<p>Perché? Perché in realtà quello che volevo ottenere era banale, l’avevo in testa sin dall’inizio; 
+ed il TDD è più efficace in altri contesti (per me), ovvero quando gli algoritmi non sono così 
+scontati ed è bene puntare al design prima di scrivere qualcosa. 
+Inoltre per ottenere il risultato iniziale ho scritto decine e decine di righe di codice 
+(ben inteso, probabilmente si poteva scrivere meglio, ma il mio obiettivo era scrivere con una certa 
+fluidità il test anche per poterlo paragonare ad uno sviluppo classico). 
+Confesso che senza TDD non avrei scritto nulla del codice che valida l’input, 
+ma nel contesto in cui sono probabilmente NON serviva scrivere quel codice.</p>
+
+<p>Ho portato valore facendolo? Probabilmente sì, ma altrettanto probabilmente il tempo impiegato 
+non giustifica quel valore. 
+Avrei portato più valore se avessi sviluppato direttamente e mi fossi concentrato sul TDD in altri contesti.</p>
+
+<p>Una conferma importante. 
+Qualche sera fa, ho avuto una piacevole conversazione con Lorenzo Massacci, co-fondatore di <a href="http://www.e-xtrategy.net/" target="_blank">E-xtrategy</a>, 
+una realtà locale molto attiva in campo Agile. Lorenzo mi ha raccontato qualche esperienza ed 
+il suo punto di vista sul TDD e mi ha detto: “noi non siamo talebani dell’Agile, 
+lo utilizziamo nel modo in cui meglio si adatta alle esigenze. 
+Il TDD puro lo lascio per le cose complesse, per il resto creo unit test da automatizzare 
+e lascio al framework (Angular), consolidato dall’esperienza e dal lavoro di altri, di occuparsi di molti aspetti”. 
+Sono pienamente d’accordo con Lorenzo! 
+Dai miei studi e dalle mie letture avevo in testa questa conclusione, 
+ma sentirla esprimere da chi vive l’Agile tutti i giorni la fa diventare qualcosa di più concreto.</p>
+
+<p>Quindi, riassumendo: pensare sempre al Valore finale. TDD QB (Quanto Basta).</p>

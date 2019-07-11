@@ -1,0 +1,106 @@
+<p>What is a Typed Factory?</p>
+<blockquote>Typed Factory Facility provides automatically generated <a href="http://en.wikipedia.org/wiki/Abstract_factory_pattern" target="_blank">Abstract Factories</a> that you can use to create components in your code, while still remaining agnostic to the presence of the container</blockquote>
+
+<p>Castle.Windsor allows two types of Typed Factory:</p>
+
+<ul>
+  <li><strong>Interface-based</strong>: as the name suggests is based on the presence of an Factory interface (whose methods should NOT submit out parameters), that the DI container can implement without the need to create an implementation for this Factory. After all, in most cases, the factory is concerned only to instantiate the handler’s appropriate based on the parameters (Command) received; nothing more</li>
+  <li><strong>Delegate-based</strong>: used when the need is limited to the creation of a single component and supports the use of delegates (but I’m  not interested in this scenario, which is a bit more complex and does not fit my need)</li>
+</ul>
+
+<p>So here are the steps used to solve the configuration:</p>
+
+<ol>
+  <li>Creating an interface for the Factory of CommandHandler. Please note: only the interface! CW is in charge of the class that implements the interface (it is possible to override these logics of implementation, but in this case it was not necessary)
+    <div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="n">ActionResult</span> <span class="nf">Index</span><span class="p">()</span>
+<span class="k">public</span> <span class="k">interface</span> <span class="nc">ICommandHandlerFactory</span>
+<span class="p">{</span>
+ <span class="n">ICommandHandler</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;[]</span> <span class="n">GetHandlersForCommand</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;(</span><span class="n">T</span> <span class="n">command</span><span class="p">)</span> <span class="k">where</span> <span class="n">T</span> <span class="p">:</span> <span class="n">ICommand</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>    </div>
+  </li>
+  <li>Configure the mapping rule of the CW container. At this point you can delete the mapping rules that related to my (bad&amp;ugly) Service Locator:
+    <div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">MessagesWindsorInstaller</span> <span class="p">:</span> <span class="n">IWindsorInstaller</span>
+<span class="p">{</span>
+ <span class="k">public</span> <span class="k">void</span> <span class="nf">Install</span><span class="p">(</span><span class="n">IWindsorContainer</span> <span class="n">container</span><span class="p">,</span> <span class="n">IConfigurationStore</span> <span class="n">store</span><span class="p">)</span>
+ <span class="p">{</span>            
+     <span class="n">container</span><span class="p">.</span><span class="nf">Register</span><span class="p">(</span>
+         <span class="n">Classes</span>                             
+         <span class="p">.</span><span class="nf">FromThisAssembly</span><span class="p">()</span>
+         <span class="p">.</span><span class="nf">BasedOn</span><span class="p">(</span><span class="k">typeof</span><span class="p">(</span><span class="n">ICommandHandler</span><span class="p">&lt;&gt;))</span> <span class="c1">// That implement ICommandHandler Interface</span>
+         <span class="p">.</span><span class="n">WithService</span><span class="p">.</span><span class="nf">Base</span><span class="p">()</span>    <span class="c1">// and its name contain "CommandHandler"</span>
+         <span class="p">.</span><span class="nf">LifestyleSingleton</span><span class="p">()</span>
+         <span class="p">);</span>
+
+     <span class="n">container</span><span class="p">.</span><span class="n">AddFacility</span><span class="p">&lt;</span><span class="n">TypedFactoryFacility</span><span class="p">&gt;()</span>
+         <span class="p">.</span><span class="nf">Register</span><span class="p">(</span><span class="n">Component</span><span class="p">.</span><span class="n">For</span><span class="p">&lt;</span><span class="n">ICommandHandlerFactory</span><span class="p">&gt;().</span><span class="nf">AsFactory</span><span class="p">());</span>
+ <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>    </div>
+  </li>
+  <li>Creating a class (of convenience) for the Dispatching command that applies the pattern of Constructor Injection to get the factory just outside of the handler. Note: For simplicity (and laziness) I did not create the respective interface, but only because I have instantiated the container CW within a specific controller. If I had walked the path correct ControllerFactory Customizing the MVC would create even more clean interface CommandsDispatcher, create its mapping rule and exploit the CW pattern Constructor Injection on the Controller to allow CW to create the instance (singleton) in autonomy.
+    <div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">CommandsDispatcher</span>
+<span class="p">{</span>
+ <span class="k">private</span> <span class="k">readonly</span> <span class="n">ICommandHandlerFactory</span> <span class="n">_factory</span><span class="p">;</span>
+ <span class="k">public</span> <span class="nf">CommandsDispatcher</span><span class="p">(</span><span class="n">ICommandHandlerFactory</span> <span class="n">factory</span><span class="p">)</span>
+ <span class="p">{</span>
+     <span class="n">_factory</span> <span class="p">=</span> <span class="n">factory</span><span class="p">;</span>
+ <span class="p">}</span>
+ <span class="k">public</span> <span class="k">void</span> <span class="n">Dispatch</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;(</span><span class="n">T</span> <span class="n">command</span><span class="p">)</span> <span class="k">where</span> <span class="n">T</span> <span class="p">:</span> <span class="n">ICommand</span>
+ <span class="p">{</span>
+     <span class="n">ICommandHandler</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;[]</span> <span class="n">handlers</span> <span class="p">=</span> <span class="n">_factory</span><span class="p">.</span><span class="n">GetHandlersForCommand</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;(</span><span class="n">command</span><span class="p">);</span>
+     <span class="k">foreach</span> <span class="p">(</span><span class="kt">var</span> <span class="n">handler</span> <span class="k">in</span> <span class="n">handlers</span><span class="p">)</span>
+     <span class="p">{</span>
+         <span class="n">handler</span><span class="p">.</span><span class="nf">Handle</span><span class="p">(</span><span class="n">command</span><span class="p">);</span>
+     <span class="p">}</span>
+ <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>    </div>
+  </li>
+  <li>Last step is to create the factory in my controller and pass it to the dispatcher who will use it whenever you need it (i.e., each time the user submits a new Command to the web server).
+    <div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">HomeController</span> <span class="p">:</span> <span class="n">Controller</span>
+<span class="p">{</span>
+ <span class="k">private</span> <span class="k">readonly</span> <span class="n">IWindsorContainer</span> <span class="n">_container</span><span class="p">;</span>
+ <span class="k">private</span> <span class="k">readonly</span> <span class="n">CommandsDispatcher</span> <span class="n">_dispatcher</span><span class="p">;</span>
+ <span class="k">public</span> <span class="nf">HomeController</span><span class="p">()</span>
+     <span class="p">:</span> <span class="k">base</span><span class="p">()</span>
+ <span class="p">{</span>
+     <span class="c1">//DI Configuration for Castle.Windsor</span>
+     <span class="c1">// Create the DI container</span>
+     <span class="n">_container</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">WindsorContainer</span><span class="p">();</span>
+     <span class="c1">// Install the packaged configurations</span>
+     <span class="n">_container</span><span class="p">.</span><span class="nf">Install</span><span class="p">(</span><span class="k">new</span> <span class="nf">MessagesWindsorInstaller</span><span class="p">());</span>
+     <span class="n">_dispatcher</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">CommandsDispatcher</span><span class="p">(</span><span class="n">_container</span><span class="p">.</span><span class="n">Resolve</span><span class="p">&lt;</span><span class="n">ICommandHandlerFactory</span><span class="p">&gt;());</span>
+ <span class="p">}</span>
+ <span class="k">public</span> <span class="n">ActionResult</span> <span class="nf">Index</span><span class="p">()</span>
+ <span class="p">{</span>
+     <span class="n">_dispatcher</span><span class="p">.</span><span class="n">Dispatch</span><span class="p">&lt;</span><span class="n">RegisterCommand</span><span class="p">&gt;(</span><span class="k">new</span> <span class="nf">RegisterCommand</span><span class="p">()</span> <span class="p">{</span> <span class="n">SampleData</span> <span class="p">=</span> <span class="s">"Ciao from RegisterCommand!!!!"</span> <span class="p">});</span>
+     <span class="k">return</span> <span class="nf">View</span><span class="p">();</span>
+ <span class="p">}</span>
+ <span class="k">protected</span> <span class="k">override</span> <span class="k">void</span> <span class="nf">Dispose</span><span class="p">(</span><span class="kt">bool</span> <span class="n">disposing</span><span class="p">)</span>
+ <span class="p">{</span>
+     <span class="k">if</span> <span class="p">(</span><span class="n">disposing</span><span class="p">)</span>
+     <span class="p">{</span>
+         <span class="n">_container</span><span class="p">.</span><span class="nf">Dispose</span><span class="p">();</span>
+     <span class="p">}</span>
+     <span class="k">base</span><span class="p">.</span><span class="nf">Dispose</span><span class="p">(</span><span class="n">disposing</span><span class="p">);</span>
+ <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>    </div>
+  </li>
+</ol>
+
+<p>Beautiful read the console log:</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/36/ROOT-1-130493890222725734): Loaded 'DynamicProxyGenAssembly2'. 
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/36/ROOT-1-130493890222725734): Loaded 'DynamicProxyGenAssembly2'. 
+RegisterCommandHandler --&gt; data: Ciao from RegisterCommand!!!!
+SecondRegisterCommandHandler --&gt; data: Ciao from RegisterCommand!!!!
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/36/ROOT-1-130493890222725734): Loaded 'C:\windows\Microsoft.Net\assembly\GAC_MSIL\System.Web.Mobile\v4.0_4.0.0.0__b03f5f7f11d50a3a\System.Web.Mobile.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/36/ROOT-1-130493890222725734): Loaded 'C:\Windows\Microsoft.NET\Framework\v4.0.30319\Temporary ASP.NET Files\root\4d18b93a\cd3594a2\App_Web_d3rchlam.dll'. 
+</code></pre></div></div>
+
+<p>In public repository I have reviewed the entire flow by inserting a proper initialization of the DI container using the override WebAPI ControllerFactory. 
+There are different (and well made) tutorial on the subject, so I will not repeat things already present in the web (http://docs.castleproject.org/Windsor.Windsor-tutorial-ASP-NET-MVC-3 application-to-be-Seen.ashx).</p>
+
+<p>In my code, <a href="https://github.com/williamverdolini/CQRS-ES-Todos/tree/master/Web.UI/Injection" target="_blank">here are some key points about Dependency Injection</a>.
+Obviously all starts from <a href="https://github.com/williamverdolini/CQRS-ES-Todos/blob/master/Web.UI/Global.asax.cs#L19" target="_blank">Global.asax.cs</a></p>

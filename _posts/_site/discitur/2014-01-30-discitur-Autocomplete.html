@@ -1,0 +1,160 @@
+<!-- Markup JSON-LD generato da Assistente per il markup dei dati strutturati di Google. -->
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Article",
+  "name" : "Angular.js Autocomplete",
+  "author" : {
+    "@type" : "Person",
+    "name" : "williamverdolini"
+  },
+  "datePublished" : "2014-01-30",
+  "articleSection" : [ "autocomplete", "Angular.js" ],
+  "url" : "http://williamverdolini.github.io/2014/01/30/discitur-Autocomplete/"
+}
+</script>
+
+<p>Tra i tanti aspetti positivi di questo sprint, uno di quelli che più di
+altri ha fatto ulteriormente crescere l’apprezzamento del framework
+Angular è stata la realizzazione di una textbox con funzionalità di
+autocomplete. schematizzando brutalmente Il flusso previsto dalla funzionalità,
+si possono individuare 4 step principali:</p>
+
+<p><img src="/images/discitur/Autocomplete.png" /></p>
+
+<ol>
+  <li>
+    <p>L’utente inizia a digitare le lettere del campo richiesto</p>
+  </li>
+  <li>
+    <p>ad ogni lettera inserita viene fatta una richiesta ad un servizio di
+ricerca</p>
+  </li>
+  <li>
+    <p>il servizio di ricerca restituisce l’oggetto JSON dei valori che contengono
+le lettere inserite</p>
+  </li>
+  <li>
+    <p>l’array di dati restituito viene renderizzato come valori di una
+combobox</p>
+  </li>
+</ol>
+
+<p> </p>
+
+<p>La funzionalità, per quanto minima, è un componente verticale che
+attraversa tutti i layer dell’architettura. Nei framework con cui abitualmente
+lavoro (ASP.NET Web Form, Custom Web Architectures, o in passato JSP, JSF)
+questo componente può essere abbastanza complicato da realizzare. Questo tipo
+di funzionalità, apparentemente semplici e nella pratica abbastanza complesse,
+sono le tipiche funzionalità “traditore”. Per il fatto che sono in genere sotto
+stimate perché non si entra mai, in fase di stima, in un dettaglio così
+approfondito (almeno le prime volte) e puntualmente il “burned” è decisamente
+peggiore dell’”earned”.</p>
+
+<p>In Angular + WebApi, realizzare la funzionalità è stata invece
+particolarmente semplice. Ecco i passaggi nel dettaglio:</p>
+
+<p> </p>
+
+<p><strong>1) Utilizzo di <a href="http://angular-ui.github.io/bootstrap/" target="_blank">Angular-ui Bootstrap</a></strong></p>
+
+<p>Nella libreria Angular Bootstrap esiste un componente/direttiva già pronta
+per il rendering utente: il <a href="http://angular-ui.github.io/bootstrap/#/typeahead" target="_blank">Typeahead</a>.</p>
+
+<p>Il componente consente di essere configurato per bindare un promises,
+quindi il risultato di servizi di backend (i classici $http o $resource). Ecco un
+esempio:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&lt;</span><span class="nx">input</span> <span class="kd">class</span><span class="o">=</span><span class="s2">"form-control input-sm"</span> <span class="nx">type</span><span class="o">=</span><span class="s2">"text"</span>
+       <span class="nx">name</span><span class="o">=</span><span class="s2">"school"</span>
+       <span class="nx">ng</span><span class="o">-</span><span class="nx">model</span><span class="o">=</span><span class="s2">"local.school"</span>
+       <span class="nx">typeahead</span><span class="o">-</span><span class="nx">wait</span><span class="o">-</span><span class="nx">ms</span><span class="o">=</span><span class="s2">"300"</span>
+       <span class="nx">typeahead</span><span class="o">=</span><span class="s2">"k for k in getSchools($viewValue) | filter:$viewValue"</span>
+       <span class="nx">typeahead</span><span class="o">-</span><span class="nx">on</span><span class="o">-</span><span class="nx">select</span><span class="o">=</span><span class="s2">"select('school')"</span>
+       <span class="nx">typeahead</span><span class="o">-</span><span class="nx">editable</span><span class="o">=</span><span class="s1">'false'</span><span class="o">&gt;</span>
+</code></pre></div></div>
+
+<p>Il controller contiene i campi per il model collegato ed i metodi per la
+gestione delle chiamate server:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">$scope</span><span class="p">.</span><span class="nx">local</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">school</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+<span class="p">};</span>
+
+<span class="nx">$scope</span><span class="p">.</span><span class="nx">getSchools</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">q</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">LessonService</span><span class="p">.</span><span class="nx">getDistinctValues</span><span class="p">(</span><span class="s1">'school'</span><span class="p">,</span> <span class="p">{</span> <span class="na">schoolQ</span><span class="p">:</span> <span class="nx">q</span> <span class="p">});</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><strong>2) Utilizzo di Angular Service standard per le chiamate server-side</strong></p>
+
+<p>Nulla di nuovo. Ripulendo il codice dal “rumore di fondo”:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">.</span><span class="nx">factory</span><span class="p">(</span><span class="s1">'LessonService'</span><span class="p">,</span> <span class="p">[</span>
+<span class="s1">'$resource'</span><span class="p">,</span>
+<span class="s1">'$http'</span><span class="p">,</span>
+<span class="s1">'$q'</span><span class="p">,</span>
+<span class="s1">'LessonDTO'</span><span class="p">,</span>
+<span class="s1">'DisciturSettings'</span><span class="p">,</span>
+<span class="s1">'DiscUtil'</span><span class="p">,</span>
+<span class="kd">function</span> <span class="p">(</span><span class="nx">$resource</span><span class="p">,</span> <span class="nx">$http</span><span class="p">,</span> <span class="nx">$q</span><span class="p">,</span> <span class="nx">LessonDTO</span><span class="p">,</span> <span class="nx">DisciturSettings</span><span class="p">,</span> <span class="nx">DiscUtil</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="p">{</span>
+    <span class="c1">// Get Async list of disciplines</span>
+    <span class="na">getDistinctValues</span><span class="p">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">inputParams</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">switch</span> <span class="p">(</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">case</span> <span class="p">(</span><span class="s1">'school'</span><span class="p">):</span>
+          <span class="nx">DiscUtil</span><span class="p">.</span><span class="nx">validateInput</span><span class="p">(</span><span class="s1">'LessonService.getDistinctValues.school'</span><span class="p">,</span> 
+               <span class="p">{</span> <span class="na">schoolQ</span><span class="p">:</span> <span class="kc">null</span> <span class="p">},</span> 
+               <span class="nx">inputParams</span><span class="p">);</span>
+          <span class="k">break</span><span class="p">;</span>
+        <span class="nl">default</span><span class="p">:</span>
+          <span class="k">throw</span> <span class="p">{</span> 
+               <span class="na">code</span><span class="p">:</span> <span class="mi">20003</span><span class="p">,</span> 
+               <span class="na">message</span><span class="p">:</span> <span class="s1">'invalid type string for LessonService.getDistinctValues :'</span> <span class="o">+</span> <span class="nx">type</span> 
+          <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="c1">// create deferring result</span>
+    <span class="kd">var</span> <span class="nx">deferred</span> <span class="o">=</span> <span class="nx">$q</span><span class="p">.</span><span class="nx">defer</span><span class="p">();</span>
+
+    <span class="c1">// Retrieve Async data for lesson id in input        </span>
+    <span class="nx">$http</span><span class="p">({</span> <span class="na">method</span><span class="p">:</span> <span class="s1">'GET'</span><span class="p">,</span> <span class="na">url</span><span class="p">:</span> <span class="nx">DisciturSettings</span><span class="p">.</span><span class="nx">apiUrl</span> <span class="o">+</span> <span class="s1">'lesson'</span><span class="p">,</span> <span class="na">params</span><span class="p">:</span> <span class="nx">inputParams</span> <span class="p">})</span>
+      <span class="p">.</span><span class="nx">success</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span><span class="nx">deferred</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">})</span>
+      <span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span><span class="nx">deferred</span><span class="p">.</span><span class="nx">reject</span><span class="p">(</span><span class="s2">"Error for LessonService.getDistinctValues:"</span> <span class="o">+</span> <span class="nx">data</span><span class="p">);</span> <span class="p">});</span>
+    <span class="c1">// create deferring result</span>
+    <span class="k">return</span> <span class="nx">deferred</span><span class="p">.</span><span class="nx">promise</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="p">};</span>
+<span class="p">}]);</span>
+</code></pre></div></div>
+
+<p><strong>2) WebApi 2 + Entity Framework 6</strong></p>
+
+<p>La realizzazione di questo servizio è stato…semplice:</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="p">[</span><span class="n">HttpGet</span><span class="p">]</span>
+<span class="k">public</span> <span class="k">async</span> <span class="n">Task</span><span class="p">&lt;</span><span class="n">List</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;&gt;</span> <span class="nf">FindSchool</span><span class="p">(</span><span class="kt">string</span> <span class="n">schoolQ</span><span class="p">)</span>
+<span class="p">{</span>
+   <span class="n">IQueryable</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;</span> <span class="n">schools</span> <span class="p">=</span> <span class="n">db</span><span class="p">.</span><span class="n">Lessons</span>
+                                  <span class="p">.</span><span class="nf">Where</span><span class="p">(</span><span class="n">l</span> <span class="p">=&gt;</span> <span class="n">l</span><span class="p">.</span><span class="n">School</span><span class="p">.</span><span class="nf">Contains</span><span class="p">(</span><span class="n">schoolQ</span><span class="p">))</span>
+                                  <span class="p">.</span><span class="nf">Select</span><span class="p">(</span><span class="n">l</span> <span class="p">=&gt;</span> <span class="n">l</span><span class="p">.</span><span class="n">School</span><span class="p">).</span><span class="nf">Distinct</span><span class="p">();</span>
+
+   <span class="k">return</span> <span class="k">await</span> <span class="n">schools</span><span class="p">.</span><span class="nf">ToListAsync</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><strong>4) Bootstrap Theming per completare</strong></p>
+
+<p>Per il rendering e l’effetto conclusivo mi sono appoggiato ad uno dei temi
+Bootstrap 3 disponibili. L’effetto è molto gradevole:</p>
+
+<p><img src="/images/discitur/Autocomplete-screenshot.png" /></p>
+
+<p>In questo componente tutto è stato piuttosto facile (incredibile!).
+Sicuramente il ruolo più importante ce l’ha Angular Bootstrap che nella
+direttiva messa a disposizione fa il grosso del lavoro. Chi sviluppa da un po’
+(nemmeno tanto) sa che è meglio provare a cercare se quello che ci serve
+qualcun altro l’ha già fatto (meglio) prima di noi.</p>
+
+<p><em><a href="http://www.codinghorror.com/blog/2009/02/dont-reinvent-the-wheel-unless-you-plan-on-learning-more-about-wheels.html" target="_blank">Don’t reinvent the wheel</a></em> dicono gli americani. </p>

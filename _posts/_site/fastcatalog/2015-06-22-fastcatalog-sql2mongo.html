@@ -1,0 +1,115 @@
+<p>In the <a href="/2015/06/14/fastcatalog-sql2nosql" target="_blank">previous article</a> I’ve explained the migration logic and here I’ll see the implementation and some results using MongoDb as target db. I’m using <a href="http://docs.mongodb.org/ecosystem/drivers/csharp/" target="_blank">official Mongodb Driver for .NET (2.0)</a>. Here is all the document model:</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">namespace</span> <span class="nn">SQL2MongoDB.Models</span>
+<span class="p">{</span>
+	<span class="k">public</span> <span class="k">class</span> <span class="nc">MongoProduct</span>
+	<span class="p">{</span>
+		<span class="k">public</span> <span class="kt">string</span> <span class="n">Code</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+		<span class="k">public</span> <span class="kt">string</span> <span class="n">Description</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+		<span class="k">public</span> <span class="kt">double</span> <span class="n">Price</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+		<span class="k">public</span> <span class="kt">long</span> <span class="n">IdCategory</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+		<span class="k">public</span> <span class="n">IList</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;</span> <span class="n">Synonims</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+		<span class="k">public</span> <span class="n">IList</span><span class="p">&lt;</span><span class="n">ProductAttribute</span><span class="p">&gt;</span> <span class="n">Attributes</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+	<span class="p">}</span>
+
+	<span class="k">public</span> <span class="k">class</span> <span class="nc">ProductAttribute</span>
+	<span class="p">{</span>
+		<span class="k">public</span> <span class="kt">string</span> <span class="n">Key</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+		<span class="k">public</span> <span class="kt">string</span> <span class="n">Value</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Very neat. <br />
+I don’t use any Id field logic and let Mongo create it for me.
+All the migration logic is inside the specific <a href="https://github.com/williamverdolini/FastCatalog/blob/master/Catalog/SQL2MongoDB/Logic/MongoDbClient.cs" target="_blank">MongoDbClient</a>. I want to highlight three aspects about that:</p>
+
+<ol>
+  <li>I don’t need any particular initialization logic</li>
+  <li>XML-to-JSON mapping is natural
+    <div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">void</span> <span class="nf">Save</span><span class="p">(</span><span class="n">SQLProduct</span> <span class="n">dbProduct</span><span class="p">)</span>
+<span class="p">{</span>
+ <span class="n">Contract</span><span class="p">.</span><span class="n">Requires</span><span class="p">&lt;</span><span class="n">ArgumentNullException</span><span class="p">&gt;(</span><span class="n">dbProduct</span> <span class="p">!=</span> <span class="k">null</span><span class="p">,</span> <span class="s">"dbProduct"</span><span class="p">);</span>
+ <span class="kt">var</span> <span class="n">product</span> <span class="p">=</span> <span class="k">new</span> <span class="n">MongoProduct</span>
+ <span class="p">{</span>
+     <span class="n">Code</span> <span class="p">=</span> <span class="n">dbProduct</span><span class="p">.</span><span class="n">Data</span><span class="p">.</span><span class="n">Code</span><span class="p">,</span>
+     <span class="n">Description</span> <span class="p">=</span> <span class="n">dbProduct</span><span class="p">.</span><span class="n">Data</span><span class="p">.</span><span class="n">Description</span><span class="p">,</span>
+     <span class="n">IdCategory</span> <span class="p">=</span> <span class="n">dbProduct</span><span class="p">.</span><span class="n">Data</span><span class="p">.</span><span class="n">IdCategory</span><span class="p">,</span>
+     <span class="n">Price</span> <span class="p">=</span> <span class="n">Math</span><span class="p">.</span><span class="nf">Round</span><span class="p">(</span><span class="m">10</span> <span class="p">+</span> <span class="n">rnd</span><span class="p">.</span><span class="nf">NextDouble</span><span class="p">()</span> <span class="p">*</span> <span class="p">(</span><span class="m">1000</span> <span class="p">-</span> <span class="m">10</span><span class="p">),</span><span class="m">2</span><span class="p">),</span>
+     <span class="n">Synonims</span> <span class="p">=</span> <span class="n">dbProduct</span><span class="p">.</span><span class="n">Synonims</span><span class="p">.</span><span class="nf">ToStringList</span><span class="p">(),</span>
+     <span class="n">Attributes</span> <span class="p">=</span> <span class="n">dbProduct</span><span class="p">.</span><span class="n">Attributes</span><span class="p">.</span><span class="nf">ToProductAttributes</span><span class="p">()</span>
+ <span class="p">};</span>
+ <span class="n">products</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="n">product</span><span class="p">.</span><span class="nf">ToBsonDocument</span><span class="p">());</span>
+<span class="p">}</span>
+</code></pre></div>    </div>
+  </li>
+  <li>Post-migration logic is where I put the indexes creation. Why? I did some tries and found out that these indexes make my queries faster,but that’s not the point: normally migration procedures does NOT have code for online application logic (and they shouldn’t have), but for this scenario it could be good. Considering a normal legacy application, NoSQL db could be (initially) seen as a <a href="http://www.cqrs.nu/tutorial/cs/03-read-models" target="_blank">read-model</a> where to transfer the RDBMS (denormalized) data and, if this transfer is pretty fast, it could be executed periodically from scratch, after dropping the whole collection, keeping the legacy application for the write-model.</li>
+</ol>
+
+<p>But is the migration pretty fast? Here is the console log in my laptop</p>
+
+<p><img src="/images/fastcatalog/fastcatalog_mongo_console.png" class="img-rounded" /><br />
+Not bad!</p>
+
+<h2 id="queries">Queries</h2>
+
+<p>Ok. After that the MongoDb was populated I began to try some queries for multi-attribute catalog and after a while I found this as best queries:</p>
+
+<h3 id="query-for-all-product-attributes-2300ms">Query for all product attributes (~2300ms)</h3>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">db</span><span class="p">.</span><span class="nx">Products</span><span class="p">.</span><span class="nx">aggregate</span><span class="p">([</span>
+	<span class="p">{</span><span class="na">$unwind</span><span class="p">:</span> <span class="s2">"$Attributes"</span><span class="p">},</span>
+	<span class="p">{</span><span class="na">$group</span><span class="p">:</span> <span class="p">{</span> <span class="na">_id</span><span class="p">:</span> <span class="s2">"$Attributes"</span><span class="p">,</span> <span class="na">total</span><span class="p">:</span> <span class="p">{</span><span class="na">$sum</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span> <span class="p">}},</span>
+	<span class="p">{</span><span class="na">$sort</span><span class="p">:</span> <span class="p">{</span><span class="s2">"_id.Value"</span><span class="p">:</span><span class="mi">1</span><span class="p">}},</span>
+	<span class="p">{</span><span class="na">$group</span><span class="p">:</span> <span class="p">{</span> <span class="na">_id</span><span class="p">:</span> <span class="s2">"$_id.Key"</span><span class="p">,</span> <span class="na">Properties</span><span class="p">:</span> <span class="p">{</span><span class="na">$push</span><span class="p">:</span> <span class="p">{</span><span class="na">Value</span><span class="p">:</span><span class="s2">"$_id.Value"</span><span class="p">,</span> <span class="na">Count</span><span class="p">:</span><span class="s2">"$total"</span><span class="p">}}}},</span>
+	<span class="p">{</span><span class="na">$sort</span><span class="p">:</span> <span class="p">{</span><span class="na">_id</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="s2">"Properties.Value"</span><span class="p">:</span> <span class="mi">1</span><span class="p">}}</span>
+<span class="p">]);</span>
+</code></pre></div></div>
+
+<h3 id="query-for-product-attributes-filtered-by-some-attribute-values--170ms">Query for product attributes filtered by some attribute values  (~170ms)</h3>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">db</span><span class="p">.</span><span class="nx">Products</span><span class="p">.</span><span class="nx">aggregate</span><span class="p">([</span>
+	<span class="p">{</span><span class="na">$match</span><span class="p">:</span> <span class="p">{</span> 
+		<span class="na">$and</span><span class="p">:</span> <span class="p">[</span>
+			<span class="p">{</span><span class="s2">"IdCategory"</span><span class="p">:</span><span class="mi">245710</span><span class="p">},</span>
+			<span class="p">{</span><span class="s2">"Price"</span><span class="p">:{</span><span class="na">$gte</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="na">$lt</span><span class="p">:</span> <span class="mi">400</span><span class="p">}},</span>
+			<span class="p">{</span><span class="na">$and</span><span class="p">:</span> <span class="p">[{</span><span class="s2">"Attributes.Key"</span><span class="p">:</span><span class="s2">"FORMATO"</span><span class="p">},</span> <span class="p">{</span><span class="s2">"Attributes.Value"</span><span class="p">:</span><span class="s2">"0402 (1.0 x 0.5mm)"</span><span class="p">}]},</span>
+			<span class="p">{</span><span class="na">$and</span><span class="p">:</span> <span class="p">[{</span><span class="s2">"Attributes.Key"</span><span class="p">:</span><span class="s2">"TOLLERANZA"</span><span class="p">},</span> <span class="p">{</span><span class="s2">"Attributes.Value"</span><span class="p">:</span> <span class="p">{</span><span class="na">$in</span><span class="p">:</span> <span class="p">[</span><span class="s2">"± 0.01%"</span><span class="p">,</span><span class="s2">"± 0.05%"</span><span class="p">,</span><span class="s2">"± 0.1%"</span><span class="p">]}}]}</span>
+		<span class="p">]</span>
+	<span class="p">}},</span>	
+	<span class="p">{</span><span class="na">$unwind</span><span class="p">:</span> <span class="s2">"$Attributes"</span><span class="p">},</span>
+	<span class="p">{</span><span class="na">$group</span><span class="p">:</span> <span class="p">{</span> <span class="na">_id</span><span class="p">:</span> <span class="s2">"$Attributes"</span><span class="p">,</span> <span class="na">total</span><span class="p">:</span> <span class="p">{</span><span class="na">$sum</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span> <span class="p">}},</span>
+	<span class="p">{</span><span class="na">$sort</span><span class="p">:</span> <span class="p">{</span><span class="s2">"_id.Value"</span><span class="p">:</span><span class="mi">1</span><span class="p">}},</span>
+	<span class="p">{</span><span class="na">$group</span><span class="p">:</span> <span class="p">{</span> <span class="na">_id</span><span class="p">:</span> <span class="s2">"$_id.Key"</span><span class="p">,</span> <span class="na">Properties</span><span class="p">:</span> <span class="p">{</span><span class="na">$push</span><span class="p">:</span> <span class="p">{</span><span class="na">Value</span><span class="p">:</span><span class="s2">"$_id.Value"</span><span class="p">,</span> <span class="na">Count</span><span class="p">:</span><span class="s2">"$total"</span><span class="p">}}}},</span>
+	<span class="p">{</span><span class="na">$sort</span><span class="p">:</span> <span class="p">{</span><span class="na">_id</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="s2">"Properties.Value"</span><span class="p">:</span> <span class="mi">1</span><span class="p">}}</span>
+<span class="p">]);</span>
+</code></pre></div></div>
+
+<h3 id="query-for-documents-filtered-by-some-attribute-values--26ms">Query for documents filtered by some attribute values (~ 26ms)</h3>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">db</span><span class="p">.</span><span class="nx">Products</span><span class="p">.</span><span class="nx">find</span><span class="p">({</span>
+	<span class="na">$and</span><span class="p">:</span> <span class="p">[</span>
+				<span class="p">{</span><span class="s2">"IdCategory"</span><span class="p">:</span><span class="mi">245710</span><span class="p">},</span>
+				<span class="p">{</span><span class="s2">"Price"</span><span class="p">:{</span><span class="na">$gte</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span> <span class="na">$lt</span><span class="p">:</span> <span class="mi">400</span><span class="p">}},</span>
+				<span class="p">{</span><span class="na">$and</span><span class="p">:</span> <span class="p">[{</span><span class="s2">"Attributes.Key"</span><span class="p">:</span><span class="s2">"FORMATO"</span><span class="p">},</span> <span class="p">{</span><span class="s2">"Attributes.Value"</span><span class="p">:</span><span class="s2">"0402 (1.0 x 0.5mm)"</span><span class="p">}]},</span>
+				<span class="p">{</span><span class="na">$and</span><span class="p">:</span> <span class="p">[{</span><span class="s2">"Attributes.Key"</span><span class="p">:</span><span class="s2">"TOLLERANZA"</span><span class="p">},</span> <span class="p">{</span><span class="s2">"Attributes.Value"</span><span class="p">:</span> <span class="p">{</span><span class="na">$in</span><span class="p">:</span> <span class="p">[</span><span class="s2">"± 0.01%"</span><span class="p">,</span><span class="s2">"± 0.05%"</span><span class="p">,</span><span class="s2">"± 0.1%"</span><span class="p">]}}]}</span>
+			<span class="p">]</span>
+<span class="p">})</span>
+<span class="p">.</span><span class="nx">limit</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="col-md-6">
+<h4>Pros</h4>
+<ul>
+<li>Clear. Readable. Maintainable</li>
+<li>the query results give the complete <b>structured json object</b>, with the nested couples of attribute's value/count. There's no need to manipulate furthermore the object in front-end code</li>
+<li>Pretty fast, specially for filtered query</li>
+<li>Migration time is very good</li>
+</ul>
+</div>
+<div class="col-md-6">
+<h4>Cons</h4>
+<ul>
+<li>Not so speed as I guess...specially for <b>Query for all product attributes</b>. MSSQL Stored procedures took roughly the same time (in same machine).This is the point to stress; I tried different indexes combinations, but I was not able to improve performance furthermore...maybe some suggestion?</li>
+</ul>
+</div>

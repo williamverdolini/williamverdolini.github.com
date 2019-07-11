@@ -1,0 +1,136 @@
+<p><a href="/2015/07/26/fastcatalog-web-elastic/" target="_blank">Same story</a>, but with <a href="https://www.mongodb.org/" target="_blank">MongoDb</a>. After having implemented <a href="/2015/06/08/fastcatalog-intro/" target="_blank">the feature</a> with ElasticSearch, it was pretty straightforward to do the same thing with MongoDB (also because all the front-end code remained the same; that’s one of the <a href="/2014/01/05/discitur-prerequisiti_en#" target="_blank">advantages of a SPA</a>).</p>
+
+<p>Here are the key points during this part of development:</p>
+
+<h2 id="filter-definition">Filter Definition</h2>
+<p>A MongoDb query is expressed by a <a href="http://mongodb.github.io/mongo-csharp-driver/2.0/reference/driver/definitions/#filters" target="_blank">filter definition</a>.
+A filter could be expressed through both Type-safe or generic BsonDocument/String API. For example, the followings express the same filter:</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">var</span> <span class="n">bsonFilter</span> <span class="p">=</span> <span class="k">new</span> <span class="n">BsonDocument</span><span class="p">{</span>
+	<span class="p">{</span>
+		<span class="s">"$and"</span><span class="p">,</span> <span class="k">new</span> <span class="n">BsonArray</span><span class="p">{</span>
+			<span class="k">new</span> <span class="n">BsonDocument</span><span class="p">{</span> <span class="p">{</span><span class="s">"Code"</span><span class="p">,</span> <span class="s">"Product Code"</span><span class="p">}</span> <span class="p">},</span>
+			<span class="k">new</span> <span class="n">BsonDocument</span><span class="p">{</span> <span class="p">{</span><span class="s">"Description"</span><span class="p">,</span> <span class="s">"Product Description"</span><span class="p">}</span> <span class="p">}</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+<span class="p">};</span>
+
+<span class="kt">var</span> <span class="n">typeSafeFilter</span> <span class="p">=</span> <span class="n">Builders</span><span class="p">&lt;</span><span class="n">MongoProduct</span><span class="p">&gt;.</span><span class="n">Filter</span><span class="p">.</span><span class="nf">And</span><span class="p">(</span>
+	<span class="n">Builders</span><span class="p">&lt;</span><span class="n">MongoProduct</span><span class="p">&gt;.</span><span class="n">Filter</span><span class="p">.</span><span class="nf">Eq</span><span class="p">(</span><span class="n">a</span> <span class="p">=&gt;</span> <span class="n">a</span><span class="p">.</span><span class="n">Code</span><span class="p">,</span> <span class="s">"Product Code"</span><span class="p">),</span>
+	<span class="n">Builders</span><span class="p">&lt;</span><span class="n">MongoProduct</span><span class="p">&gt;.</span><span class="n">Filter</span><span class="p">.</span><span class="nf">Eq</span><span class="p">(</span><span class="n">a</span> <span class="p">=&gt;</span> <span class="n">a</span><span class="p">.</span><span class="n">Description</span><span class="p">,</span> <span class="s">"Product Description"</span><span class="p">)</span>
+	<span class="p">);</span>
+</code></pre></div></div>
+
+<p>surprisingly (for me) I prefer the first style, because it’s easier to translate the JSON query to BsonDocument filter and it’s easier to debug what query you’re doing.</p>
+
+<h2 id="aggregation-pipeline">Aggregation Pipeline</h2>
+<p>One of the part of MongoDb that I like the most is the <a href="http://docs.mongodb.org/manual/core/aggregation-pipeline/" target="_blank">Aggregation pipeline</a>, that allows to create complex aggregation logic in a very natural way. As shown in <a href="/2015/06/22/fastcatalog-sql2mongo/#query-for-all-product-attributes-2300ms" target="_blank">a previous article</a>, the following is the aggregation pipeline used to aggregate the products data:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">db</span><span class="p">.</span><span class="nx">Products</span><span class="p">.</span><span class="nx">aggregate</span><span class="p">([</span>
+	<span class="p">{</span><span class="na">$unwind</span><span class="p">:</span> <span class="s2">"$Attributes"</span><span class="p">},</span>
+	<span class="p">{</span><span class="na">$group</span><span class="p">:</span> <span class="p">{</span> <span class="na">_id</span><span class="p">:</span> <span class="s2">"$Attributes"</span><span class="p">,</span> <span class="na">total</span><span class="p">:</span> <span class="p">{</span><span class="na">$sum</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span> <span class="p">}},</span>
+	<span class="p">{</span><span class="na">$sort</span><span class="p">:</span> <span class="p">{</span><span class="s2">"_id.Value"</span><span class="p">:</span><span class="mi">1</span><span class="p">}},</span>
+	<span class="p">{</span><span class="na">$group</span><span class="p">:</span> <span class="p">{</span> <span class="na">_id</span><span class="p">:</span> <span class="s2">"$_id.Key"</span><span class="p">,</span> <span class="na">Properties</span><span class="p">:</span> <span class="p">{</span><span class="na">$push</span><span class="p">:</span> <span class="p">{</span><span class="na">Value</span><span class="p">:</span><span class="s2">"$_id.Value"</span><span class="p">,</span> <span class="na">Count</span><span class="p">:</span><span class="s2">"$total"</span><span class="p">}}}},</span>
+	<span class="p">{</span><span class="na">$sort</span><span class="p">:</span> <span class="p">{</span><span class="na">_id</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="s2">"Properties.Value"</span><span class="p">:</span> <span class="mi">1</span><span class="p">}}</span>
+<span class="p">]);</span>
+</code></pre></div></div>
+
+<p>The <a href="http://mongodb.github.io/mongo-csharp-driver/2.0/" target="_blank">.Net driver</a> was able to preserve the easiness to translate this aggregation logic in C# code.</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">var</span> <span class="n">collection</span> <span class="p">=</span> <span class="n">database</span><span class="p">.</span><span class="n">GetCollection</span><span class="p">&lt;</span><span class="n">BsonDocument</span><span class="p">&gt;(</span><span class="s">"Products"</span><span class="p">);</span>
+
+<span class="kt">var</span> <span class="n">unwindAttributes</span> <span class="p">=</span> <span class="k">new</span> <span class="n">BsonDocument</span><span class="p">{</span>
+	<span class="p">{</span>
+		<span class="s">"$unwind"</span><span class="p">,</span> <span class="s">"$Attributes"</span>
+	<span class="p">}</span>
+<span class="p">};</span>
+
+<span class="kt">var</span> <span class="n">groupAttributes</span> <span class="p">=</span> <span class="k">new</span> <span class="n">BsonDocument</span><span class="p">{</span>
+	<span class="p">{</span>
+		<span class="s">"$group"</span><span class="p">,</span> <span class="k">new</span> <span class="n">BsonDocument</span><span class="p">{</span>
+			<span class="p">{</span><span class="s">"_id"</span><span class="p">,</span> <span class="s">"$Attributes"</span><span class="p">},</span> 
+			<span class="p">{</span><span class="s">"total"</span><span class="p">,</span> <span class="k">new</span> <span class="nf">BsonDocument</span><span class="p">(</span><span class="s">"$sum"</span><span class="p">,</span> <span class="m">1</span><span class="p">)}</span> 
+		<span class="p">}</span>
+	<span class="p">}</span>
+<span class="p">};</span>
+
+<span class="kt">var</span> <span class="n">sort</span> <span class="p">=</span> <span class="k">new</span> <span class="n">BsonDocument</span><span class="p">{</span>
+	<span class="p">{</span>
+		<span class="s">"$sort"</span><span class="p">,</span> <span class="k">new</span> <span class="n">BsonDocument</span><span class="p">{</span>
+			<span class="p">{</span><span class="s">"_id.Value"</span><span class="p">,</span> <span class="m">1</span><span class="p">}</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+<span class="p">};</span>
+
+<span class="kt">var</span> <span class="n">groupValuesPerAttribute</span> <span class="p">=</span> <span class="k">new</span> <span class="n">BsonDocument</span><span class="p">{</span>
+	<span class="p">{</span>
+		<span class="s">"$group"</span><span class="p">,</span> <span class="k">new</span> <span class="n">BsonDocument</span><span class="p">{</span>
+			<span class="p">{</span><span class="s">"_id"</span><span class="p">,</span> <span class="s">"$_id.Key"</span><span class="p">},</span> 
+			<span class="p">{</span><span class="s">"Properties"</span><span class="p">,</span> <span class="k">new</span> <span class="n">BsonDocument</span><span class="p">{</span>
+				<span class="p">{</span>
+					<span class="s">"$push"</span><span class="p">,</span> <span class="k">new</span> <span class="n">BsonDocument</span><span class="p">{</span>
+							<span class="p">{</span><span class="s">"Value"</span><span class="p">,</span> <span class="s">"$_id.Value"</span><span class="p">},</span>
+							<span class="p">{</span><span class="s">"Count"</span><span class="p">,</span> <span class="s">"$total"</span><span class="p">}</span>
+						<span class="p">}</span>
+					<span class="p">}</span>
+				<span class="p">}</span> 
+			<span class="p">}</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+<span class="p">};</span>
+
+<span class="kt">var</span> <span class="n">sortValues</span> <span class="p">=</span> <span class="k">new</span> <span class="n">BsonDocument</span><span class="p">{</span>
+	<span class="p">{</span>
+		<span class="s">"$sort"</span><span class="p">,</span> <span class="k">new</span> <span class="n">BsonDocument</span><span class="p">{</span>
+			<span class="p">{</span><span class="s">"_id"</span><span class="p">,</span> <span class="m">1</span><span class="p">},</span>
+			<span class="p">{</span><span class="s">"Properties.Value"</span><span class="p">,</span> <span class="m">1</span><span class="p">}</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+<span class="p">};</span>
+
+<span class="kt">var</span> <span class="n">aggregate</span> <span class="p">=</span> <span class="k">await</span> <span class="n">collection</span><span class="p">.</span><span class="n">AggregateAsync</span><span class="p">&lt;</span><span class="n">BsonDocument</span><span class="p">&gt;(</span><span class="k">new</span><span class="p">[]</span> <span class="p">{</span> 
+	<span class="n">unwindAttributes</span><span class="p">,</span> 
+	<span class="n">groupAttributes</span><span class="p">,</span> 
+	<span class="n">sort</span><span class="p">,</span> 
+	<span class="n">groupValuesPerAttribute</span><span class="p">,</span> 
+	<span class="n">sortValues</span> 
+<span class="p">});</span>
+</code></pre></div></div>
+
+<p>As for the filters, I prefer to use the BSonDocument format also for aggregations. This approach does NOT give you any clue about the correctness of your query at compile time, but, at the end, it’s easier to translate the JSON and debug which commands you are sending to MongoDB.</p>
+
+<h2 id="aggregation--find">Aggregation + Find</h2>
+<p>The main difference in the <a href="https://github.com/williamverdolini/FastCatalog/blob/master/Catalog/Web/Areas/Mongo/Services/CatalogRepository.cs#L59-L69" target="_blank">Search service design</a> is that with MongoDb I had to do more than one single database request as <a href="https://github.com/williamverdolini/FastCatalog/blob/master/Catalog/Web/Areas/Elastic/Services/CatalogRepository.cs#L68" target="_blank">I was able to do with ElasticSearch</a>.</p>
+
+<p>A request for getting the aggregation data.</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">private</span> <span class="k">async</span> <span class="n">Task</span><span class="p">&lt;</span><span class="n">IList</span><span class="p">&lt;</span><span class="n">BsonDocument</span><span class="p">&gt;&gt;</span> <span class="nf">SearchAggregations</span><span class="p">(</span><span class="n">SearchInput</span> <span class="n">input</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="p">...</span>
+	<span class="kt">var</span> <span class="n">collection</span> <span class="p">=</span> <span class="n">database</span><span class="p">.</span><span class="n">GetCollection</span><span class="p">&lt;</span><span class="n">BsonDocument</span><span class="p">&gt;(</span><span class="n">MONGO_COLLECTION</span><span class="p">);</span>
+	<span class="kt">var</span> <span class="n">aggregate</span> <span class="p">=</span> <span class="k">await</span> <span class="n">collection</span><span class="p">.</span><span class="n">AggregateAsync</span><span class="p">&lt;</span><span class="n">BsonDocument</span><span class="p">&gt;(</span><span class="k">new</span><span class="p">[]</span> <span class="p">{</span> 
+			<span class="n">match</span><span class="p">,</span>
+			<span class="n">unwindAttributes</span><span class="p">,</span> 
+			<span class="n">groupAttributes</span><span class="p">,</span> 
+			<span class="n">sort</span><span class="p">,</span> 
+			<span class="n">groupValuesPerAttribute</span><span class="p">,</span> 
+			<span class="n">sortValues</span> 
+	<span class="p">});</span>
+
+	<span class="k">return</span> <span class="n">aggregate</span><span class="p">.</span><span class="nf">ToListAsync</span><span class="p">().</span><span class="n">Result</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>and a request for getting the products data.</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">private</span> <span class="k">async</span> <span class="n">Task</span><span class="p">&lt;</span><span class="n">SearchResult</span><span class="p">&gt;</span> <span class="nf">SearchDocuments</span><span class="p">(</span><span class="n">SearchInput</span> <span class="n">input</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="kt">var</span> <span class="n">collection</span> <span class="p">=</span> <span class="n">database</span><span class="p">.</span><span class="n">GetCollection</span><span class="p">&lt;</span><span class="n">MongoProduct</span><span class="p">&gt;(</span><span class="n">MONGO_COLLECTION</span><span class="p">);</span>
+	<span class="kt">var</span> <span class="n">cursor</span> <span class="p">=</span> <span class="n">collection</span><span class="p">.</span><span class="nf">Find</span><span class="p">(</span><span class="nf">MatchDocuments</span><span class="p">(</span><span class="n">input</span><span class="p">));</span>
+	<span class="kt">long</span> <span class="n">count</span> <span class="p">=</span> <span class="k">await</span> <span class="n">cursor</span><span class="p">.</span><span class="nf">CountAsync</span><span class="p">();</span>
+	<span class="kt">var</span> <span class="n">result</span> <span class="p">=</span> <span class="k">await</span> <span class="n">cursor</span><span class="p">.</span><span class="nf">Skip</span><span class="p">(</span><span class="m">0</span><span class="p">).</span><span class="nf">Limit</span><span class="p">(</span><span class="m">10</span><span class="p">).</span><span class="nf">ToListAsync</span><span class="p">();</span>
+	<span class="p">...</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>It’s not a big deal and it’s quite common to do, but this can underline how ElasticSearch seems to be more “prepared” to arrange this kind of aggregation-based functionality.</p>

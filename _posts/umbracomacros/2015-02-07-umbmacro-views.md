@@ -68,6 +68,6 @@ So, here you can put all the code that should not be sent every time during the 
 Besides that, the code in this view and in the previous one, is almost the same for all Custom Macros, so the skeleton for this code could be realized by some scaffolding utility (time-to-market!).
 
 ## Handle Partial View
-The real business View, where the HTML mark-up is written. In respect of <a href="http://en.wikipedia.org/wiki/Don%27t_repeat_yourself" target="_blank">DRY principle</a>, this view is rendered not only during the page request, but during all the ajax requests for the Custom Macro, 
+The real business View, where the HTML mark-up is written. In respect of <a href="https://en.wikipedia.org/wiki/Don%27t_repeat_yourself" target="_blank">DRY principle</a>, this view is rendered not only during the page request, but during all the ajax requests for the Custom Macro, 
 so despite different commands to manage, you have just one view for rendering the Custom Macro ViewModel.
 

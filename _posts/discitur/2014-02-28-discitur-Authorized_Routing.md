@@ -26,7 +26,7 @@ tags: [Angular.js,Authentication,Routing]
   },
   "datePublished" : "2014-02-28",
   "articleSection" : [ "Angular.js", "Authentication", "Routing" ],
-  "url" : "http://williamverdolini.github.io/2014/02/28/discitur-Authorized_Routing"
+  "url" : "https://williamverdolini.github.io/2014/02/28/discitur-Authorized_Routing"
 }
 </script>
 

@@ -1,7 +1,7 @@
 <h2 id="mvc-4-solutions-for-di">MVC (4) solutions for DI</h2>
-<p>Dependency Injection is a must for a <a href="http://en.wikipedia.org/wiki/SOLID_%28object-oriented_design%29" target="_blank">S.O.L.I.D. code</a> and, for that, 
+<p>Dependency Injection is a must for a <a href="https://en.wikipedia.org/wiki/SOLID_%28object-oriented_design%29" target="_blank">S.O.L.I.D. code</a> and, for that, 
 you should use a DI container. Using Umbraco is not a problem about that and it’s possible to exploit some feature to initialize the DI Container.
-About the DI Container, there’s a lot out there and I choose <a href="http://docs.castleproject.org/Default.aspx" target="_blank">Castle Windsor</a>.</p>
+About the DI Container, there’s a lot out there and I choose <a href="https://docs.castleproject.org/Default.aspx" target="_blank">Castle Windsor</a>.</p>
 
 <p>IMHO Asp.NET MVC 4 has a partial support for dependency injection; indeed it offers two ways:</p>
 
@@ -17,7 +17,7 @@ The second one gives a wider spectrum of usage, but works as a service locator, 
 Let’s see how to do that in an Umbraco application.</p>
 
 <h3 id="mvc-controller-factory">MVC Controller Factory</h3>
-<p>The code for the factory is very simple and it could be taken from <a href="http://docs.castleproject.org/Windsor.Windsor-tutorial-part-two-plugging-Windsor-in.ashx" target="_blank">Castle Windsor documentation</a></p>
+<p>The code for the factory is very simple and it could be taken from <a href="https://docs.castleproject.org/Windsor.Windsor-tutorial-part-two-plugging-Windsor-in.ashx" target="_blank">Castle Windsor documentation</a></p>
 
 <div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">WindsorControllerFactory</span> <span class="p">:</span> <span class="n">DefaultControllerFactory</span>
 <span class="p">{</span>
@@ -55,7 +55,7 @@ Let’s see how to do that in an Umbraco application.</p>
 
 	<span class="k">protected</span> <span class="k">override</span> <span class="k">void</span> <span class="nf">ApplicationStarted</span><span class="p">(</span><span class="n">UmbracoApplicationBase</span> <span class="n">umbracoApplication</span><span class="p">,</span> <span class="n">ApplicationContext</span> <span class="n">applicationContext</span><span class="p">)</span>
 	<span class="p">{</span>
-		<span class="c1">// see: http://our.umbraco.org/documentation/reference/Templating/Mvc/using-ioc</span>
+		<span class="c1">// see: https://our.umbraco.org/documentation/reference/Templating/Mvc/using-ioc</span>
 		<span class="n">container</span> <span class="p">=</span> <span class="nf">BootstrapDIContainer</span><span class="p">();</span>
 		
 		<span class="c1">// DI Container's Dispose at the end of the Umbraco Application</span>

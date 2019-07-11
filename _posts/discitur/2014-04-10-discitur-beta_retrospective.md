@@ -26,7 +26,7 @@ tags: [Agile,Tech]
   },
   "datePublished" : "2014-04-10",
   "articleSection" : [ "Agile","Tech"  ],
-  "url" : "http://williamverdolini.github.io/2014/04/10/discitur-beta_retrospective"
+  "url" : "https://williamverdolini.github.io/2014/04/10/discitur-beta_retrospective"
 }
 </script>
 
@@ -53,8 +53,8 @@ prima i dati oggettivi.
      32,5 ggu (giorni uomo).
 - Non tutto il tempo è stato dedicato al
      progetto di sviluppo, infatti circa 5-6 ggu (complessivamente) sono stati
-     dedicati alla predisposizione del <a href="http://williamverdolini.github.io/" target="_blank">blog</a> (grazie e <a href="https://github.com/" target="_blank">https://github.com/</a> e <a href="http://jekyllbootstrap.com/" target="_blank">http://jekyllbootstrap.com/</a>) e alla
-     scrittura degli <a href="http://williamverdolini.github.io/Discitur.html" target="_blank">articoli del diario di progetto</a> (che finirò di pubblicare a breve), quindi, con
+     dedicati alla predisposizione del <a href="/" target="_blank">blog</a> (grazie e <a href="https://github.com/" target="_blank">https://github.com/</a> e <a href="http://jekyllbootstrap.com/" target="_blank">http://jekyllbootstrap.com/</a>) e alla
+     scrittura degli <a href="/Discitur.html" target="_blank">articoli del diario di progetto</a> (che finirò di pubblicare a breve), quindi, con
      buona approssimazione, il progetto (comprensivo dei costi di formazione,
      apprendimento e configuration management) è costato **25 ggu**
 - Gli sprint, inizialmente 7, poi accorpati in

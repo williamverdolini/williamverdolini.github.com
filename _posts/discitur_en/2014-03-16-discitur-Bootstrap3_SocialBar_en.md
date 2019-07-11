@@ -19,7 +19,7 @@ tags: [Bootstrap,Angular.js,Social Network]
   },
   "datePublished" : "2014-03-16",
   "articleSection" : [ "Bootstrap", "Angular.js", "Social Network"  ],
-  "url" : "http://williamverdolini.github.io/2014/03/09/discitur-Bootstrap3_SocialBar_en"
+  "url" : "https://williamverdolini.github.io/2014/03/09/discitur-Bootstrap3_SocialBar_en"
 }
 </script>
 

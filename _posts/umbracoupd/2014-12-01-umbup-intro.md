@@ -15,7 +15,7 @@ group: Umbraco_Update
 tags: [Technology,Umbraco]
 ---
 
-We have a web app application that has developed upon <a href="http://umbraco.com/products/umbraco-cms" target="_blank">Umbraco CMS</a>. Umbraco is very a flexible and good CMS we have chosen some years ago because:
+We have a web app application that has developed upon <a href="https://umbraco.com/products/umbraco-cms" target="_blank">Umbraco CMS</a>. Umbraco is very a flexible and good CMS we have chosen some years ago because:
 
 -	It’s in .NET framework: our land.
 -	It’s flexible and extensible: it allows us to add custom functionalities using pluggable (familiar) .NET user control

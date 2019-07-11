@@ -26,7 +26,7 @@ tags: [Bower,Configuration Management]
   },
   "datePublished" : "2014-03-09",
   "articleSection" : [ "Bower", "Configuration Management" ],
-  "url" : "http://williamverdolini.github.io/2014/03/09/discitur-Bower_update"
+  "url" : "https://williamverdolini.github.io/2014/03/09/discitur-Bower_update"
 }
 </script>
 

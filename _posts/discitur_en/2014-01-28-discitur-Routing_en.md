@@ -19,7 +19,7 @@ tags: [Angular.js,Routing]
   },
   "datePublished" : "2014-01-28",
   "articleSection" : [ "Angular.js", "Routing" ],
-  "url" : "http://williamverdolini.github.io/2014/01/28/discitur-Routing_en/"
+  "url" : "https://williamverdolini.github.io/2014/01/28/discitur-Routing_en/"
 }
 </script>
 

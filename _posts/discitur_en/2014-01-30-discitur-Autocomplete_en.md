@@ -19,7 +19,7 @@ tags: [Angular.js]
   },
   "datePublished" : "2014-01-30",
   "articleSection" : [ "autocomplete", "Angular.js" ],
-  "url" : "http://williamverdolini.github.io/2014/01/30/discitur-Autocomplete_en/"
+  "url" : "https://williamverdolini.github.io/2014/01/30/discitur-Autocomplete_en/"
 }
 </script>
 

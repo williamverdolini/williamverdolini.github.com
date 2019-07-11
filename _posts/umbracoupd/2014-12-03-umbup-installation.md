@@ -18,7 +18,7 @@ tags: [Technology,Umbraco]
 I order to have a "to-be" database to compare with, I've made a basic Umbraco installation from scratch.
 here are the steps done:
 
-1. I've downloaded the <a href="http://our.umbraco.org/download" target="_blank">Umbraco latest release</a> (.zip)
+1. I've downloaded the <a href="https://our.umbraco.org/download" target="_blank">Umbraco latest release</a> (.zip)
 2. I've unzipped Umbraco release in a local folder. For simplicity I've created an "umbraco_original" folder, that I've used also as backup of original code
 3. I've created a new database on SQL Server 2008 R2
 4. I've created a new Empty Web Project (.NET 4.5) in Visual Studio <br/><br/>			

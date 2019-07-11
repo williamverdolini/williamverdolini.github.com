@@ -2,7 +2,7 @@
 This is not so straightforward as before, but with some “forced injections”, we can hit the goal.</p>
 
 <p>First of all it’s important to say that, with filters, we have to talk about <strong>Properties Injection</strong> and NOT Dependencies Injection, because in MVC 4 we can’t interfere with filters creation, but just with already created instances.
-Obviously injecting dependencies is a cleaner way to apply the <a href="http://en.wikipedia.org/wiki/Inversion_of_control" target="_blank">IoC principles</a>, but when not possible, injecting properties is a good “plan B”.</p>
+Obviously injecting dependencies is a cleaner way to apply the <a href="https://en.wikipedia.org/wiki/Inversion_of_control" target="_blank">IoC principles</a>, but when not possible, injecting properties is a good “plan B”.</p>
 
 <p>To do that we have to override the default implementation of <a href="https://msdn.microsoft.com/en-us/library/system.web.mvc.iactioninvoker(v=vs.118).aspx" target="_blank">IActionInvoker</a>, which is used to invoke an MVC action in response to an HTTP request. In the Umbraco context, we have to 
 override <a href="https://github.com/umbraco/Umbraco-CMS/blob/6.2.5/src/Umbraco.Web/Mvc/RenderActionInvoker.cs" target="_blank">Umbraco.Web.Mvc.RenderActionInvoker</a>. Here it is:</p>

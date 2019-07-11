@@ -26,7 +26,7 @@ tags: [Angular.js,Authentication]
   },
   "datePublished" : "2014-02-03",
   "articleSection" : [ "Authentication", "Angular.js", "Login", "token" ],
-  "url" : "http://williamverdolini.github.io/2014/02/03/discitur-Refresh_happens/"
+  "url" : "https://williamverdolini.github.io/2014/02/03/discitur-Refresh_happens/"
 }
 </script>
 

@@ -19,7 +19,7 @@ tags: [CORS,WebApi]
   },
   "datePublished" : "2014-03-28",
   "articleSection" : [ "CORS", "WebApi"  ],
-  "url" : "http://williamverdolini.github.io/2014/03/28/discitur-CORS"
+  "url" : "https://williamverdolini.github.io/2014/03/28/discitur-CORS"
 }
 </script>
 
@@ -54,7 +54,7 @@ This "trick" has the unfortunate effect of completely break my angular.js applic
 In fact all the directives require that the own template has a unique root-node...which, with Somee.com, is no longer true...
 
 
-I have not resigned myself to the thing (because, from newbie, deploying for the first time the application on these servers, cost me several hours) and I thought back to what mentioned in a <a href="http://williamverdolini.github.io/2014/01/24/discitur-separation_en/" target="_blank">previous article</a>, namely that, thanks to the organization of services and use of a unique baseUrl, is very simple to indicate which server Angular uses for RESTful calls. GOOD!
+I have not resigned myself to the thing (because, from newbie, deploying for the first time the application on these servers, cost me several hours) and I thought back to what mentioned in a <a href="/2014/01/24/discitur-separation_en/" target="_blank">previous article</a>, namely that, thanks to the organization of services and use of a unique baseUrl, is very simple to indicate which server Angular uses for RESTful calls. GOOD!
 
 Thanks to <a href="https://github.com/" target="_blank">Github</a> (which I will never cease to thank!) anyone who registers has available (free of charge), a web space for the publication of their material: <a href="http://pages.github.com/" target="_blank">Github Pages</a>, that is, precisely, the space where I publish these articles. At this point I think I have everything and I could realize my environment with this UAT Environment Management:
 

@@ -19,7 +19,7 @@ tags: [Angular.js,DTO,Software Design]
   },
   "datePublished" : "2014-01-23",
   "articleSection" : [ "Angular.js", "DTO", "Software Design" ],
-  "url" : "http://williamverdolini.github.io/2014/01/23/discitur-DTO_en/"
+  "url" : "https://williamverdolini.github.io/2014/01/23/discitur-DTO_en/"
 }
 </script>
 

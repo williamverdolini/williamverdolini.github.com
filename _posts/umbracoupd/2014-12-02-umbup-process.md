@@ -19,17 +19,17 @@ tags: [Technology,Umbraco,Prototyping]
 
 Before to start it's important to clearly define the goals and the conditions to follow.
 
-Here are my <a href="http://en.wikipedia.org/wiki/Exit-criteria" target="_blank">exit criteria</a>:
+Here are my <a href="https://en.wikipedia.org/wiki/Exit-criteria" target="_blank">exit criteria</a>:
 
 1. **Time-box**: 3 weeks to have a complete and working prototype, with a retrospective every week. 
-2. **High fidelity prototype**: in this scenario a complete prototype consists in a working Umbraco installation (in the latest release) based on a migrated legacy database and most of customized back-office features verified. So, from prototyping point of view, what I want to reach is an <a href="http://www.svpg.com/high-fidelity-prototypes/" target="_blank">high-fidelity prototype</a>, that could be the starting point for the complete upgrade process.
+2. **High fidelity prototype**: in this scenario a complete prototype consists in a working Umbraco installation (in the latest release) based on a migrated legacy database and most of customized back-office features verified. So, from prototyping point of view, what I want to reach is an <a href="https://www.svpg.com/high-fidelity-prototypes/" target="_blank">high-fidelity prototype</a>, that could be the starting point for the complete upgrade process.
 <span id="off-proc"></span>
 
 
 
 ## The official Process (and the first failure)
 
-Initially I tried to follow the <a href="http://our.umbraco.org/documentation/Installation/Upgrading/version-specific" target="_blank">official upgrade path described in the Umbraco documentation</a> or in <a href="http://www.blix.co/blog/2014/6/5/follow-the-path-upgrading-umbraco-from-v4-to-v7.aspx" target="_blank">other articles in the web</a>. The process is pretty clear and it consists in a gradual upgrade throughout all the most important releases since the 4.7.1 to 7.1.8. 
+Initially I tried to follow the <a href="https://our.umbraco.org/documentation/Installation/Upgrading/version-specific" target="_blank">official upgrade path described in the Umbraco documentation</a> or in <a href="https://www.blix.co/blog/2014/6/5/follow-the-path-upgrading-umbraco-from-v4-to-v7.aspx" target="_blank">other articles in the web</a>. The process is pretty clear and it consists in a gradual upgrade throughout all the most important releases since the 4.7.1 to 7.1.8. 
 
 But my scenario was a little more complicated, because we had customized a lot of back-office functionalities as:
 
@@ -46,7 +46,7 @@ No. Stop! That's _definitely_ not my way.
 
 First failure. And first hard decision: leave down the proven task list and create my own.
 
-## <a href="http://gettingthingsdone.com/" target="_blank">Getting Things Done</a> 
+## <a href="https://gettingthingsdone.com/" target="_blank">Getting Things Done</a> 
 
 GTD. Good principles always have an acronym!
 Out of my mind, my approach was:

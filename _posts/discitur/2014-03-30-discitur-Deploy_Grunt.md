@@ -26,7 +26,7 @@ tags: [Configuration Management,Deploy,Grunt]
   },
   "datePublished" : "2014-03-30",
   "articleSection" : [ "Configuration Management","Deploy","Grunt"  ],
-  "url" : "http://williamverdolini.github.io/2014/03/30/discitur-Deploy_Grunt"
+  "url" : "https://williamverdolini.github.io/2014/03/30/discitur-Deploy_Grunt"
 }
 </script>
 

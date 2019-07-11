@@ -19,7 +19,7 @@ tags: [Angular.js,TDD]
   },
   "datePublished" : "2014-01-26",
   "articleSection" : [ "Angular.js", "TDD" ],
-  "url" : "http://williamverdolini.github.io/2014/01/26/discitur-Climbing_TDD_en/"
+  "url" : "https://williamverdolini.github.io/2014/01/26/discitur-Climbing_TDD_en/"
 }
 </script>
 [_italian_]({{BASE_PATH }}/2014/01/26/discitur-Climbing_TDD)

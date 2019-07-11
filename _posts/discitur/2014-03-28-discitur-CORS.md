@@ -26,7 +26,7 @@ tags: [CORS,WebApi]
   },
   "datePublished" : "2014-03-28",
   "articleSection" : [ "CORS", "WebApi"  ],
-  "url" : "http://williamverdolini.github.io/2014/03/28/discitur-CORS"
+  "url" : "https://williamverdolini.github.io/2014/03/28/discitur-CORS"
 }
 </script>
 
@@ -87,7 +87,7 @@ root-node unico…cosa che, con somee.com, non è più vera…
 
 Non mi sono rassegnato alla cosa (anche perché, da newbie, deployare per la
 prima volta l’applicazione su questi server, mi è costato diverse ore) ed ho
-ripensato a quanto accennato in un <a href="http://williamverdolini.github.io/2014/01/24/discitur-separation/" target="_blank">precedente articolo</a>, ovvero che, grazie all’organizzazione dei servizi e all’uso di
+ripensato a quanto accennato in un <a href="/2014/01/24/discitur-separation/" target="_blank">precedente articolo</a>, ovvero che, grazie all’organizzazione dei servizi e all’uso di
 una baseUrl unica, è molto semplice indicare ad Angular quale server puntare
 per le chiamate RESTful. BENE!
 

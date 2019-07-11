@@ -25,7 +25,7 @@ tags: [Angular.js,Digest Cycle,watchers,Performance]
   },
   "datePublished" : "2014-02-10",
   "articleSection" : [ "Digest Cycle", "Angular.js", "watchers", "$$watchers", "$watch", "Performance" ],
-  "url" : "http://williamverdolini.github.io/2014/02/18/discitur-Watchers_unbinding/"
+  "url" : "https://williamverdolini.github.io/2014/02/18/discitur-Watchers_unbinding/"
 }
 </script>
 

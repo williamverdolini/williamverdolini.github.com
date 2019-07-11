@@ -92,7 +92,7 @@ At first I faced the most difficult set of tables, because solving those could a
 
 ### Upgrade ContentType tables
 There are at least three tables in this group: cmsContentType, cmsContentType2ContentType (**NEW table!**), cmsContentTypeAllowedContentType.
-Their purpose is to define the relations among <a href="http://our.umbraco.org/wiki/how-tos/working-with-document-types" target="_blank">Umbraco Document Types</a>.
+Their purpose is to define the relations among <a href="https://our.umbraco.org/wiki/how-tos/working-with-document-types" target="_blank">Umbraco Document Types</a>.
 
 I've changed the generated script in order to:
 
@@ -113,7 +113,7 @@ I've changed the generated script in order to:
 ### Upgrade DataType tables
 Tables like cmsDataType contain data about how (macro's and content's) properties are managed. 
 Here came some big problems...Actually we have customized some functionalities for insert/edit macro properties, creating some custom back-office module. So, besides the data and the tables, we should spend a lot of time to rewrite these functionalities for the renewed Umbraco back office, developed in Angular.js.
-Probably it's not just a problem about my time-box, but also about my (implicit) goals: in this moment I can't spend too much time to allow the dev team learning Angular.js. I know that framework, it's cool, but <a href="http://www.bennadel.com/blog/2439-my-experience-with-angularjs-the-super-heroic-javascript-mvw-framework.htm" target="_blank">it's not so easy as it seems the first days</a>...and I’d want my dev team to spend time learning other framework that could pump the application performance, like AspNet.MVC (<a href="http://www.codeproject.com/Articles/821275/Webforms-vs-MVC-and-Why-MVC-is-better" target="_blank">vs WebForms</a>).
+Probably it's not just a problem about my time-box, but also about my (implicit) goals: in this moment I can't spend too much time to allow the dev team learning Angular.js. I know that framework, it's cool, but <a href="https://www.bennadel.com/blog/2439-my-experience-with-angularjs-the-super-heroic-javascript-mvw-framework.htm" target="_blank">it's not so easy as it seems the first days</a>...and I’d want my dev team to spend time learning other framework that could pump the application performance, like AspNet.MVC (<a href="https://www.codeproject.com/Articles/821275/Webforms-vs-MVC-and-Why-MVC-is-better" target="_blank">vs WebForms</a>).
 
 ## So...
 Umbraco 7.1.8 is NOT my landing version...<br/>

@@ -94,15 +94,15 @@ cmsPropertyData Table contains data about macro and document property's content.
 <?UMBRACO_MACRO macroAlias="......"  otherProperties="values" />
 ```
 
-with properties name in <a href="http://en.wikipedia.org/wiki/CamelCase" target="_blank">CamelCase</a> format.
+with properties name in <a href="https://en.wikipedia.org/wiki/CamelCase" target="_blank">CamelCase</a> format.
 
 To achieve this result I've used <a href="https://gist.github.com/williamverdolini/5c369b4d620405033b35#file-dev_cms_4-7_update_to_umbraco_6-2-4-gist-sql-L2663-L2822" target="_blank">Regular Expressions in OLE Automation Procedures</a>, inside SQL Server. 
 
 ## Removed Tables
-Besides cmsTab, other two tables have been removed: umbracoApp, umbracoAppTree. For these there is no migration script, because they became two different config files: <a href="http://our.umbraco.org/documentation/extending-umbraco/section-trees/" target="_blank">application.config and trees.config</a>.
+Besides cmsTab, other two tables have been removed: umbracoApp, umbracoAppTree. For these there is no migration script, because they became two different config files: <a href="https://our.umbraco.org/documentation/extending-umbraco/section-trees/" target="_blank">application.config and trees.config</a>.
 Initially I've created a T-SQL procedure to write the XML files from the legacy tables, but the informations were few and, at the end, I made some manual corrections.
 
 ## The complete Upgrade script
 I've published <a href="https://gist.github.com/williamverdolini/5c369b4d620405033b35" target="_blank">the complete SQL script to upgrade from Umbraco version 4.7.1 to version 6.2.4</a>.
-It uses <a href="http://msdn.microsoft.com/library/ms162773.aspx" target="_blank">sqlcmd</a>, but it's quite easy to remove that variables.
+It uses <a href="https://msdn.microsoft.com/library/ms162773.aspx" target="_blank">sqlcmd</a>, but it's quite easy to remove that variables.
 

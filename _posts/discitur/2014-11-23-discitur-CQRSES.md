@@ -25,7 +25,7 @@ tags: [CQRS+ES,Software Design]
   },
   "datePublished" : "2014-11-23",
   "articleSection" : [ "CQRS+ES", "Software Design" ],
-  "url" : "http://williamverdolini.github.io/2014/11/23/discitur-CQRS/"
+  "url" : "https://williamverdolini.github.io/2014/11/23/discitur-CQRS/"
 }
 </script>
 

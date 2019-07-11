@@ -18,7 +18,7 @@ tags: [Angular.js,Digest Cycle,watchers]
   },
   "datePublished" : "2014-02-10",
   "articleSection" : [ "Digest Cycle", "Angular.js", "watchers", "$$watchers", "$watch" ],
-  "url" : "http://williamverdolini.github.io/2014/02/10/discitur-Digest_en/"
+  "url" : "https://williamverdolini.github.io/2014/02/10/discitur-Digest_en/"
 }
 </script>
 

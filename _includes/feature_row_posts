@@ -12,11 +12,13 @@
 
     <div class="feature__item{% if include.type %}--{{ include.type }}{% endif %} pseudolink" onclick="location.href ='{{ f_url }}'">
       <div class="archive__item">
-        {% if f.header.overlay_image or f.header.image %}
+        {% if f.header.overlay_image or f.header.image or f.header.home_image%}
 		  {% if f.header.overlay_image %}
 			  {% assign img = f.header.overlay_image %}
 		  {% elsif f.header.image %}
 			  {% assign img = f.header.image  %}
+		  {% elsif f.header.home_image %}
+			  {% assign img = f.header.home_image  %}
 		  {% endif %}			
           <div class="archive__item-teaser">
             <img src=

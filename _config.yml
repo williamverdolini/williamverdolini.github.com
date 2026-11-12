@@ -1,4 +1,4 @@
-plugins: ['jekyll-github-metadata','minimal-mistakes-jekyll']
+plugins: ['jekyll-github-metadata','jekyll-remote-theme','jekyll-include-cache']
 # This is the default format. 
 # For more see: http://jekyllrb.com/docs/permalinks/
 permalink: /:year/:month/:day/:title/
@@ -46,7 +46,7 @@ repository: williamverdolini/williamverdolini.github.com
 #encoding: ISO-8859-15
 encoding: UTF-8
 markdown: kramdown   
-theme: minimal-mistakes-jekyll
+remote_theme: mmistakes/minimal-mistakes@4.28.1
 minimal_mistakes_skin: "default" # "air", "aqua", "contrast", "dark", "dirt", "neon", "mint", "plum" "sunrise"
 # Collections
 collections:

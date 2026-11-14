@@ -22,6 +22,14 @@
           </svg>
         </button>
         {% endif %}
+        <label class="theme-select">
+          <span class="visually-hidden">Color theme</span>
+          <select id="theme-select" aria-label="Color theme">
+            <option value="system">System</option>
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+          </select>
+        </label>
         <button class="greedy-nav__toggle" type="button">
           <span class="visually-hidden">{{ site.data.ui-text[site.locale].menu_label | default: "Toggle Menu" }}</span>
           <div class="navicon"></div>

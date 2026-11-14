@@ -15,6 +15,11 @@ This is my training journey into Command Query Responsibility Segregation (CQRS)
   </div>
 </div>   
 
+<h2>Current implementation (2026)</h2>
+<p>The articles in this section describe the original 2014–2015 application. That .NET Framework web application and its command/query stacks have been retired. The project has since been rebuilt as a separate training application with a .NET 10 API, an event-sourced domain, a SQL Server event store and read projection, and a standalone Angular 22 frontend served by Nginx.</p>
+<p>Docker Compose starts the complete stack. From the <code>modern</code> directory in the repository, run <code>docker compose --env-file .env.example up --build</code>. The UI is served at <code>http://localhost:4200</code>. See the <a href="https://github.com/williamverdolini/CQRS-ES-Todos/tree/master/modern">current source</a> and <a href="https://github.com/williamverdolini/CQRS-ES-Todos/blob/master/modern/README.md">setup guide</a>.</p>
+<p>Legacy data is not imported automatically. The legacy event exporter and modern importer are retained for a deliberate import. The source links in the articles below point to the historical implementation captured in <a href="https://github.com/williamverdolini/CQRS-ES-Todos/tree/fbadf80b902bfc7eb4a50043d845a82c78888515">this repository revision</a>.</p>
+
 <div class="row">
   <div class="col-md-12">
     <h2>Contents</h2>
@@ -44,7 +49,8 @@ This is my training journey into Command Query Responsibility Segregation (CQRS)
   </div>
 </div>
 
-<h2>Technologies</h2>
+<h2>Original 2014 implementation</h2>
+<p>The following technologies describe the historical version used for the articles below.</p>
 <ul>
 	<li>UI: <a href="http://getbootstrap.com/" target="_blank">Bootstrap 3.0.3</a></li>
 	<li>Front-end: <a href="http://angularjs.org/" target="_blank">Angular.js 1.2.21</a></li>

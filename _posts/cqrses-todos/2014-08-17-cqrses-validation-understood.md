@@ -54,7 +54,7 @@ public class ChangeToDoItemImportanceCommandValidator : AbstractValidator<Change
 }
 ```
 
-This version of code is present in public repository, in branch <a href="https://github.com/williamverdolini/CQRS-ES-Todos/tree/master" target="_blank">master</a>.
+This version of code is present in public repository, in branch <a href="https://github.com/williamverdolini/CQRS-ES-Todos/tree/fbadf80b902bfc7eb4a50043d845a82c78888515" target="_blank">master</a>.
 
 
 ## Solution #2: One AggregateRoot (AR) with composition

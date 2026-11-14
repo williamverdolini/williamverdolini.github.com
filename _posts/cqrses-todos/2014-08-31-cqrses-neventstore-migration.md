@@ -92,7 +92,7 @@ What I like in this approach is that I kept completely separated the domain from
 Migration are very complex projects, often realized by specific teams, sometimes different from business dev teams. In my experience I worked in dev team on some very complex domains, while some different teams were working on a migration project on the same production environments (think about a multi-tenant environment with a roll-out plan for different “go-live”). I didn’t know their logic; they didn’t know mine; but the database structure and its rules were in common in the same time. Keep the code separated was a must.
 Again, these are my thoughts and my solution; I’m not sure is the best and I’m open to learn from your experience and ideas.
 
-If you are interested, all the code is present <a href="https://github.com/williamverdolini/CQRS-ES-Todos/tree/master/Todo.Legacy.Migration" target="_blank">in the repository under a specific project (Todo.Legacy.Migration)</a>, but DI’s container specific installer and migration invocation, but just for the sake of this training journey.
+If you are interested, all the code is present <a href="https://github.com/williamverdolini/CQRS-ES-Todos/tree/fbadf80b902bfc7eb4a50043d845a82c78888515/Todo.Legacy.Migration" target="_blank">in the repository under a specific project (Todo.Legacy.Migration)</a>, but DI’s container specific installer and migration invocation, but just for the sake of this training journey.
 All the code about migration is visible in this <a href="https://github.com/williamverdolini/CQRS-ES-Todos/commit/0aa05acbe6d773ad2fa97af4faa9b1c8693b8103" target="_blank">commit</a>.
 
 
@@ -106,13 +106,13 @@ That's why if we didn’t have an event-handler for that external events, the pr
 So the migration logic was be modified in two points:
 
 <ol>
-<li><a href="https://github.com/williamverdolini/CQRS-ES-Todos/blob/master/Todo.Domain/Messages/Events/ToDoEvents.cs#L134" target="_blank">Memento Propagation events</a>: migration events were added in order to propagate the initial state of the Aggregates (from migration) to read model projection.
+<li><a href="https://github.com/williamverdolini/CQRS-ES-Todos/blob/fbadf80b902bfc7eb4a50043d845a82c78888515/Todo.Domain/Messages/Events/ToDoEvents.cs#L134" target="_blank">Memento Propagation events</a>: migration events were added in order to propagate the initial state of the Aggregates (from migration) to read model projection.
 </li>
-<li><a href="https://github.com/williamverdolini/CQRS-ES-Todos/blob/master/Todo.QueryStack/Logic/EventHandlers/ToDoEventHandlers.cs#L162-L211" target="_blank">Memento Propagation events Handlers</a>: the handlers were added. Some migration logic could be managed in these handlers, but I prefer to keep migration logic in Migration manager and leave in these handlers only the logic necessary for rebuilding task.
+<li><a href="https://github.com/williamverdolini/CQRS-ES-Todos/blob/fbadf80b902bfc7eb4a50043d845a82c78888515/Todo.QueryStack/Logic/EventHandlers/ToDoEventHandlers.cs#L162-L211" target="_blank">Memento Propagation events Handlers</a>: the handlers were added. Some migration logic could be managed in these handlers, but I prefer to keep migration logic in Migration manager and leave in these handlers only the logic necessary for rebuilding task.
 </li>
 </ol>
 
-here the <a href="https://github.com/williamverdolini/CQRS-ES-Todos/blob/master/Todo.Legacy.Migration/Logic/LegacySnapshotCreator.cs#L48-L88" target="_blank">code for the reviewed migration strategy</a>.
+here the <a href="https://github.com/williamverdolini/CQRS-ES-Todos/blob/fbadf80b902bfc7eb4a50043d845a82c78888515/Todo.Legacy.Migration/Logic/LegacySnapshotCreator.cs#L48-L88" target="_blank">code for the reviewed migration strategy</a>.
   
   
   

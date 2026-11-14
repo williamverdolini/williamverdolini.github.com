@@ -51,3 +51,9 @@ Mi viene in mente una frase...
 > The journey is the most important thing, not the destination. 
 
 ...dov'è che l'ho letta?
+
+## Aggiornamento 2026: il progetto Todo
+
+Questo articolo racconta una riflessione generale sull’adozione di CQRS+ES; non descrive la migrazione del sistema aziendale menzionato sopra. In parallelo, il progetto formativo **CQRS+ES Todo List** è stato rinnovato: la vecchia applicazione .NET Framework è stata ritirata e sostituita da un’API .NET 10, una UI standalone Angular 22 e uno stack avviabile con Docker Compose.
+
+La nuova versione usa SQL Server per l’event store e la read projection. I dati legacy non vengono importati automaticamente; gli strumenti di esportazione e importazione degli eventi sono conservati per un’eventuale migrazione deliberata. La [pagina del progetto](https://williamverdolini.github.io/Cqrs-es-todos.html) riassume la nuova implementazione; il codice è nel [repository CQRS-ES-Todos](https://github.com/williamverdolini/CQRS-ES-Todos/tree/master/modern).

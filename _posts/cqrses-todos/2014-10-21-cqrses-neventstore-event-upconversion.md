@@ -32,19 +32,19 @@ There are different solutions explained by Damian Hickey in <a href="https://gro
 ### Attribute Versioning setup
 The strategy needs:
 <ol>
-<li>a <a href="https://github.com/williamverdolini/CQRS-ES-Todos/blob/master/Todo.Infrastructure/Events/Versioning/VersionedEventAttribute.cs" target="_blank">VersionedEvent attribute</a> to link the concrete event classes with an alias for the event name (usually the event class name itself) and to associate that concrete event implementation with a version number.</li>
-<li>a <a href="https://github.com/williamverdolini/CQRS-ES-Todos/blob/master/Todo.Infrastructure/Events/Versioning/NewtonsoftJsonSerializer.cs" target="_blank">custom Serializer</a> that serialize/deserialize the event instances using a custom <a href="https://github.com/williamverdolini/CQRS-ES-Todos/blob/master/Todo.Infrastructure/Events/Versioning/VersionedEventSerializationBinder.cs" target="_blank">serialization binder</a>, implemented according to the attribute versioning strategy</li>
-<li>a <a href="https://github.com/williamverdolini/CQRS-ES-Todos/blob/master/Web.UI/Injection/Installers/EventStoreInstaller.cs#L82" target="_blank">NEventStore instrumentation in order to use this serialization strategy</a></li>
-<li>a <a href="https://github.com/williamverdolini/CQRS-ES-Todos/blob/master/Web.UI/Injection/Installers/EventStoreInstaller.cs#L90-L91" target="_blank">NEventStore instrumentation in order to enable Event-Upconversion</a></li>
+<li>a <a href="https://github.com/williamverdolini/CQRS-ES-Todos/blob/fbadf80b902bfc7eb4a50043d845a82c78888515/Todo.Infrastructure/Events/Versioning/VersionedEventAttribute.cs" target="_blank">VersionedEvent attribute</a> to link the concrete event classes with an alias for the event name (usually the event class name itself) and to associate that concrete event implementation with a version number.</li>
+<li>a <a href="https://github.com/williamverdolini/CQRS-ES-Todos/blob/fbadf80b902bfc7eb4a50043d845a82c78888515/Todo.Infrastructure/Events/Versioning/NewtonsoftJsonSerializer.cs" target="_blank">custom Serializer</a> that serialize/deserialize the event instances using a custom <a href="https://github.com/williamverdolini/CQRS-ES-Todos/blob/fbadf80b902bfc7eb4a50043d845a82c78888515/Todo.Infrastructure/Events/Versioning/VersionedEventSerializationBinder.cs" target="_blank">serialization binder</a>, implemented according to the attribute versioning strategy</li>
+<li>a <a href="https://github.com/williamverdolini/CQRS-ES-Todos/blob/fbadf80b902bfc7eb4a50043d845a82c78888515/Web.UI/Injection/Installers/EventStoreInstaller.cs#L82" target="_blank">NEventStore instrumentation in order to use this serialization strategy</a></li>
+<li>a <a href="https://github.com/williamverdolini/CQRS-ES-Todos/blob/fbadf80b902bfc7eb4a50043d845a82c78888515/Web.UI/Injection/Installers/EventStoreInstaller.cs#L90-L91" target="_blank">NEventStore instrumentation in order to enable Event-Upconversion</a></li>
 </ol>
 
 
 ### Attribute Versioning usage
 At this point to use this versioning strategy we need to:
 <ol>
-<li><a href="https://github.com/williamverdolini/CQRS-ES-Todos/blob/master/Todo.Domain/Messages/Events/ToDoEvents.cs#L37-L38" target="_blank">Rename the old version of Event Class</a> (i.e. className_V0) and mark the class with the VersionedEvent attribute's info</li>
-<li><a href="https://github.com/williamverdolini/CQRS-ES-Todos/blob/master/Todo.Domain/Messages/Events/ToDoEvents.cs#L58-L59" target="_blank">Create the new version of the Event Class</a> (with the same original name) and mark the class with the VersionedEvent attribute using a major version number</li>
-<li>Create the <a href="https://github.com/williamverdolini/CQRS-ES-Todos/blob/master/Todo.Domain/Messages/Events/ToDoEventsConverters.cs" target="_blank">Event Upconverter</a> that implements the event conversion logic</li>
+<li><a href="https://github.com/williamverdolini/CQRS-ES-Todos/blob/fbadf80b902bfc7eb4a50043d845a82c78888515/Todo.Domain/Messages/Events/ToDoEvents.cs#L37-L38" target="_blank">Rename the old version of Event Class</a> (i.e. className_V0) and mark the class with the VersionedEvent attribute's info</li>
+<li><a href="https://github.com/williamverdolini/CQRS-ES-Todos/blob/fbadf80b902bfc7eb4a50043d845a82c78888515/Todo.Domain/Messages/Events/ToDoEvents.cs#L58-L59" target="_blank">Create the new version of the Event Class</a> (with the same original name) and mark the class with the VersionedEvent attribute using a major version number</li>
+<li>Create the <a href="https://github.com/williamverdolini/CQRS-ES-Todos/blob/fbadf80b902bfc7eb4a50043d845a82c78888515/Todo.Domain/Messages/Events/ToDoEventsConverters.cs" target="_blank">Event Upconverter</a> that implements the event conversion logic</li>
 </ol>
 
 that's all.
@@ -88,6 +88,6 @@ public class EventsRebuilder : IEventsRebuilder
 
 
 ### Well begun is half done
-Thinking about Event Upconversion should be one of the first strategies to define when you adopt Event Sourcing. That's just because the events are the data saved and serialized from the beginning, during all the life of your application. So, defining at the very first moment how to serialize and deserialize the event data allow you to write more maintanable code, without having to adjust the target after. 
+Thinking about Event Upconversion should be one of the first strategies to define when you adopt Event Sourcing. That's just because the events are the data saved and serialized from the beginning, during all the life of your application. So, defining at the very first moment how to serialize and deserialize the event data allow you to write more maintanable code, without having to adjust the target after.
 But in this sample application I wanted to put me in the worst condition: that's, to add a event upconversion strategy after the application go-live.
-Using the VersionedEvent attribute as explained before allow me to add some more <a href="https://github.com/williamverdolini/CQRS-ES-Todos/blob/master/Todo.Infrastructure/Events/Versioning/VersionedEventSerializationBinder.cs#L18-L42" target="_blank">serialization/deserialization logic</a> in order to face this situation. 
+Using the VersionedEvent attribute as explained before allow me to add some more <a href="https://github.com/williamverdolini/CQRS-ES-Todos/blob/fbadf80b902bfc7eb4a50043d845a82c78888515/Todo.Infrastructure/Events/Versioning/VersionedEventSerializationBinder.cs#L18-L42" target="_blank">serialization/deserialization logic</a> in order to face this situation.

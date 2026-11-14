@@ -113,7 +113,7 @@ public class EventNotifier : IEventNotifier
 As you can see, I use:
 
 - <a href="http://martinfowler.com/eaaCatalog/dataTransferObject.html" target="_blank">DTO pattern</a> to encapsulate and keep the serialization for SignalR channel out of the rest of the code.
-- <a href="http://automapper.org/" target="_blank">AutoMapper</a> to simplify object-to-object mapping and, in this case, <a href="https://github.com/williamverdolini/CQRS-ES-Todos/blob/master/Todo.QueryStack/Mappers/NotifierMapperProfile.cs" target="_blank">it's very easy</a>
+- <a href="http://automapper.org/" target="_blank">AutoMapper</a> to simplify object-to-object mapping and, in this case, <a href="https://github.com/williamverdolini/CQRS-ES-Todos/blob/fbadf80b902bfc7eb4a50043d845a82c78888515/Todo.QueryStack/Mappers/NotifierMapperProfile.cs" target="_blank">it's very easy</a>
 
 At the end, I call the notifier's methods at the end of the read-model updates:
 
